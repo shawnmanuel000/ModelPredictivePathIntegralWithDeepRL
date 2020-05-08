@@ -63,11 +63,13 @@ def calc_cost_map(track, buffer=50, res=0.1, fl=f"{cost_map_dir}/cost_map2Ddense
 	return (data["X"], data["Y"], data["cost"])
 
 def plot_cost_map(rmap):
+	transform = lambda x: 20*np.tanh(x/20)**2
 	X, Y, ZZ = rmap
 	plt.figure()
 	XX,YY = np.meshgrid(X, Y)
 	ax = plt.axes(projection='3d')
-	ax.plot_surface(XX, YY, ZZ, cmap='RdYlGn_r')
+	ax.plot_surface(XX, YY, transform(ZZ), cmap='RdYlGn_r')
+	ax.set_zlim3d(0, 50)
 	plt.show()
 
 if __name__ == "__main__":
