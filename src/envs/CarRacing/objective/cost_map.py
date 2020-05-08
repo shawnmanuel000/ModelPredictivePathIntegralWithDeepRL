@@ -47,8 +47,9 @@ def cost_fn(point):
 	track = load_track()
 	return min_dist(point,track)
 
-def calc_cost_map(track, buffer=50, res=0.1, fl=f"{cost_map_dir}/cost_map2Ddense.npz"):
+def load_cost_map(track=None, buffer=50, res=0.1, fl="cost_map2Ddense"):
 	if not os.path.exists(fl):
+		track = track if track else load_track()
 		X, Z, Y = zip(*track)
 		x_min, x_max = np.min(X), np.max(X)
 		y_min, y_max = np.min(Y), np.max(Y)
@@ -58,7 +59,7 @@ def calc_cost_map(track, buffer=50, res=0.1, fl=f"{cost_map_dir}/cost_map2Ddense
 		with Pool(16) as p:
 			dists = p.map(cost_fn, points)
 		dists = np.array(dists).reshape(len(X), len(Y))
-		np.savez(fl, X=X, Y=Y, cost=dists.T, res=res, buffer=buffer)
+		np.savez(f"{cost_map_dir}/{fl}.npz", X=X, Y=Y, cost=dists.T, res=res, buffer=buffer)
 	data = np.load(fl)
 	return (data["X"], data["Y"], data["cost"])
 
@@ -76,5 +77,5 @@ if __name__ == "__main__":
 	track = load_track()
 	# plot_track2D(track)
 	# plot_track(track)
-	rmap = calc_cost_map(track)
+	rmap = load_cost_map(track)
 	plot_cost_map(rmap)
