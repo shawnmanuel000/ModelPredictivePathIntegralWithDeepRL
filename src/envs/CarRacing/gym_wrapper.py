@@ -1,4 +1,3 @@
-
 import gym
 import itertools
 import numpy as np
@@ -8,9 +7,6 @@ from mlagents_envs import logging_util
 from mlagents_envs.base_env import DecisionSteps, TerminalSteps, BaseEnv
 
 class UnityGymException(error.Error):
-    """
-    Any error related to the gym wrapper of ml-agents.
-    """
     pass
 
 logger = logging_util.get_logger(__name__)
@@ -18,33 +14,19 @@ logging_util.set_log_level(logging_util.INFO)
 GymStepResult = Tuple[np.ndarray, float, bool, Dict]
 
 class UnityToGymWrapper(gym.Env):
-    """
-    Provides Gym wrapper for Unity Learning Environments.
-    """
-
-    def __init__(
-        self,
-        unity_env: BaseEnv,
-        use_visual: bool = False,
-        uint8_visual: bool = False,
-        flatten_branched: bool = False,
-        allow_multiple_visual_obs: bool = False,
-    ):
+    def __init__(self, unity_env: BaseEnv, use_visual: bool = False, uint8_visual: bool = False, flatten_branched: bool = False, allow_multiple_visual_obs: bool = False):
         """
         Environment initialization
         :param unity_env: The Unity BaseEnv to be wrapped in the gym. Will be closed when the UnityToGymWrapper closes.
         :param use_visual: Whether to use visual observation or vector observation.
         :param uint8_visual: Return visual observations as uint8 (0-255) matrices instead of float (0.0-1.0).
-        :param flatten_branched: If True, turn branched discrete action spaces into a Discrete space rather than
-            MultiDiscrete.
+        :param flatten_branched: If True, turn branched discrete action spaces into a Discrete space rather than MultiDiscrete.
         :param allow_multiple_visual_obs: If True, return a list of visual observations instead of only one.
         """
         self._env = unity_env
-
         # Take a single step so that the brain information will be sent over
         if not self._env.get_behavior_names():
             self._env.step()
-
         self.visual_obs = None
         self._n_agents = -1
 
@@ -57,35 +39,22 @@ class UnityToGymWrapper(gym.Env):
 
         # Check brain configuration
         if len(self._env.get_behavior_names()) != 1:
-            raise UnityGymException(
-                "There can only be one behavior in a UnityEnvironment "
-                "if it is wrapped in a gym."
-            )
+            raise UnityGymException("There can only be one behavior in a UnityEnvironment if it is wrapped in a gym.")
 
         self.name = self._env.get_behavior_names()[0]
         self.group_spec = self._env.get_behavior_spec(self.name)
 
         if use_visual and self._get_n_vis_obs() == 0:
-            raise UnityGymException(
-                "`use_visual` was set to True, however there are no"
-                " visual observations as part of this environment."
-            )
+            raise UnityGymException("`use_visual` was set to True, however there are no visual observations as part of this environment.")
         self.use_visual = self._get_n_vis_obs() >= 1 and use_visual
 
         if not use_visual and uint8_visual:
-            logger.warning(
-                "`uint8_visual was set to true, but visual observations are not in use. "
-                "This setting will not have any effect."
-            )
+            logger.warning("`uint8_visual was set to true, but visual observations are not in use. This setting will not have any effect.")
         else:
             self.uint8_visual = uint8_visual
 
         if self._get_n_vis_obs() > 1 and not self._allow_multiple_visual_obs:
-            logger.warning(
-                "The environment contains more than one visual observation. "
-                "You must define allow_multiple_visual_obs=True to received them all. "
-                "Otherwise, please note that only the first will be provided in the observation."
-            )
+            logger.warning("The environment contains more than one visual observation. You must define allow_multiple_visual_obs=True to received them all. Otherwise, please note that only the first will be provided in the observation.")
 
         # Check for number of agents in scene.
         self._env.reset()
@@ -104,27 +73,18 @@ class UnityToGymWrapper(gym.Env):
                     self._action_space = self._flattener.action_space
                 else:
                     self._action_space = spaces.MultiDiscrete(branches)
-
         else:
             if flatten_branched:
-                logger.warning(
-                    "The environment has a non-discrete action space. It will "
-                    "not be flattened."
-                )
+                logger.warning("The environment has a non-discrete action space. It will not be flattened.")
             high = np.array([1] * self.group_spec.action_shape)
             self._action_space = spaces.Box(-high, high, dtype=np.float32)
         high = np.array([np.inf] * self._get_vec_obs_size())
         if self.use_visual:
             shape = self._get_vis_obs_shape()
             if uint8_visual:
-                self._observation_space = spaces.Box(
-                    0, 255, dtype=np.uint8, shape=shape
-                )
+                self._observation_space = spaces.Box(0, 255, dtype=np.uint8, shape=shape)
             else:
-                self._observation_space = spaces.Box(
-                    0, 1, dtype=np.float32, shape=shape
-                )
-
+                self._observation_space = spaces.Box(0, 1, dtype=np.float32, shape=shape)
         else:
             self._observation_space = spaces.Box(-high, high, dtype=np.float32)
 
@@ -138,7 +98,6 @@ class UnityToGymWrapper(gym.Env):
         n_agents = len(decision_step)
         self._check_agents(n_agents)
         self.game_over = False
-
         res: GymStepResult = self._single_step(decision_step)
         return res[0]
 
@@ -158,11 +117,9 @@ class UnityToGymWrapper(gym.Env):
         if self._flattener is not None:
             # Translate action into list
             action = self._flattener.lookup_action(action)
-
         spec = self.group_spec
         action = np.array(action).reshape((1, spec.action_size))
         self._env.set_actions(self.name, action)
-
         self._env.step()
         decision_step, terminal_step = self._env.get_steps(self.name)
         if len(terminal_step) != 0:
@@ -175,7 +132,6 @@ class UnityToGymWrapper(gym.Env):
     def _single_step(self, info: Union[DecisionSteps, TerminalSteps]) -> GymStepResult:
         if self.use_visual:
             visual_obs = self._get_vis_obs_list(info)
-
             if self._allow_multiple_visual_obs:
                 visual_obs_list = []
                 for obs in visual_obs:
@@ -183,17 +139,12 @@ class UnityToGymWrapper(gym.Env):
                 self.visual_obs = visual_obs_list
             else:
                 self.visual_obs = self._preprocess_single(visual_obs[0][0])
-
             default_observation = self.visual_obs
         elif self._get_vec_obs_size() > 0:
             default_observation = self._get_vector_obs(info)[0, :]
         else:
-            raise UnityGymException(
-                "The Agent does not have vector observations and the environment was not setup "
-                + "to use visual observations."
-            )
+            raise UnityGymException("The Agent does not have vector observations and the environment was not setup to use visual observations.")
         done = isinstance(info, TerminalSteps)
-
         return (default_observation, info.reward[0], done, {"step": info})
 
     def _preprocess_single(self, single_visual_obs: np.ndarray) -> np.ndarray:
@@ -215,18 +166,14 @@ class UnityToGymWrapper(gym.Env):
                 return shape
         return None
 
-    def _get_vis_obs_list(
-        self, step_result: Union[DecisionSteps, TerminalSteps]
-    ) -> List[np.ndarray]:
+    def _get_vis_obs_list(self, step_result: Union[DecisionSteps, TerminalSteps]) -> List[np.ndarray]:
         result: List[np.ndarray] = []
         for obs in step_result.obs:
             if len(obs.shape) == 4:
                 result.append(obs)
         return result
 
-    def _get_vector_obs(
-        self, step_result: Union[DecisionSteps, TerminalSteps]
-    ) -> np.ndarray:
+    def _get_vector_obs(self, step_result: Union[DecisionSteps, TerminalSteps]) -> np.ndarray:
         result: List[np.ndarray] = []
         for obs in step_result.obs:
             if len(obs.shape) == 2:
@@ -259,9 +206,7 @@ class UnityToGymWrapper(gym.Env):
 
     def _check_agents(self, n_agents: int) -> None:
         if self._n_agents > 1:
-            raise UnityGymException(
-                "There can only be one Agent in the environment but {n_agents} were detected."
-            )
+            raise UnityGymException("There can only be one Agent in the environment but {n_agents} were detected.")
 
     @property
     def metadata(self):
@@ -292,7 +237,6 @@ class ActionFlattener:
     """
     Flattens branched discrete action spaces into single-branch discrete action spaces.
     """
-
     def __init__(self, branched_action_space):
         """
         Initialize the flattener.
@@ -313,9 +257,7 @@ class ActionFlattener:
         possible_vals = [range(_num) for _num in branched_action_space]
         all_actions = [list(_action) for _action in itertools.product(*possible_vals)]
         # Dict should be faster than List for large action spaces
-        action_lookup = {
-            _scalar: _action for (_scalar, _action) in enumerate(all_actions)
-        }
+        action_lookup = {_scalar: _action for (_scalar, _action) in enumerate(all_actions)}
         return action_lookup
 
     def lookup_action(self, action):
