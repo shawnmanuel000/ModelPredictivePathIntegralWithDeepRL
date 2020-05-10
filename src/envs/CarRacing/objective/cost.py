@@ -2,7 +2,7 @@ import os
 import numpy as np
 import itertools as it
 from multiprocessing import Pool
-from track import Track
+from .track import Track
 
 root = os.path.dirname(os.path.abspath(__file__))
 cost_map_dir = os.path.abspath(f"{root}/cost_maps")
@@ -14,6 +14,7 @@ class CostModel():
 		self.min_point = np.array([self.X[0], self.Y[0], 0])
 
 	def get_cost(self, point):
+		point = np.array(point)
 		ref = self.min_point[:point.shape[-1]].reshape(*[1]*(len(point.shape)-1), -1)
 		index = np.round((point-ref)/self.res).astype(np.int32)
 		cost = self.cost_map[index[...,0],index[...,1]]

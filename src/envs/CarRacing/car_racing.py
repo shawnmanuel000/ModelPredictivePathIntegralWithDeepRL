@@ -1,32 +1,44 @@
 import os
 import sys
+import gym
 import numpy as np
 from mlagents_envs.environment import UnityEnvironment
-from gym_wrapper import UnityToGymWrapper
-sys.path.append(os.path.abspath("./src/envs/CarRacing/objective"))
-from cost import CostModel
-np.set_printoptions(precision=3, sign=' ', floatmode="fixed", suppress=True, linewidth=100)
+from .unity_gym import UnityToGymWrapper
+from .objective import cost
 
-root = os.path.dirname(os.path.abspath(__file__))
-sim_file = os.path.abspath(os.path.join(root, "simulator", sys.platform, "CarRacing"))
+class CarRacingEnv(gym.Env):
+	def __init__(self, max_time=1000):
+		root = os.path.dirname(os.path.abspath(__file__))
+		sim_file = os.path.abspath(os.path.join(root, "simulator", sys.platform, "CarRacing"))
+		unity_env = UnityEnvironment(file_name=sim_file)
+		self.env = UnityToGymWrapper(unity_env)
+		self.action_space = self.env.action_space
+		self.observation_space = self.env.observation_space
+		self.cost_model = cost.CostModel()
+		self.max_time = max_time
 
-unity_env = UnityEnvironment(file_name=sim_file)
-env = UnityToGymWrapper(unity_env)
+	def reset(self, idle_timeout=None):
+		self.time = 0
+		self.idle_timeout = idle_timeout if isinstance(idle_timeout, int) else np.Inf
+		state = self.env.reset()
+		return state
 
-action_size = env.action_space.shape
-state_size = env.observation_space.shape
-cmodel = CostModel()
+	def get_reward(self, state):
+		x, z, y = state[:3]
+		vel = state[3:6]
+		reward = 0.1*np.linalg.norm(vel) - self.cost_model.get_cost((x,y))
+		return reward
 
-for ep in range(1):
-	state = env.reset()
-	done = False
-	step = 0
-	while not done and step<1000:
-		action = np.random.uniform([-1, -1, -1], [1, 1, 1], size=action_size)
-		state, reward, done, _ = env.step(action)
-		reward = cmodel.get_cost(state[:3])
-		print(f"Step: {step:5d}, R: {reward}, A: {action}, Pos: {state[:3]}, Idle: {state[-1]}")
-		env.render()
-		step += 1
+	def step(self, action):
+		self.time += 1
+		state, reward, done, info = self.env.step(action)
+		reward = self.get_reward(state)
+		idle = state[-1]
+		done = done or idle>self.idle_timeout or self.time > self.max_time
+		return state, reward, done, info
 
-env.close()
+	def render(self):
+		return self.env.render()
+
+	def close(self):
+		self.env.close()
