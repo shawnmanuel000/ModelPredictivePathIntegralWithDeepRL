@@ -1,1 +1,1 @@
-from .car_racing import CarRacingEnv
+from .car_racing import CarRacing

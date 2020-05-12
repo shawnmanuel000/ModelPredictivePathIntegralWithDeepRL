@@ -1,23 +1,36 @@
 import os
 import sys
-import gym
 import numpy as np
 from mlagents_envs.environment import UnityEnvironment
+from mlagents_envs import logging_util
 from .unity_gym import UnityToGymWrapper
 from .objective import cost
+from ..Gym import gym
 
-class CarRacingEnv(gym.Env):
+logging_util.set_log_level(logging_util.ERROR)
+
+class EnvMeta(type):
+	def __new__(meta, name, bases, class_dict):
+		cls = super().__new__(meta, name, bases, class_dict)
+		gym.register(f"{name}-v1", entry_point=cls)
+		return cls
+
+class CarRacing(gym.Env, metaclass=EnvMeta):
+	def __new__(cls, **kwargs):
+		cls.id = getattr(cls, "id", 0)+1
+		return super().__new__(cls, **kwargs)
+
 	def __init__(self, max_time=1000):
 		root = os.path.dirname(os.path.abspath(__file__))
 		sim_file = os.path.abspath(os.path.join(root, "simulator", sys.platform, "CarRacing"))
-		unity_env = UnityEnvironment(file_name=sim_file)
+		unity_env = UnityEnvironment(file_name=sim_file, worker_id=self.id)
 		self.env = UnityToGymWrapper(unity_env)
 		self.action_space = self.env.action_space
 		self.observation_space = self.env.observation_space
 		self.cost_model = cost.CostModel()
 		self.max_time = max_time
 
-	def reset(self, idle_timeout=None):
+	def reset(self, idle_timeout=10000):
 		self.time = 0
 		self.idle_timeout = idle_timeout if isinstance(idle_timeout, int) else np.Inf
 		state = self.env.reset()
@@ -37,8 +50,9 @@ class CarRacingEnv(gym.Env):
 		done = done or idle>self.idle_timeout or self.time > self.max_time
 		return state, reward, done, info
 
-	def render(self):
+	def render(self, mode=None, **kwargs):
 		return self.env.render()
 
 	def close(self):
-		self.env.close()
+		if not hasattr(self, "closed"): self.env.close()
+		self.closed = True

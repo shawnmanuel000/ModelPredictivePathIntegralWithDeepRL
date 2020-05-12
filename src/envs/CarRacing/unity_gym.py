@@ -1,16 +1,15 @@
-import gym
 import itertools
 import numpy as np
-from gym import error, spaces
 from typing import Any, Dict, List, Optional, Tuple, Union
 from mlagents_envs import logging_util
 from mlagents_envs.base_env import DecisionSteps, TerminalSteps, BaseEnv
+from ..Gym import gym
 
-class UnityGymException(error.Error):
+class UnityGymException(gym.error.Error):
     pass
 
 logger = logging_util.get_logger(__name__)
-logging_util.set_log_level(logging_util.INFO)
+logging_util.set_log_level(logging_util.ERROR)
 GymStepResult = Tuple[np.ndarray, float, bool, Dict]
 
 class UnityToGymWrapper(gym.Env):
@@ -66,27 +65,27 @@ class UnityToGymWrapper(gym.Env):
         if self.group_spec.is_action_discrete():
             branches = self.group_spec.discrete_action_branches
             if self.group_spec.action_shape == 1:
-                self._action_space = spaces.Discrete(branches[0])
+                self._action_space = gym.spaces.Discrete(branches[0])
             else:
                 if flatten_branched:
                     self._flattener = ActionFlattener(branches)
                     self._action_space = self._flattener.action_space
                 else:
-                    self._action_space = spaces.MultiDiscrete(branches)
+                    self._action_space = gym.spaces.MultiDiscrete(branches)
         else:
             if flatten_branched:
                 logger.warning("The environment has a non-discrete action space. It will not be flattened.")
             high = np.array([1] * self.group_spec.action_shape)
-            self._action_space = spaces.Box(-high, high, dtype=np.float32)
+            self._action_space = gym.spaces.Box(-high, high, dtype=np.float32)
         high = np.array([np.inf] * self._get_vec_obs_size())
         if self.use_visual:
             shape = self._get_vis_obs_shape()
             if uint8_visual:
-                self._observation_space = spaces.Box(0, 255, dtype=np.uint8, shape=shape)
+                self._observation_space = gym.spaces.Box(0, 255, dtype=np.uint8, shape=shape)
             else:
-                self._observation_space = spaces.Box(0, 1, dtype=np.float32, shape=shape)
+                self._observation_space = gym.spaces.Box(0, 1, dtype=np.float32, shape=shape)
         else:
-            self._observation_space = spaces.Box(-high, high, dtype=np.float32)
+            self._observation_space = gym.spaces.Box(-high, high, dtype=np.float32)
 
     def reset(self) -> Union[List[np.ndarray], np.ndarray]:
         """Resets the state of the environment and returns an initial observation.
@@ -235,7 +234,7 @@ class UnityToGymWrapper(gym.Env):
 
 class ActionFlattener:
     """
-    Flattens branched discrete action spaces into single-branch discrete action spaces.
+    Flattens branched discrete action spaces into single-branch discrete action gym.spaces.
     """
     def __init__(self, branched_action_space):
         """
@@ -245,7 +244,7 @@ class ActionFlattener:
         """
         self._action_shape = branched_action_space
         self.action_lookup = self._create_lookup(self._action_shape)
-        self.action_space = spaces.Discrete(len(self.action_lookup))
+        self.action_space = gym.spaces.Discrete(len(self.action_lookup))
 
     @classmethod
     def _create_lookup(self, branched_action_space):
