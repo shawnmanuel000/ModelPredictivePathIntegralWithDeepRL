@@ -11,7 +11,7 @@ def test():
 	action_size = env.action_space.shape
 	state_size = env.observation_space.shape
 	agent = InputController(state_size, action_size)
-	for ep in range(1):
+	for _ in range(1):
 		state = env.reset()
 		done = False
 		step = 0

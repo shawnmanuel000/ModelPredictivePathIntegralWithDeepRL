@@ -3,7 +3,7 @@ import numpy as np
 from src import utils
 from src.envs import all_envs
 from src.models import all_models, get_config
-from src.models.wrappers import ParallelAgent, RayAgent, RayEnv, LatentAgent
+from src.models.wrappers import ParallelAgent, RayAgent, RayEnv
 from src.utils.multiprocess import set_rank_size, get_server, get_client
 from src.utils.envs import EnsembleEnv, EnvManager, EnvWorker
 from src.utils.misc import rollout, SEED, rmdir
@@ -15,7 +15,7 @@ class GymTrainer():
 	def __init__(self, make_env, model, config):
 		ports = list(range(1+config.rank, config.split if config.rank==0 else config.size))
 		self.envs = (EnvManager if len(ports)>0 else EnsembleEnv)(make_env, ports if ports else config.num_envs, config.TRIAL_AT)
-		self.agent = (ParallelAgent if config.latent=="none" else LatentAgent)(self.envs.state_size, self.envs.action_size, model, config, gpu=True)
+		self.agent = ParallelAgent(self.envs.state_size, self.envs.action_size, model, config, gpu=True)
 		self.conn = None if config.split==config.size else get_client([config.split]) if config.rank==0 else get_server(root=0)
 		self.logger = Logger(self.envs, self.agent, config, conn=self.conn) if not config.trial else None
 		self.checkpoint = config.env_name + "/" +  "_".join(["rs"]*int(config.rs) + ["icm"]*int(config.icm))
@@ -86,7 +86,6 @@ def parse_args(envs, models, frameworks):
 	parser.add_argument("--tcp_rank", type=int, default=0, help="Which port to listen on (as a worker server)")
 	parser.add_argument("--num_envs", type=int, default=1, help="How many parallel envs to train the agent in")
 	parser.add_argument("--nsteps", type=int, default=100000, help="Number of steps to train the agent")
-	parser.add_argument("--latent", default="none", choices=["none", "train", "use"], help="Whether to use latent action space to train")
 	parser.add_argument("--render", action="store_true", help="Whether to render an environment rollout")
 	parser.add_argument("--trial", action="store_true", help="Whether to trial run from saved checkpoint")
 	parser.add_argument("--icm", action="store_true", help="Whether to use intrinsic motivation")

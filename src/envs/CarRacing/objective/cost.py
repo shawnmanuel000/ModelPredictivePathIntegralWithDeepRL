@@ -15,7 +15,8 @@ class CostModel():
 
 	def get_cost(self, point):
 		point = np.array(point)
-		ref = self.min_point[:point.shape[-1]].reshape(*[1]*(len(point.shape)-1), -1)
+		shape = list(point.shape)
+		ref = self.min_point[:shape[-1]].reshape(*[1]*(len(shape)-1), -1)
 		index = np.round((point-ref)/self.res).astype(np.int32)
 		cost = self.cost_map[index[...,0],index[...,1]]
 		return 20*np.tanh(cost/20)**2

@@ -4,7 +4,7 @@ import numpy as np
 from mlagents_envs.environment import UnityEnvironment
 from mlagents_envs import logging_util
 from .unity_gym import UnityToGymWrapper
-from .objective import cost
+from .objective import CostModel
 from ..Gym import gym
 
 logging_util.set_log_level(logging_util.ERROR)
@@ -27,7 +27,7 @@ class CarRacing(gym.Env, metaclass=EnvMeta):
 		self.env = UnityToGymWrapper(unity_env)
 		self.action_space = self.env.action_space
 		self.observation_space = self.env.observation_space
-		self.cost_model = cost.CostModel()
+		self.cost_model = CostModel()
 		self.max_time = max_time
 
 	def reset(self, idle_timeout=10000):
@@ -37,7 +37,7 @@ class CarRacing(gym.Env, metaclass=EnvMeta):
 		return state
 
 	def get_reward(self, state):
-		x, z, y = state[:3]
+		x, _, y = state[:3]
 		vel = state[3:6]
 		reward = 0.1*np.linalg.norm(vel) - self.cost_model.get_cost((x,y))
 		return reward
