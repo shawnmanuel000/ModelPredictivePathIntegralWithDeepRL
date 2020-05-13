@@ -19,7 +19,7 @@ class EnvMeta(type):
 class CarRacing(gym.Env, metaclass=EnvMeta):
 	def __new__(cls, **kwargs):
 		cls.id = getattr(cls, "id", 0)+1
-		return super().__new__(cls, **kwargs)
+		return super().__new__(cls)
 
 	def __init__(self, max_time=1000):
 		root = os.path.dirname(os.path.abspath(__file__))
@@ -34,7 +34,7 @@ class CarRacing(gym.Env, metaclass=EnvMeta):
 		self.max_time = max_time
 		self.reset()
 
-	def reset(self, idle_timeout=None, train=True):
+	def reset(self, idle_timeout=10, train=True):
 		self.time = 0
 		self.scale_sim(0)
 		self.idle_timeout = idle_timeout if isinstance(idle_timeout, int) else np.Inf
@@ -43,8 +43,9 @@ class CarRacing(gym.Env, metaclass=EnvMeta):
 
 	def get_reward(self, state):
 		x, _, y = state[:3]
-		vel = state[3:6]
-		reward = np.linalg.norm(vel) - self.cost_model.get_cost((x,y))
+		vx, _, vy = state[3:6]
+		cost = self.cost_model.get_cost((x,y))
+		reward = vy/np.exp(cost) - np.abs(vx) - cost
 		return 0.1*reward
 
 	def step(self, action):
