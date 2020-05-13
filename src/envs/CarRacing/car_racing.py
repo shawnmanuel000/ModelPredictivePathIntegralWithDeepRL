@@ -43,9 +43,9 @@ class CarRacing(gym.Env, metaclass=EnvMeta):
 
 	def get_reward(self, state):
 		x, _, y = state[:3]
-		vx, _, vy = state[3:6]
+		_, _, vy = state[3:6]
 		cost = self.cost_model.get_cost((x,y))
-		reward = vy/np.exp(cost) - np.abs(vx) - cost
+		reward = vy/np.exp(cost) - cost
 		return 0.1*reward
 
 	def step(self, action):
