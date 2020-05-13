@@ -51,9 +51,9 @@ class CarRacing(gym.Env, metaclass=EnvMeta):
 	def step(self, action):
 		self.time += 1
 		state, reward, done, info = self.env.step(action)
-		reward = self.get_reward(state)
 		idle = state[-1]
 		done = done or idle>self.idle_timeout or self.time > self.max_time
+		reward = self.get_reward(state) - 10*done
 		return state, reward, done, info
 
 	def render(self, mode=None, **kwargs):
