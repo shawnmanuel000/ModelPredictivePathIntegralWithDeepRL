@@ -26,7 +26,7 @@ class EnsembleEnv():
 		self.max_steps = self.env.spec.max_episode_steps if self.env.spec.max_episode_steps else max_steps
 
 	def reset(self, train=False):
-		obs = [env.reset() for env in (self.envs if train else self.test_envs)]
+		obs = [env.reset(train=train) for env in (self.envs if train else self.test_envs)]
 		return np.stack(obs)
 
 	def step(self, actions, train=False, render=False):
@@ -34,7 +34,7 @@ class EnsembleEnv():
 		envs = self.envs if train else self.test_envs
 		for env,action in zip(envs, actions):
 			state, rew, done, info = env.step(action)
-			state = env.reset() if train and done else state
+			state = env.reset(train=train) if train and done else state
 			results.append((state, rew, done, info))
 			if render: env.render()
 		obs, rews, dones, infos = zip(*results)
@@ -64,11 +64,11 @@ class EnvWorker():
 			train = data.get("train", False)
 			env = self.env[int(train)]
 			if data["cmd"] == "RESET":
-				message = env.reset()
+				message = env.reset(train=train)
 				rewards[int(train)] = None
 			elif data["cmd"] == "STEP":
 				state, reward, done, info = env.step(data["action"])
-				state = env.reset() if train and done else state
+				state = env.reset(train=train) if train and done else state
 				rewards[int(train)] = np.array(reward) if rewards[int(train)] is None else rewards[int(train)] + np.array(reward)
 				message = (state, reward, done, info)
 				step += int(train)

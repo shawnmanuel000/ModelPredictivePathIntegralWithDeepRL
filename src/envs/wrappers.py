@@ -2,7 +2,6 @@ import os
 import numpy as np
 import matplotlib.pyplot as plt
 from .Gym.gym.envs.atari import AtariEnv
-from .Gym.gym.envs.robotics import FetchReachEnv 
 gym, rbs, vzd = None, None, None
 os.system("export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:/home/shawn/.mujoco/mujoco200/bin")
 os.system("export LD_PRELOAD=/usr/lib/x86_64-linux-gnu/libGLEW.so")
@@ -41,7 +40,8 @@ class GymEnv(gym.Wrapper):
 
 	def reset(self, **kwargs):
 		self.time = 0
-		state = self.env.reset()
+		settings = kwargs if isinstance(self.env, car_racing.CarRacing) else {}
+		state = self.env.reset(**settings)
 		return self.preprocess(state)
 
 	def step(self, action, train=False):
