@@ -3,7 +3,6 @@ import sys
 import numpy as np
 import matplotlib.pyplot as plt
 from mpl_toolkits import mplot3d
-from multiprocessing import Pool
 sys.path.append(os.path.abspath("./src/envs/CarRacing"))
 from cost import CostModel
 
@@ -29,10 +28,38 @@ def plot_cost_map(cmodel):
 	ax.set_ylabel("Y")
 	ax.set_zlim3d(0, 50)
 
+def plot_track_map(track):
+	plt.figure()
+	ax = plt.axes(projection='3d')
+	X, Y, Z = track.X, track.Y, track.Z
+	grid = np.array(list(zip(X,Y,Z)))
+	ax.scatter(X, Y, track.get_nearest(grid))
+	ax.set_xlabel("X")
+	ax.set_ylabel("Y")
+	ax.set_zlim3d(0, 500)
+
+def animate_path(track):
+	plt.ion()
+	plt.figure()
+	ax = plt.axes(projection='3d')
+	X, Y, Z = track.X, track.Y, track.Z
+	grid = np.array(list(zip(X,Y,Z)))
+	for point in grid:
+		path = track.get_path(point)
+		xs, zs, ys = zip(*path)
+		ax.set_zlim3d(-100, 100)
+		ax.plot(X,Y,Z, color="#DDDDDD")
+		ax.plot(xs, ys, zs, linewidth=2)
+		plt.draw()
+		plt.pause(0.0000001)
+		ax.cla()
+
 if __name__ == "__main__":
 	cost_model = CostModel()
 	track = cost_model.track
-	plot_track2D(track)
-	plot_track(track)
-	plot_cost_map(cost_model)
+	# plot_track2D(track)
+	# plot_track(track)
+	# plot_cost_map(cost_model)
+	# plot_track_map(track)
+	animate_path(track)
 	plt.show()

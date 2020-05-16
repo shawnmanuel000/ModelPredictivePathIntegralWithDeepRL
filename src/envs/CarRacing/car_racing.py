@@ -28,9 +28,9 @@ class CarRacing(gym.Env, metaclass=EnvMeta):
 		unity_env = UnityEnvironment(file_name=sim_file, side_channels=[self.channel], worker_id=self.id + np.random.randint(10000, 20000))
 		self.scale_sim = lambda s: self.channel.set_configuration_parameters(width=50*int(1+9*s), height=50*int(1+9*s), quality_level=int(1+3*s), time_scale=int(1+5*(1-s)))
 		self.env = UnityToGymWrapper(unity_env)
-		self.action_space = self.env.action_space
-		self.observation_space = self.env.observation_space
 		self.cost_model = CostModel()
+		self.action_space = self.env.action_space
+		self.observation_space = gym.spaces.Box(-np.inf, np.inf, self.observation().shape)
 		self.max_time = max_time
 		self.reset()
 
@@ -38,14 +38,13 @@ class CarRacing(gym.Env, metaclass=EnvMeta):
 		self.time = 0
 		self.scale_sim(0)
 		self.idle_timeout = idle_timeout if isinstance(idle_timeout, int) else np.Inf
-		state = self.env.reset()
-		return state
+		return self.observation()
 
 	def get_reward(self, state):
-		x, _, y = state[:3]
-		_, _, vy = state[3:6]
+		x, _, y = state[:3]*10
+		vx, _, vy = state[3:6]
 		cost = self.cost_model.get_cost((x,y))
-		reward = vy/np.exp(cost) - cost
+		reward = vy/np.exp(cost) - cost*(1+np.abs(vx))
 		return 0.1*reward
 
 	def step(self, action):
@@ -54,11 +53,17 @@ class CarRacing(gym.Env, metaclass=EnvMeta):
 		idle = state[-1]
 		done = done or idle>self.idle_timeout or self.time > self.max_time
 		reward = self.get_reward(state) - 10*done
-		return state, reward, done, info
+		return self.observation(state), reward, done, info
 
 	def render(self, mode=None, **kwargs):
 		self.scale_sim(1)
 		return self.env.render()
+
+	def observation(self, state=None):
+		state = self.env.reset() if state is None else state
+		target = self.cost_model.track.get_path([state[0], state[2], state[1]])
+		state[:3] /= 10
+		return np.concatenate([state, *target], -1)
 
 	def close(self):
 		if not hasattr(self, "closed"): self.env.close()

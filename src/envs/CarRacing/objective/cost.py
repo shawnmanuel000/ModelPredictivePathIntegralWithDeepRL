@@ -6,7 +6,7 @@ try: from track import Track
 except: from .track import Track
 
 root = os.path.dirname(os.path.abspath(__file__))
-cost_map_dir = os.path.abspath(f"{root}/cost_maps")
+map_dir = os.path.abspath(f"{root}/cost_maps")
 
 class CostModel():
 	def __init__(self, cost_name="cost_map2Ddense"):
@@ -23,7 +23,7 @@ class CostModel():
 		return 20*np.tanh(cost/20)**4
 
 	def load_cost_map(self, cost_name, res=0.1, buffer=50):
-		cost_file = self.get_cost_file(cost_name)
+		cost_file = os.path.join(map_dir, f"{cost_name}.npz")
 		if not os.path.exists(cost_file):
 			X, Y = self.track.X, self.track.Y
 			x_min, x_max = np.min(X), np.max(X)
@@ -40,6 +40,3 @@ class CostModel():
 		self.Y = data["Y"]
 		self.cost_map = data["cost"].T
 		self.res = res
-
-	def get_cost_file(self, cost_name):
-		return os.path.join(cost_map_dir, f"{cost_name}.npz")
