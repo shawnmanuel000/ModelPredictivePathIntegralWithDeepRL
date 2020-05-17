@@ -21,7 +21,7 @@ class CarRacing(gym.Env, metaclass=EnvMeta):
 		cls.id = getattr(cls, "id", 0)+1
 		return super().__new__(cls)
 
-	def __init__(self, max_time=1000):
+	def __init__(self, max_time=500):
 		root = os.path.dirname(os.path.abspath(__file__))
 		sim_file = os.path.abspath(os.path.join(root, "simulator", sys.platform, "CarRacing"))
 		self.channel = EngineConfigurationChannel()
@@ -32,6 +32,7 @@ class CarRacing(gym.Env, metaclass=EnvMeta):
 		self.action_space = self.env.action_space
 		self.observation_space = gym.spaces.Box(-np.inf, np.inf, self.observation().shape)
 		self.max_time = max_time
+		self.pos_scale = 100
 		self.reset()
 
 	def reset(self, idle_timeout=10, train=True):
@@ -42,10 +43,10 @@ class CarRacing(gym.Env, metaclass=EnvMeta):
 
 	def get_reward(self, state, prevstate=None):
 		prevstate = state if prevstate is None else prevstate
-		px, pz, py = prevstate[:3]*10
-		x, z, y = state[:3]*10
+		px, pz, py = prevstate[:3]*self.pos_scale
+		x, z, y = state[:3]*self.pos_scale
 		_, _, vy = state[3:6]
-		vtarget = 20
+		vtarget = 10
 		cost = self.cost_model.get_cost((x,y))
 		progress = self.cost_model.track.get_progress([px,py,pz], [x,y,z])
 		reward = progress + 1 - np.power(vtarget - vy, 2)/vtarget**2 - cost**2
@@ -68,7 +69,7 @@ class CarRacing(gym.Env, metaclass=EnvMeta):
 		state = self.env.reset() if state is None else state
 		target = self.cost_model.track.get_path([state[0], state[2], state[1]])
 		target = np.array(target) - state[:3]
-		return np.concatenate([state[:3]/10, state[3:], *target/10], -1)
+		return np.concatenate([state[:3]/self.pos_scale, state[3:], *target/self.pos_scale], -1)
 
 	def close(self):
 		if not hasattr(self, "closed"): self.env.close()
