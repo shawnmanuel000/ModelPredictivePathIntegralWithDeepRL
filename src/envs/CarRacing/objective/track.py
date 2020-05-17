@@ -14,6 +14,7 @@ class Track():
 		self.X, self.Z, self.Y = zip(*self.track)
 		self.load_point_map(map_name)
 		self.min_point = np.array([self.Xmap[0], self.Ymap[0], self.Zmap[0]])
+		self.max_point = np.array([self.Xmap[-1], self.Ymap[-1], self.Zmap[-1]])
 		
 	def min_dist(self, point):
 		xt, yt = point
@@ -33,8 +34,10 @@ class Track():
 	def get_nearest(self, point):
 		point = np.array(point)
 		shape = list(point.shape)
-		ref = self.min_point[:shape[-1]].reshape(*[1]*(len(shape)-1), -1)
-		index = np.round((point-ref)/self.res).astype(np.int32)
+		minref = self.min_point[:shape[-1]].reshape(*[1]*(len(shape)-1), -1)
+		maxref = self.max_point[:shape[-1]].reshape(*[1]*(len(shape)-1), -1)
+		point = np.clip(point, minref, maxref)
+		index = np.round((point-minref)/self.res).astype(np.int32)
 		nearest = self.point_map[index[...,0],index[...,1],index[...,2]]
 		return nearest
 
@@ -43,6 +46,14 @@ class Track():
 		ipath = (nearest+np.arange(0,length*step,step)) % len(self.track)
 		path = itemgetter(*ipath)(self.track)
 		return path
+
+	def get_progress(self,src, dst):
+		start = self.get_nearest(src)
+		fin = self.get_nearest(dst)
+		progress = fin - start
+		if progress>len(self.track)/2:
+			progress -= len(self.track)
+		return progress
 
 	def load_point_map(self, map_name, res=1, buffer=50):
 		point_file = os.path.join(map_dir, f"{map_name}.npz")
@@ -65,6 +76,9 @@ class Track():
 		self.Zmap = data["Z"]
 		self.point_map = data["nearests"]
 		self.res = data["res"]
+
+	def __len__(self):
+		return len(self.track)
 
 	@staticmethod
 	def save_track(track):

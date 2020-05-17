@@ -1,7 +1,7 @@
 import numpy as np
 from src.utils.rand import RandomAgent
 from src.envs import get_env, all_envs, env_grps
-from .pytorch import PPOAgent, SACAgent, DDQNAgent, DDPGAgent, MPOAgent
+from .pytorch import PPOAgent, SACAgent, DDQNAgent, DDPGAgent, MPOAgent, MPPIController
 from .rllib import rPPOAgent, rSACAgent, rDDPGAgent, rDDQNAgent
 
 all_models = {
@@ -11,8 +11,13 @@ all_models = {
 		"sac":SACAgent, 
 		"ddqn":DDQNAgent, 
 		"rand":RandomAgent,
-		"mpo":MPOAgent
+		"mpo":MPOAgent,
+		"mppi":MPPIController
 	},
+}
+
+all_controllers = {
+	"mppi":MPPIController
 }
 
 if not None in [rPPOAgent, rSACAgent, rDDPGAgent, rDDQNAgent]:

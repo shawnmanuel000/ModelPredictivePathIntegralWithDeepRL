@@ -41,7 +41,7 @@ class Logger():
 	def __init__(self, envs, agent, config, force_git=False, **kwconfig):
 		self.git_info = self.get_git_info(force_git)
 		self.agent_class = getattr(agent, "agent", agent).__class__
-		self.config = {"envs":self.dict_to_string(envs), "agent":self.dict_to_string(agent), "config":config.print(), "num_envs":config.get("split",1)-1, **kwconfig}
+		self.config = {"config":config.print(), "num_envs":config.get("split",1)-1, "envs":self.dict_to_string(envs), "agent":self.dict_to_string(agent), **kwconfig}
 		self.env_name = config.env_name
 		model_name = self.get_module(getattr(agent, "agent", agent))
 		log_folder = f"{LOG_DIR}/{config.get('framework', 'pt')}/{model_name}/{self.env_name}"

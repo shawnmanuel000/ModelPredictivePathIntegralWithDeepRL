@@ -4,6 +4,7 @@ from collections import deque
 from torchvision import transforms
 from src.utils.rand import RandomAgent
 from src.utils.misc import resize, rgb2gray, IMG_DIM
+from .pytorch.mpc import get_envmodel
 from .pytorch.icm import ICMNetwork
 from .rllib.base import RayEnv
 
@@ -68,7 +69,7 @@ class ParallelAgent(RandomAgent):
 
 	@property
 	def eps(self):
-		return self.agent.eps
+		return self.agent.eps if hasattr(self, "agent") else 0
 
 	@eps.setter
 	def eps(self, value):
@@ -81,6 +82,20 @@ class ParallelAgent(RandomAgent):
 	def get_stats(self):
 		stats = self.icm.get_stats() if self.icm is not None else {}
 		return {**super().get_stats(), **stats, **self.agent.get_stats()}
+
+class MPCAgent(ParallelAgent):
+	def __init__(self, state_size, action_size, controller, config, load="", gpu=True, **kwargs):
+		agent = lambda state_size, action_size, config, load, gpu: controller(state_size, action_size, get_envmodel(config), config, gpu=gpu)
+		super().__init__(state_size, action_size, agent, config)
+
+	def train(self, state, action, next_state, reward, done):
+		pass
+
+	def save_model(self, dirname="pytorch", name="checkpoint", net=None):
+		pass
+
+	def load_model(self, dirname="pytorch", name="checkpoint", net=None):
+		return self
 
 class RayAgent(RandomAgent):
 	def __init__(self, state_size, action_size, model, config, gpu=True):

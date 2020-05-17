@@ -13,14 +13,17 @@ class CostModel():
 		self.track = Track()
 		self.load_cost_map(cost_name)
 		self.min_point = np.array([self.X[0], self.Y[0], 0])
+		self.max_point = np.array([self.X[-1], self.Y[-1], 0])
 
 	def get_cost(self, point):
 		point = np.array(point)
 		shape = list(point.shape)
-		ref = self.min_point[:shape[-1]].reshape(*[1]*(len(shape)-1), -1)
-		index = np.round((point-ref)/self.res).astype(np.int32)
+		minref = self.min_point[:shape[-1]].reshape(*[1]*(len(shape)-1), -1)
+		maxref = self.max_point[:shape[-1]].reshape(*[1]*(len(shape)-1), -1)
+		point = np.clip(point, minref, maxref)
+		index = np.round((point-minref)/self.res).astype(np.int32)
 		cost = self.cost_map[index[...,0],index[...,1]]
-		return 20*np.tanh(cost/20)**4
+		return np.tanh(cost/2)**2
 
 	def load_cost_map(self, cost_name, res=0.1, buffer=50):
 		cost_file = os.path.join(map_dir, f"{cost_name}.npz")

@@ -40,20 +40,25 @@ class CarRacing(gym.Env, metaclass=EnvMeta):
 		self.idle_timeout = idle_timeout if isinstance(idle_timeout, int) else np.Inf
 		return self.observation()
 
-	def get_reward(self, state):
-		x, _, y = state[:3]*10
-		vx, _, vy = state[3:6]
+	def get_reward(self, state, prevstate=None):
+		prevstate = state if prevstate is None else prevstate
+		px, pz, py = prevstate[:3]*10
+		x, z, y = state[:3]*10
+		_, _, vy = state[3:6]
+		vtarget = 20
 		cost = self.cost_model.get_cost((x,y))
-		reward = vy/np.exp(cost) - cost*(1+np.abs(vx))
-		return 0.1*reward
+		progress = self.cost_model.track.get_progress([px,py,pz], [x,y,z])
+		reward = progress + 1 - np.power(vtarget - vy, 2)/vtarget**2 - cost**2
+		return reward
 
 	def step(self, action):
 		self.time += 1
 		state, reward, done, info = self.env.step(action)
 		idle = state[-1]
 		done = done or idle>self.idle_timeout or self.time > self.max_time
+		state = self.observation(state)
 		reward = self.get_reward(state) - 10*done
-		return self.observation(state), reward, done, info
+		return state, reward, done, info
 
 	def render(self, mode=None, **kwargs):
 		self.scale_sim(1)
@@ -62,8 +67,8 @@ class CarRacing(gym.Env, metaclass=EnvMeta):
 	def observation(self, state=None):
 		state = self.env.reset() if state is None else state
 		target = self.cost_model.track.get_path([state[0], state[2], state[1]])
-		state[:3] /= 10
-		return np.concatenate([state, *target], -1)
+		target = np.array(target) - state[:3]
+		return np.concatenate([state[:3]/10, state[3:], *target/10], -1)
 
 	def close(self):
 		if not hasattr(self, "closed"): self.env.close()
