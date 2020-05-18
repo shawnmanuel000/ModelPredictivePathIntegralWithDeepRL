@@ -58,7 +58,7 @@ class CarRacing(gym.Env, metaclass=EnvMeta):
 		idle = state[-1]
 		done = done or idle>self.idle_timeout or self.time > self.max_time
 		state = self.observation(state)
-		reward = self.get_reward(state) - 10*done
+		reward = self.get_reward(state) - np.tanh(idle)
 		return state, reward, done, info
 
 	def render(self, mode=None, **kwargs):
