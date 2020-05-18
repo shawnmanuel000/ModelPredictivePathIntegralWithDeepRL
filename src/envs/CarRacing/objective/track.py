@@ -47,7 +47,7 @@ class Track():
 		path = itemgetter(*ipath)(self.track)
 		return path
 
-	def get_progress(self,src, dst):
+	def get_progress(self, src, dst):
 		start = self.get_nearest(src)
 		fin = self.get_nearest(dst)
 		progress = fin - start

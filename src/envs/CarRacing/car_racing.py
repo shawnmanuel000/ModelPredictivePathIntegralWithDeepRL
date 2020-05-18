@@ -26,13 +26,14 @@ class CarRacing(gym.Env, metaclass=EnvMeta):
 		sim_file = os.path.abspath(os.path.join(root, "simulator", sys.platform, "CarRacing"))
 		self.channel = EngineConfigurationChannel()
 		unity_env = UnityEnvironment(file_name=sim_file, side_channels=[self.channel], worker_id=self.id + np.random.randint(10000, 20000))
-		self.scale_sim = lambda s: self.channel.set_configuration_parameters(width=50*int(1+9*s), height=50*int(1+9*s), quality_level=int(1+3*s), time_scale=int(1+5*(1-s)))
+		self.scale_sim = lambda s: self.channel.set_configuration_parameters(width=50*int(1+9*s), height=50*int(1+9*s), quality_level=int(1+3*s), time_scale=int(1+9*(1-s)))
 		self.env = UnityToGymWrapper(unity_env)
+		self.pos_scale = 1
+		self.vtarget = 20
 		self.cost_model = CostModel()
 		self.action_space = self.env.action_space
 		self.observation_space = gym.spaces.Box(-np.inf, np.inf, self.observation().shape)
 		self.max_time = max_time
-		self.pos_scale = 100
 		self.reset()
 
 	def reset(self, idle_timeout=10, train=True):
@@ -46,10 +47,9 @@ class CarRacing(gym.Env, metaclass=EnvMeta):
 		px, pz, py = prevstate[:3]*self.pos_scale
 		x, z, y = state[:3]*self.pos_scale
 		_, _, vy = state[3:6]
-		vtarget = 10
 		cost = self.cost_model.get_cost((x,y))
 		progress = self.cost_model.track.get_progress([px,py,pz], [x,y,z])
-		reward = progress + 1 - np.power(vtarget - vy, 2)/vtarget**2 - cost**2
+		reward = progress + 1 - np.power(self.vtarget - vy, 2)/self.vtarget**2 - 1.2*cost**2
 		return reward
 
 	def step(self, action):

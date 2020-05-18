@@ -63,7 +63,7 @@ net_config = Config(
 
 	EPS_MAX = 1.0,                 	# The starting proportion of random to greedy actions to take
 	EPS_MIN = 0.1,               	# The lower limit proportion of random to greedy actions to take
-	EPS_DECAY = 0.995,             	# The rate at which eps decays from EPS_MAX to EPS_MIN
+	EPS_DECAY = 0.998,             	# The rate at which eps decays from EPS_MAX to EPS_MIN
 	NUM_STEPS = 500,				# The number of steps to collect experience in sequence for each GAE calculation
 	MAX_BUFFER_SIZE = 100000,    	# Sets the maximum length of the replay buffer
 	REPLAY_BATCH_SIZE = 32,        	# How many experience tuples to sample from the buffer for each train step
@@ -99,8 +99,8 @@ env_model_configs = {
 }
 
 train_config = Config(
-	TRIAL_AT = 1000,					# Number of steps between each evaluation rollout
-	SAVE_AT = 10, 						# Number of evaluation rollouts between each save weights
+	TRIAL_AT = 5000,					# Number of steps between each evaluation rollout
+	SAVE_AT = 1, 						# Number of evaluation rollouts between each save weights
 )
 
 env_configs = {
