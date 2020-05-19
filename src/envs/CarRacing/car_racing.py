@@ -1,5 +1,6 @@
 import os
 import sys
+import inspect
 import numpy as np
 from mlagents_envs.environment import UnityEnvironment
 from mlagents_envs.side_channel.engine_configuration_channel import EngineConfigurationChannel
@@ -29,10 +30,11 @@ class CarRacing(gym.Env, metaclass=EnvMeta):
 		self.scale_sim = lambda s: self.channel.set_configuration_parameters(width=50*int(1+9*s), height=50*int(1+9*s), quality_level=int(1+3*s), time_scale=int(1+9*(1-s)))
 		self.env = UnityToGymWrapper(unity_env)
 		self.pos_scale = 1
-		self.vtarget = 20
+		self.vtarget = 25
 		self.cost_model = CostModel()
 		self.action_space = self.env.action_space
 		self.observation_space = gym.spaces.Box(-np.inf, np.inf, self.observation().shape)
+		self.src = '<\\N>'.join([line for line in open(os.path.abspath(__file__), 'r')])
 		self.max_time = max_time
 		self.reset()
 
@@ -46,10 +48,10 @@ class CarRacing(gym.Env, metaclass=EnvMeta):
 		prevstate = state if prevstate is None else prevstate
 		px, pz, py = prevstate[:3]*self.pos_scale
 		x, z, y = state[:3]*self.pos_scale
-		_, _, vy = state[3:6]
+		vx, _, vy = state[3:6]
 		cost = self.cost_model.get_cost((x,y))
 		progress = self.cost_model.track.get_progress([px,py,pz], [x,y,z])
-		reward = progress + 1 - np.power(self.vtarget - vy, 2)/self.vtarget**2 - 1.2*cost**2
+		reward = progress + 1 - np.power(self.vtarget - vy, 2)/self.vtarget**2 - (1+np.abs(vx))*cost**2
 		return reward
 
 	def step(self, action):
