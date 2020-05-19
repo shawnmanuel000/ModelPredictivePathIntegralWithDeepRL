@@ -50,9 +50,8 @@ class Track():
 	def get_progress(self, src, dst):
 		start = self.get_nearest(src)
 		fin = self.get_nearest(dst)
-		progress = fin - start
-		if progress>len(self.track)/2:
-			progress -= len(self.track)
+		offset = len(self.track)/2
+		progress = (offset + fin - start)%len(self.track) - offset
 		return progress
 
 	def load_point_map(self, map_name, res=1, buffer=50):

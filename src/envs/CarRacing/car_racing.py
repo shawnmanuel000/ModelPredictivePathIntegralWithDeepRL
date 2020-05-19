@@ -34,7 +34,7 @@ class CarRacing(gym.Env, metaclass=EnvMeta):
 		self.cost_model = CostModel()
 		self.action_space = self.env.action_space
 		self.observation_space = gym.spaces.Box(-np.inf, np.inf, self.observation().shape)
-		self.src = '<\\N>'.join([line for line in open(os.path.abspath(__file__), 'r')])
+		self.src = '\t'.join([line for line in open(os.path.abspath(__file__), 'r')][46:57])
 		self.max_time = max_time
 		self.reset()
 
@@ -42,26 +42,29 @@ class CarRacing(gym.Env, metaclass=EnvMeta):
 		self.time = 0
 		self.scale_sim(0)
 		self.idle_timeout = idle_timeout if isinstance(idle_timeout, int) else np.Inf
-		return self.observation()
+		self.state = self.observation()
+		return self.state
 
 	def get_reward(self, state, prevstate=None):
 		prevstate = state if prevstate is None else prevstate
 		px, pz, py = prevstate[:3]*self.pos_scale
 		x, z, y = state[:3]*self.pos_scale
-		vx, _, vy = state[3:6]
+		_, _, vy = state[3:6]
+		# idle = state[29]
 		cost = self.cost_model.get_cost((x,y))
 		progress = self.cost_model.track.get_progress([px,py,pz], [x,y,z])
-		reward = progress + 1 - np.power(self.vtarget - vy, 2)/self.vtarget**2 - (1+np.abs(vx))*cost**2
+		reward = np.tanh(progress)*(1-cost**2) # + 1-np.power(self.vtarget-vy, 2)/self.vtarget**2 - np.tanh(idle)
 		return reward
 
 	def step(self, action):
 		self.time += 1
-		state, reward, done, info = self.env.step(action)
-		idle = state[-1]
+		next_state, reward, done, info = self.env.step(action)
+		idle = next_state[29]
 		done = done or idle>self.idle_timeout or self.time > self.max_time
-		state = self.observation(state)
-		reward = self.get_reward(state) - np.tanh(idle)
-		return state, reward, done, info
+		next_state = self.observation(next_state)
+		reward = self.get_reward(next_state, self.state)
+		self.state = next_state
+		return self.state, reward, done, info
 
 	def render(self, mode=None, **kwargs):
 		self.scale_sim(1)
