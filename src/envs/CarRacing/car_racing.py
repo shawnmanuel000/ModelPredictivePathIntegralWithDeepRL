@@ -53,7 +53,7 @@ class CarRacing(gym.Env, metaclass=EnvMeta):
 		# idle = state[29]
 		cost = self.cost_model.get_cost((x,y))
 		progress = self.cost_model.track.get_progress([px,py,pz], [x,y,z])
-		reward = np.tanh(progress)*(1-cost**2) # + 1-np.power(self.vtarget-vy, 2)/self.vtarget**2 - np.tanh(idle)
+		reward = (np.tanh(progress) + (1-np.power(self.vtarget-vy, 2)/self.vtarget**2))/np.exp(cost) + (1-cost)
 		return reward
 
 	def step(self, action):
