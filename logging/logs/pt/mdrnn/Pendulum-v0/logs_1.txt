@@ -1,0 +1,297 @@
+Model: <class 'src.models.pytorch.mpc.envmodel.mdrnn.MDRNNEnv'>, Env: Pendulum-v0, Date: 20/05/2020 15:00:21
+CPU: 8 Core, 5.0GHz, 62.66 GB, Linux-5.3.0-51-generic-x86_64-with-debian-buster-sid
+GPU 0: GeForce RTX 2070, 7.98 GB (Driver: 440.64.00)
+Git URL: git@github.com:shawnmanuel000/ModelPredictivePathIntegralWithDeepRL.git
+Hash: b8f967041f2c1f94b81d1d80bb542f33e3577195
+Branch: master
+
+config: 
+   TRIAL_AT = 5000
+   SAVE_AT = 1
+   REG_LAMBDA = 1e-06
+   LEARN_RATE = 0.0001
+   DISCOUNT_RATE = 0.99
+   ADVANTAGE_DECAY = 0.95
+   INPUT_LAYER = 512
+   ACTOR_HIDDEN = 256
+   CRITIC_HIDDEN = 1024
+   EPS_MAX = 1.0
+   EPS_MIN = 0.1
+   EPS_DECAY = 0.998
+   NUM_STEPS = 500
+   MAX_BUFFER_SIZE = 100000
+   REPLAY_BATCH_SIZE = 32
+   TARGET_UPDATE_RATE = 0.0004
+   env_name = Pendulum-v0
+   envmodel = mdrnn
+   model = None
+   nworkers = 0
+   epochs = 50
+   seq_len = 40
+   batch_size = 32
+   train_prop = 0.9
+   DYN = 
+      HIDDEN_SIZE = 32
+      NGAUSS = 1
+      FACTOR = 0.5
+      PATIENCE = 10
+      LEARN_RATE = 0.001,
+num_envs: 0,
+envs: <__main__.Trainer object at 0x7f12de69bad0>,
+agent: MDRNNEnv(
+	  (lstm): LSTM(4, 32, batch_first=True)
+	  (gmm): Linear(in_features=32, out_features=9, bias=True)
+	) 
+	training = True
+	tau = 0.0004
+	name = mdrnn
+	stats = <src.utils.logger.Stats object at 0x7f12de69bc50> 
+		mean_dict = {}
+		sum_dict = {}
+	config = <src.utils.config.Config object at 0x7f123fbf35d0> 
+		TRIAL_AT = 5000
+		SAVE_AT = 1
+		REG_LAMBDA = 1e-06
+		LEARN_RATE = 0.0001
+		DISCOUNT_RATE = 0.99
+		ADVANTAGE_DECAY = 0.95
+		INPUT_LAYER = 512
+		ACTOR_HIDDEN = 256
+		CRITIC_HIDDEN = 1024
+		EPS_MAX = 1.0
+		EPS_MIN = 0.1
+		EPS_DECAY = 0.998
+		NUM_STEPS = 500
+		MAX_BUFFER_SIZE = 100000
+		REPLAY_BATCH_SIZE = 32
+		TARGET_UPDATE_RATE = 0.0004
+		env_name = Pendulum-v0
+		envmodel = mdrnn
+		model = None
+		nworkers = 0
+		epochs = 50
+		seq_len = 40
+		batch_size = 32
+		train_prop = 0.9
+		DYN = <src.utils.config.Config object at 0x7f123fbf3590> 
+			HIDDEN_SIZE = 32
+			NGAUSS = 1
+			FACTOR = 0.5
+			PATIENCE = 10
+			LEARN_RATE = 0.001
+	device = cuda
+	state_size = (3,)
+	action_size = (1,)
+	n_gauss = 1
+	stride = 3
+	splits = (3, 3, 1, 1, 1)
+	discrete = False
+	optimizer = Adam (
+	Parameter Group 0
+	    amsgrad: False
+	    betas: (0.9, 0.999)
+	    eps: 1e-08
+	    lr: 0.001
+	    weight_decay: 0
+	)
+	scheduler = <torch.optim.lr_scheduler.ReduceLROnPlateau object at 0x7f12d968ee50>,
+
+import os
+import torch
+import numpy as np
+from ...agents.base import PTNetwork, one_hot
+
+class MDRNNEnv(PTNetwork):
+	def __init__(self, state_size, action_size, config, load="", gpu=True, name="mdrnn"):
+		super().__init__(config, gpu, name)
+		self.state_size = state_size
+		self.action_size = action_size
+		self.n_gauss = config.DYN.NGAUSS
+		self.stride = self.n_gauss*state_size[-1]
+		self.splits = (self.stride, self.stride, self.n_gauss, 1, 1)
+		self.discrete = type(self.action_size) != tuple
+		self.lstm = torch.nn.LSTM(action_size[-1] + state_size[-1], config.DYN.HIDDEN_SIZE, batch_first=True)
+		self.gmm = torch.nn.Linear(config.DYN.HIDDEN_SIZE, (2*state_size[-1]+1)*self.n_gauss + 2)
+		self.optimizer = torch.optim.Adam(self.parameters(), lr=config.DYN.LEARN_RATE)
+		self.scheduler = torch.optim.lr_scheduler.ReduceLROnPlateau(self.optimizer, factor=config.DYN.FACTOR, patience=config.DYN.PATIENCE)
+		self.to(self.device)
+		if load: self.load_model(load)
+
+	def forward(self, actions, states):
+		if self.discrete: actions = one_hot(actions)
+		lstm_inputs = torch.cat([actions, states], dim=-1)
+		lstm_outs, self.hidden = self.lstm(lstm_inputs, self.hidden)
+		gmm_outputs = self.gmm(lstm_outs)
+		mus, sigs, pi, rs, ds = torch.split(gmm_outputs, self.splits, -1)
+		# mus = gmm_outputs[:,:,:stride]
+		# sigs = gmm_outputs[:,:,stride:2*stride]
+		# pi = gmm_outputs[:,:,2*stride:2*stride+self.n_gauss]
+		# rs = gmm_outputs[:,:,2*stride+self.n_gauss]
+		# ds = gmm_outputs[:,:,2*stride+self.n_gauss+1]
+		mus = mus.view(mus.size(0), mus.size(1), self.n_gauss, *self.state_size)
+		sigs = sigs.view(sigs.size(0), sigs.size(1), self.n_gauss, *self.state_size).exp()
+		logpi = pi.view(pi.size(0), pi.size(1), self.n_gauss).log_softmax(dim=-1)
+		return mus, sigs, logpi, rs.squeeze(-1), ds.squeeze(-1)
+
+	def reset(self, batch_size=None, **kwargs):
+		if batch_size is None:
+			batch_size = self.hidden[0].shape[1] if hasattr(self, "hidden") else 1
+		self.hidden = [torch.zeros([1, batch_size, self.config.DYN.HIDDEN_SIZE], device=self.device) for _ in range(2)]
+
+	def step(self, action, state):
+		with torch.no_grad():
+			states, actions = map(self.to_tensor, [state, action])
+			if len(states.shape)<3: states, actions = [x.view(1, 1, -1) for x in [states, actions]]
+			mus, sigs, logpi, rs, ds = self.forward(actions, states)
+			dist = torch.distributions.categorical.Categorical(logpi.exp())
+			indices = dist.sample().unsqueeze(-1).unsqueeze(-1).repeat_interleave(state.shape[-1], -1)
+			mu = mus.gather(2, indices).view(state.shape)
+			sig = sigs.gather(2, indices).view(state.shape)
+			next_states = mu + torch.randn_like(sig).mul(sig)
+			return next_states, rs.squeeze(-1).cpu().numpy()
+
+	def get_gmm_loss(self, mus, sigs, logpi, next_states):
+		dist = torch.distributions.normal.Normal(mus, sigs)
+		log_probs = dist.log_prob(next_states.unsqueeze(-2))
+		log_probs = logpi + torch.sum(log_probs, dim=-1)
+		max_log_probs = torch.max(log_probs, dim=-1, keepdim=True)[0]
+		g_log_probs = log_probs - max_log_probs
+		g_probs = torch.sum(torch.exp(g_log_probs), dim=-1)
+		log_prob = max_log_probs.squeeze() + torch.log(g_probs)
+		return -torch.mean(log_prob)
+
+	def get_loss(self, states, actions, next_states, rewards, dones):
+		self.reset(batch_size=states.shape[0])
+		s, a, ns, r, d = map(self.to_tensor, (states, actions, next_states, rewards, dones))
+		mus, sigs, logpi, rs, ds = self.forward(a, s)
+		mse = torch.nn.functional.mse_loss(rs, r)
+		bce = torch.nn.functional.binary_cross_entropy_with_logits(ds, d)
+		gmm = self.get_gmm_loss(mus, sigs, logpi, ns)
+		self.stats.mean(mse=mse, bce=bce, gmm=gmm)
+		return (gmm + mse + bce) / (self.state_size[-1] + 2)
+
+	def optimize(self, states, actions, next_states, rewards, dones):
+		loss = self.get_loss(states, actions, next_states, rewards, dones)
+		self.optimizer.zero_grad()
+		loss.backward()
+		self.optimizer.step()
+		return loss
+
+	def schedule(self, test_loss):
+		self.scheduler.step(test_loss)
+
+	def save_model(self, dirname="pytorch", name="best", net=None):
+		filepath, _ = self.get_checkpoint_path(dirname, name, net)
+		os.makedirs(os.path.dirname(filepath), exist_ok=True)
+		torch.save(self.state_dict(), filepath)
+		
+	def load_model(self, dirname="pytorch", name="best", net=None):
+		filepath, _ = self.get_checkpoint_path(dirname, name, net)
+		if os.path.exists(filepath):
+			self.load_state_dict(torch.load(filepath, map_location=self.device))
+			print(f"Loaded MDRNN model at {filepath}")
+		return self
+
+class MDRNNCell(torch.nn.Module):
+	def __init__(self, state_size, action_size, config, load="", gpu=True):
+		super().__init__()
+		self.state_size = state_size
+		self.action_size = action_size
+		self.n_gauss = config.DYN.NGAUSS
+		self.discrete = type(self.action_size) == list
+		self.lstm = torch.nn.LSTMCell(action_size[-1] + state_size, state_size)
+		self.gmm = torch.nn.Linear(state_size, (2*state_size+1)*self.n_gauss + 2)
+		self.device = torch.device('cuda' if gpu and torch.cuda.is_available() else 'cpu')
+		self.to(self.device)
+		if load: self.load_model(load)
+
+	def forward(self, actions, states, hiddens):
+		with torch.no_grad():
+			actions, states = [x.to(self.device) for x in (torch.from_numpy(actions), states)]
+			lstm_inputs = torch.cat([actions, states], dim=-1)
+			lstm_hidden = self.lstm(lstm_inputs, hiddens)
+			return lstm_hidden
+
+	def step(self, hiddens):
+		with torch.no_grad():
+			gmm_out = self.gmm(hiddens)
+			stride = self.n_gauss*self.state_size
+			mus = gmm_out[:,:stride]
+			sigs = gmm_out[:,stride:2*stride].exp()
+			pi = gmm_out[:,2*stride:2*stride+self.n_gauss].softmax(dim=-1)
+			rs = gmm_out[:,2*stride+self.n_gauss]
+			ds = gmm_out[:,2*stride+self.n_gauss+1].sigmoid()
+			mus = mus.view(-1, self.n_gauss, self.state_size)
+			sigs = sigs.view(-1, self.n_gauss, self.state_size)
+			dist = torch.distributions.categorical.Categorical(pi)
+			indices = dist.sample()
+			mus = mus[:,indices,:].squeeze(1)
+			sigs = sigs[:,indices,:].squeeze(1)
+			next_states = mus + torch.randn_like(sigs).mul(sigs)
+			return next_states, rs
+
+	def reset(self, batch_size=1):
+		return [torch.zeros(batch_size, self.state_size).to(self.device) for _ in range(2)]
+
+	def load_model(self, dirname="pytorch", name="best"):
+		filepath = get_checkpoint_path(dirname, name)
+		if os.path.exists(filepath):
+			self.load_state_dict({k.replace("_l0",""):v for k,v in torch.load(filepath, map_location=self.device).items()})
+			print(f"Loaded MDRNNCell model at {filepath}")
+		return self
+
+def get_checkpoint_path(self, dirname="pytorch", name="checkpoint", net=None):
+	net_path = os.path.join("./logging/saved_models", self.name if net is None else net, dirname)
+	filepath = os.path.join(net_path, f"{name}.pth")
+	return filepath, net_path
+
+Step:       0, Reward:    -1.937 [  -0.159], Avg:    -1.937 (1.000) <0-00:00:00> ({'mse':     3.3043, 'bce':     0.0171, 'gmm':    -5.0072})
+Step:       1, Reward:    -2.129 [  -2.032], Avg:    -2.033 (1.000) <0-00:00:29> ({'mse':     0.3718, 'bce':     0.0019, 'gmm':   -10.5808})
+Step:       2, Reward:    -2.399 [  -2.196], Avg:    -2.155 (1.000) <0-00:00:58> ({'mse':     0.2561, 'bce':     0.0017, 'gmm':   -11.3410})
+Step:       3, Reward:    -2.546 [  -2.302], Avg:    -2.253 (1.000) <0-00:01:35> ({'mse':     0.1997, 'bce':     0.0016, 'gmm':   -11.8338})
+Step:       4, Reward:    -2.550 [  -2.339], Avg:    -2.312 (1.000) <0-00:02:05> ({'mse':     0.1697, 'bce':     0.0016, 'gmm':   -11.9728})
+Step:       5, Reward:    -2.576 [  -2.381], Avg:    -2.356 (1.000) <0-00:02:35> ({'mse':     0.1537, 'bce':     0.0016, 'gmm':   -12.1554})
+Step:       6, Reward:    -2.551 [  -2.358], Avg:    -2.384 (1.000) <0-00:03:06> ({'mse':     0.1429, 'bce':     0.0016, 'gmm':   -12.0331})
+Step:       7, Reward:    -2.581 [  -2.440], Avg:    -2.409 (1.000) <0-00:03:40> ({'mse':     0.1351, 'bce':     0.0016, 'gmm':   -12.4074})
+Step:       8, Reward:    -2.708 [  -2.440], Avg:    -2.442 (1.000) <0-00:04:10> ({'mse':     0.1301, 'bce':     0.0015, 'gmm':   -12.4639})
+Step:       9, Reward:    -2.604 [  -2.465], Avg:    -2.458 (1.000) <0-00:04:39> ({'mse':     0.1248, 'bce':     0.0015, 'gmm':   -12.5213})
+Step:      10, Reward:    -2.603 [  -2.447], Avg:    -2.471 (1.000) <0-00:05:13> ({'mse':     0.1207, 'bce':     0.0015, 'gmm':   -12.4344})
+Step:      11, Reward:    -2.438 [  -2.476], Avg:    -2.469 (1.000) <0-00:05:45> ({'mse':     0.1183, 'bce':     0.0015, 'gmm':   -12.4795})
+Step:      12, Reward:    -2.448 [  -2.511], Avg:    -2.467 (1.000) <0-00:06:15> ({'mse':     0.1144, 'bce':     0.0015, 'gmm':   -12.6412})
+Step:      13, Reward:    -2.707 [  -2.525], Avg:    -2.484 (1.000) <0-00:06:45> ({'mse':     0.1124, 'bce':     0.0015, 'gmm':   -12.8298})
+Step:      14, Reward:    -2.647 [  -2.518], Avg:    -2.495 (1.000) <0-00:07:21> ({'mse':     0.1110, 'bce':     0.0015, 'gmm':   -12.7693})
+Step:      15, Reward:    -2.799 [  -2.548], Avg:    -2.514 (1.000) <0-00:07:51> ({'mse':     0.1082, 'bce':     0.0015, 'gmm':   -12.9748})
+Step:      16, Reward:    -2.818 [  -2.544], Avg:    -2.532 (1.000) <0-00:08:22> ({'mse':     0.1069, 'bce':     0.0015, 'gmm':   -12.9677})
+Step:      17, Reward:    -2.114 [  -2.569], Avg:    -2.509 (1.000) <0-00:08:51> ({'mse':     0.1052, 'bce':     0.0015, 'gmm':   -12.7244})
+Step:      18, Reward:    -1.754 [  -2.564], Avg:    -2.469 (1.000) <0-00:09:27> ({'mse':     0.1038, 'bce':     0.0015, 'gmm':   -12.5207})
+Step:      19, Reward:    -2.550 [  -2.570], Avg:    -2.473 (1.000) <0-00:09:56> ({'mse':     0.1025, 'bce':     0.0015, 'gmm':   -12.9461})
+Step:      20, Reward:    -2.718 [  -2.582], Avg:    -2.485 (1.000) <0-00:10:26> ({'mse':     0.1018, 'bce':     0.0015, 'gmm':   -13.0803})
+Step:      21, Reward:    -2.782 [  -2.570], Avg:    -2.498 (1.000) <0-00:10:55> ({'mse':     0.1002, 'bce':     0.0015, 'gmm':   -13.0592})
+Step:      22, Reward:    -2.694 [  -2.625], Avg:    -2.507 (1.000) <0-00:11:31> ({'mse':     0.0989, 'bce':     0.0015, 'gmm':   -13.2591})
+Step:      23, Reward:    -2.778 [  -2.639], Avg:    -2.518 (1.000) <0-00:12:01> ({'mse':     0.0980, 'bce':     0.0015, 'gmm':   -13.3647})
+Step:      24, Reward:    -2.904 [  -2.664], Avg:    -2.533 (1.000) <0-00:12:30> ({'mse':     0.0970, 'bce':     0.0015, 'gmm':   -13.5370})
+Step:      25, Reward:    -2.835 [  -2.646], Avg:    -2.545 (1.000) <0-00:12:59> ({'mse':     0.0964, 'bce':     0.0015, 'gmm':   -13.4218})
+Step:      26, Reward:    -2.948 [  -2.662], Avg:    -2.560 (1.000) <0-00:13:35> ({'mse':     0.0956, 'bce':     0.0015, 'gmm':   -13.5508})
+Step:      27, Reward:    -2.903 [  -2.649], Avg:    -2.572 (1.000) <0-00:14:04> ({'mse':     0.0953, 'bce':     0.0015, 'gmm':   -13.4669})
+Step:      28, Reward:    -2.852 [  -2.657], Avg:    -2.582 (1.000) <0-00:14:33> ({'mse':     0.0935, 'bce':     0.0015, 'gmm':   -13.4778})
+Step:      29, Reward:    -2.699 [  -2.637], Avg:    -2.586 (1.000) <0-00:15:02> ({'mse':     0.0929, 'bce':     0.0015, 'gmm':   -13.3117})
+Step:      30, Reward:    -2.934 [  -2.684], Avg:    -2.597 (1.000) <0-00:15:38> ({'mse':     0.0919, 'bce':     0.0015, 'gmm':   -13.6402})
+Step:      31, Reward:    -2.901 [  -2.711], Avg:    -2.607 (1.000) <0-00:16:07> ({'mse':     0.0908, 'bce':     0.0015, 'gmm':   -13.7403})
+Step:      32, Reward:    -2.311 [  -2.699], Avg:    -2.598 (1.000) <0-00:16:36> ({'mse':     0.0906, 'bce':     0.0015, 'gmm':   -13.3926})
+Step:      33, Reward:    -2.918 [  -2.726], Avg:    -2.607 (1.000) <0-00:17:05> ({'mse':     0.0897, 'bce':     0.0015, 'gmm':   -13.8183})
+Step:      34, Reward:    -2.710 [  -2.716], Avg:    -2.610 (1.000) <0-00:17:41> ({'mse':     0.0894, 'bce':     0.0015, 'gmm':   -13.6687})
+Step:      35, Reward:    -2.926 [  -2.753], Avg:    -2.619 (1.000) <0-00:18:10> ({'mse':     0.0887, 'bce':     0.0015, 'gmm':   -13.9434})
+Step:      36, Reward:    -3.009 [  -2.739], Avg:    -2.629 (1.000) <0-00:18:40> ({'mse':     0.0884, 'bce':     0.0015, 'gmm':   -13.9193})
+Step:      37, Reward:    -2.989 [  -2.774], Avg:    -2.639 (1.000) <0-00:19:09> ({'mse':     0.0878, 'bce':     0.0015, 'gmm':   -14.0680})
+Step:      38, Reward:    -2.811 [  -2.766], Avg:    -2.643 (1.000) <0-00:19:44> ({'mse':     0.0873, 'bce':     0.0015, 'gmm':   -13.9411})
+Step:      39, Reward:    -2.900 [  -2.760], Avg:    -2.650 (1.000) <0-00:20:14> ({'mse':     0.0870, 'bce':     0.0015, 'gmm':   -13.9592})
+Step:      40, Reward:    -2.986 [  -2.748], Avg:    -2.658 (1.000) <0-00:20:43> ({'mse':     0.0870, 'bce':     0.0015, 'gmm':   -13.9486})
+Step:      41, Reward:    -2.600 [  -2.779], Avg:    -2.656 (1.000) <0-00:21:12> ({'mse':     0.0862, 'bce':     0.0015, 'gmm':   -13.8913})
+Step:      42, Reward:    -1.916 [  -2.791], Avg:    -2.639 (1.000) <0-00:21:48> ({'mse':     0.0857, 'bce':     0.0015, 'gmm':   -13.6035})
+Step:      43, Reward:    -2.849 [  -2.782], Avg:    -2.644 (1.000) <0-00:22:17> ({'mse':     0.0859, 'bce':     0.0015, 'gmm':   -14.0312})
+Step:      44, Reward:    -3.070 [  -2.825], Avg:    -2.653 (1.000) <0-00:22:46> ({'mse':     0.0852, 'bce':     0.0015, 'gmm':   -14.3337})
+Step:      45, Reward:    -1.110 [  -2.750], Avg:    -2.620 (1.000) <0-00:23:15> ({'mse':     0.0854, 'bce':     0.0015, 'gmm':   -13.0167})
+Step:      46, Reward:    -0.350 [  -2.812], Avg:    -2.572 (1.000) <0-00:23:51> ({'mse':     0.0847, 'bce':     0.0015, 'gmm':   -12.9131})
+Step:      47, Reward:    -2.762 [  -2.811], Avg:    -2.576 (1.000) <0-00:24:20> ({'mse':     0.0843, 'bce':     0.0015, 'gmm':   -14.1138})
+Step:      48, Reward:    -2.980 [  -2.851], Avg:    -2.584 (1.000) <0-00:24:49> ({'mse':     0.0838, 'bce':     0.0015, 'gmm':   -14.4068})
+Step:      49, Reward:    -3.050 [  -2.830], Avg:    -2.593 (1.000) <0-00:25:18> ({'mse':     0.0835, 'bce':     0.0015, 'gmm':   -14.3444})

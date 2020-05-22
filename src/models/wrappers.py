@@ -4,7 +4,7 @@ from collections import deque
 from torchvision import transforms
 from src.utils.rand import RandomAgent
 from src.utils.misc import resize, rgb2gray, IMG_DIM
-from .pytorch.mpc import get_envmodel
+from .pytorch.mpc import EnvModel
 from .pytorch.icm import ICMNetwork
 from .rllib.base import RayEnv
 
@@ -85,7 +85,7 @@ class ParallelAgent(RandomAgent):
 
 class MPCAgent(ParallelAgent):
 	def __init__(self, state_size, action_size, controller, config, load="", gpu=True, **kwargs):
-		agent = lambda state_size, action_size, config, load, gpu: controller(state_size, action_size, get_envmodel(config), config, gpu=gpu)
+		agent = lambda state_size, action_size, config, load, gpu: controller(state_size, action_size, EnvModel, config, gpu=gpu)
 		super().__init__(state_size, action_size, agent, config)
 
 	def train(self, state, action, next_state, reward, done):

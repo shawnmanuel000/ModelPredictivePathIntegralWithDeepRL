@@ -5,19 +5,19 @@ from scipy.stats import multivariate_normal
 from src.utils.rand import RandomAgent
 from ..agents.base import PTACNetwork, PTAgent, Conv, one_hot_from_indices
 
-K = 100
+K = 1000
 T = 20
 LAMBDA = 1
 
 class MPPIController(RandomAgent):
 	def __init__(self, state_size, action_size, envmodel, config, gpu=True):
-		self.lamda = config.MPC.LAMBDA
 		self.mu = np.zeros(action_size)
 		self.cov = np.diag(np.ones(action_size))
-		self.covinv = np.linalg.inv(self.cov)
+		self.icov = np.linalg.inv(self.cov)
+		self.lamda = config.MPC.LAMBDA
 		self.horizon = config.MPC.HORIZON
 		self.nsamples = config.MPC.NSAMPLES
-		self.envmodel = envmodel(config)
+		self.envmodel = envmodel(state_size, action_size, config)
 		self.control = np.random.uniform(-1, 1, [self.horizon, *action_size])
 		self.noise = np.random.multivariate_normal(self.mu, self.cov, size=(self.nsamples, self.horizon))
 		self.step = 0
@@ -26,14 +26,14 @@ class MPPIController(RandomAgent):
 		self.step += 1
 		if self.step%1 == 0:
 			costs = np.zeros(shape=[self.nsamples])
-			for k in range(self.nsamples):
-				self.envmodel.reset(initstate=False)
-				for t in range(self.horizon):
-					u = self.control[t]
-					e = self.noise[k,t]
-					v = np.clip(u + e, -1, 1)
-					_, q = self.envmodel.step(v)
-					costs[k] += q + self.lamda * u.T @ self.covinv @ e
+			self.envmodel.reset(batch_size=self.nsamples, initstate=False)
+			x = torch.Tensor(state).view(1,1,-1).repeat(self.nsamples, 1, 1)
+			for t in range(self.horizon):
+				u = self.control[None,t]
+				e = self.noise[:,t]
+				v = np.clip(u + e, -1, 1)
+				x, q = self.envmodel.step(v[:,None,:], x)
+				costs += q + self.lamda * (u[:,None,:] @ self.icov[None,:,:] @ e[:,:,None]).flatten()
 			beta = np.min(costs)
 			costs_norm = -(costs - beta)/self.lamda
 			weights = sp.special.softmax(costs_norm)

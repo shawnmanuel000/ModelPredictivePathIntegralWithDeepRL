@@ -1,71 +1,81 @@
+import os
+import sys
+import tqdm
 import torch
 import argparse
 import numpy as np
-from envs import env_name, make_env
-from torchvision import transforms
-from data.loaders import RolloutSequenceDataset, ROOT
-from models.worldmodel.vae import VAE, LATENT_SIZE
-from models.worldmodel.mdrnn import MDRNN
+import matplotlib.pyplot as plt
+from types import SimpleNamespace
+from src.envs import all_envs
+from src.utils.logger import Logger
+from src.data.loaders import RolloutSequenceDataset
+from src.models.pytorch import EnvModel
+from src.models import all_envmodels, all_models, get_config
 
-parser = argparse.ArgumentParser(description="MDRNN Trainer")
-parser.add_argument("--epochs", type=int, default=50, help="Number of epochs to train the VAE")
-parser.add_argument("--iternum", type=int, default=0, help="Which iteration of world model to save MDRNN")
-args = parser.parse_args()
+class Trainer():
+	def __init__(self, make_env, config):
+		self.dataset_train = RolloutSequenceDataset(config, train=True)
+		self.dataset_test = RolloutSequenceDataset(config, train=False)
+		self.train_loader = torch.utils.data.DataLoader(self.dataset_train, batch_size=config.batch_size, shuffle=True, num_workers=config.nworkers)
+		self.test_loader = torch.utils.data.DataLoader(self.dataset_test, batch_size=config.batch_size, shuffle=False, num_workers=config.nworkers)
+		env = make_env()
+		self.state_size = [env.observation_space.n] if hasattr(env.observation_space, 'n') else env.observation_space.shape
+		self.action_size = [env.action_space.n] if hasattr(env.action_space, 'n') else env.action_space.shape
+		env.close()
 
-SEQ_LEN = 32
-BATCH_SIZE = 16
-TRAIN_BUFFER = 30
-TEST_BUFFER = 10
-NUM_WORKERS = 8
+	def train_loop(self, ep, envmodel, update=10):
+		batch_losses = []
+		envmodel.network.train()
+		with tqdm.tqdm(total=len(self.dataset_train)) as pbar:
+			pbar.set_description_str(f"Train Ep: {ep}, ")
+			for i,(states, actions, next_states, rewards, dones) in enumerate(self.train_loader):
+				loss = envmodel.network.optimize(states, actions, next_states, rewards, dones).item()
+				if i%update == 0:
+					pbar.set_postfix_str(f"Loss: {loss:.4f}")
+					pbar.update(states.shape[0]*update)
+				batch_losses.append(loss)
+		return np.mean(batch_losses)
 
-def get_data_loaders(dataset_path=ROOT):
-	transform = transforms.Lambda(lambda x: np.transpose(x, (0, 3, 1, 2)) / 255)
-	dataset_train = RolloutSequenceDataset(SEQ_LEN, transform, dataset_path, train=True, buffer_size=TRAIN_BUFFER)
-	dataset_test = RolloutSequenceDataset(SEQ_LEN, transform, dataset_path, train=False, buffer_size=TEST_BUFFER)
-	train_loader = torch.utils.data.DataLoader(dataset_train, batch_size=BATCH_SIZE, shuffle=True, num_workers=NUM_WORKERS)
-	test_loader = torch.utils.data.DataLoader(dataset_test, batch_size=BATCH_SIZE, shuffle=False, num_workers=NUM_WORKERS)
-	return train_loader, test_loader
-
-def train_loop(train_loader, vae, mdrnn):
-	mdrnn.train()
-	batch_losses = []
-	train_loader.dataset.load_next_buffer()
-	for states, actions, next_states, rewards, dones in train_loader:
-		latents, next_latents = [vae.get_latents(x).transpose(1,0) for x in (states, next_states)]
-		actions, rewards, dones = [x.transpose(1,0) for x in (actions, rewards, dones)]
-		loss = mdrnn.optimize(latents, actions, next_latents, rewards, dones)
-		batch_losses.append(loss)
-	return np.sum(batch_losses) * BATCH_SIZE / len(train_loader.dataset)
-
-def test_loop(test_loader, vae, mdrnn):
-	mdrnn.eval()
-	batch_losses = []
-	test_loader.dataset.load_next_buffer()
-	for states, actions, next_states, rewards, dones in test_loader:
+	def test_loop(self, ep, envmodel):
+		batch_losses = []
+		envmodel.network.eval()
 		with torch.no_grad():
-			latents, next_latents = [vae.get_latents(x).transpose(1,0) for x in (states, next_states)]
-			actions, rewards, dones = [x.transpose(1,0) for x in (actions, rewards, dones)]
-			loss = mdrnn.get_loss(latents, actions, next_latents, rewards, dones).item()
-			batch_losses.append(loss)
-	return np.sum(batch_losses) * BATCH_SIZE / len(test_loader.dataset)
+			for states, actions, next_states, rewards, dones in self.test_loader:
+				loss = envmodel.network.get_loss(states, actions, next_states, rewards, dones).item()
+				batch_losses.append(loss)
+		return np.mean(batch_losses)
 
-def run(epochs=50, checkpoint_dirname="pytorch"):
-	env = make_env()
-	action_size = [env.action_space.n] if hasattr(env.action_space, 'n') else env.action_space.shape
-	train_loader, test_loader = get_data_loaders()
-	vae = VAE().load_model(checkpoint_dirname)
-	mdrnn = MDRNN(action_size=action_size, load=False)
+def train(make_env, config):
+	trainer = Trainer(make_env, config)
+	envmodel = EnvModel(trainer.state_size, trainer.action_size, config, load="", gpu=True)
+	checkpoint = f"{config.env_name}"
+	logger = Logger(trainer, envmodel.network, config)
 	ep_train_losses = []
 	ep_test_losses = []
-	for ep in range(epochs):
-		train_loss = train_loop(train_loader, vae, mdrnn)
-		test_loss = test_loop(test_loader, vae, mdrnn)
+	for ep in range(config.epochs):
+		train_loss = trainer.train_loop(ep, envmodel)
+		test_loss = trainer.test_loop(ep, envmodel)
 		ep_train_losses.append(train_loss)
 		ep_test_losses.append(test_loss)
-		mdrnn.schedule(test_loss)
-		mdrnn.save_model(checkpoint_dirname, "latest")
-		if ep_test_losses[-1] <= np.min(ep_test_losses): mdrnn.save_model(checkpoint_dirname)
-		print(f"Ep: {ep+1} / {epochs}, Train: {ep_train_losses[-1]:.4f}, Test: {ep_test_losses[-1]:.4f}")
-		
+		envmodel.network.schedule(test_loss)
+		if ep_test_losses[-1] <= np.min(ep_test_losses): envmodel.network.save_model(checkpoint)
+		logger.log(f"Step: {ep:7d}, Reward: {ep_test_losses[-1]:9.3f} [{ep_train_losses[-1]:8.3f}], Avg: {np.mean(ep_test_losses, axis=0):9.3f} ({1.0:.3f})", envmodel.network.get_stats())
+
+def parse_args(envs, models, envmodels):
+	parser = argparse.ArgumentParser(description="MDRNN Trainer")
+	parser.add_argument("env_name", type=str, choices=envs, help="Name of the environment to use. Allowed values are:\n"+', '.join(envs), metavar="env_name")
+	parser.add_argument("envmodel", type=str, default=None, choices=envmodels, help="Which model to use as the dynamics. Allowed values are:\n"+', '.join(envmodels), metavar="envmodels")
+	parser.add_argument("--model", type=str, default=None, choices=models, help="Which RL algorithm to use as the agent. Allowed values are:\n"+', '.join(models), metavar="model")
+	parser.add_argument("--nworkers", type=int, default=0, help="Number of workers to use to load dataloader")
+	parser.add_argument("--epochs", type=int, default=50, help="Number of epochs to train the envmodel")
+	parser.add_argument("--seq_len", type=int, default=8, help="Length of sequence to train RNN")
+	parser.add_argument("--batch_size", type=int, default=32, help="Size of batch to train RNN")
+	parser.add_argument("--train_prop", type=float, default=0.9, help="Proportion of trajectories to use for training")
+	return parser.parse_args()
+
 if __name__ == "__main__":
-	run(args.epochs, f"{env_name}/iter{args.iternum}")
+	args = parse_args(all_envs, list(all_models.values())[0].keys(), all_envmodels)
+	make_env, _, config = get_config(args.env_name, args.model)
+	config.update(**args.__dict__)
+	train(make_env=make_env, config=config)
+		

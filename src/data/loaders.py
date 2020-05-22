@@ -1,4 +1,5 @@
 import os
+import glob
 import torch
 import numpy as np
 from bisect import bisect
@@ -6,10 +7,10 @@ from .data import get_data_dir
 from sklearn.model_selection import train_test_split
 
 class RolloutDataset(torch.utils.data.Dataset): 
-	def __init__(self, env_name, model, train_prop, buffer_size=10000, train=True): 
-		self.root = get_data_dir(env_name, model)
-		self._files = sorted([os.path.join(self.root, f) for f in os.listdir(self.root)])
-		self._files = train_test_split(self._files, train_size=train_prop, shuffle=False)[1-int(train)]
+	def __init__(self, config, buffer_size=10000, train=True): 
+		self.root = get_data_dir(config.env_name, config.get("model"))
+		self._files = sorted([os.path.join(self.root, f) for f in glob.glob(f"{self.root}/**/*.npz", recursive=True)])
+		self._files = train_test_split(self._files, train_size=config.train_prop, shuffle=False)[1-int(train)]
 		self._cum_size = None
 		self._buffer = None
 		self._buffer_fnames = None
@@ -72,9 +73,9 @@ class RolloutSequenceDataset(RolloutDataset):
 		:args transform: transformation of the states
 		:args train: if True, train data, else test
 	"""
-	def __init__(self, env_name, model, train_prop, seq_len, buffer_size=10000, train=True): 
-		self._seq_len = seq_len
-		super().__init__(env_name, model, train_prop, buffer_size, train)
+	def __init__(self, config, buffer_size=10000, train=True): 
+		self._seq_len = config.seq_len
+		super().__init__(config, buffer_size, train)
 
 	def _get_data(self, data, seq_index):
 		states_data = data['states'][seq_index:seq_index + self._seq_len + 1]

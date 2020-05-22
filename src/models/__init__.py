@@ -1,8 +1,10 @@
 import numpy as np
 from src.utils.rand import RandomAgent
+from src.utils.config import Config
 from src.envs import get_env, all_envs, env_grps
-from .pytorch import PPOAgent, SACAgent, DDQNAgent, DDPGAgent, MPOAgent, MPPIController
 from .rllib import rPPOAgent, rSACAgent, rDDPGAgent, rDDQNAgent
+from .pytorch import PPOAgent, SACAgent, DDQNAgent, DDPGAgent, MPOAgent, MPPIController
+from .pytorch.mpc import all_envmodels
 
 all_models = {
 	"pt": {
@@ -27,30 +29,6 @@ if not None in [rPPOAgent, rSACAgent, rDDPGAgent, rDDQNAgent]:
 		"ddpg":rDDPGAgent,
 		"ddqn":rDDQNAgent
 	}})
-
-class Config(object):
-	def __init__(self, **kwargs):
-		self.update(**kwargs)
-
-	def props(self):   
-		return {k:v for k,v in self.__dict__.items() if k[:1] != '_'}
-
-	def update(self, **kwargs):
-		for k,v in kwargs.items():
-			if hasattr(self, k) and isinstance(k, Config):
-				getattr(self, k).update(**v.props())
-			else:
-				setattr(self, k, v)
-		return self
-
-	def get(self, key, default=None):
-		return getattr(self, key, default)
-
-	def clone(self, **kwargs):
-		return self.__class__(**self.props()).update(**kwargs)
-
-	def print(self, level=1):
-		return "".join([f"\n{'   '*level}{k} = {v.print(level+1) if isinstance(v,Config) else v}" for k,v in self.__dict__.items()])
 
 net_config = Config(
 	REG_LAMBDA = 1e-6,             	# Penalty multiplier to apply for the size of the network weights
@@ -81,20 +59,14 @@ model_configs = {
 
 env_model_configs = {
 	env_grps["gym_cct"]: {
-		"ddpg": net_config.clone(
-		),
-		"ddqn": net_config.clone(
-		),
-		"sac": net_config.clone(
-		),
+		"ddpg": net_config.clone(),
+		"ddqn": net_config.clone(),
+		"sac": net_config.clone(),
 	},
 	env_grps["gym_b2d"]: {
-		"ddpg": net_config.clone(
-		),
-		"ddqn": net_config.clone(
-		),
-		"sac": net_config.clone(
-		),
+		"ddpg": net_config.clone(),
+		"ddqn": net_config.clone(),
+		"sac": net_config.clone(),
 	}
 }
 
@@ -112,7 +84,7 @@ def get_config(env_name, model_name, framework="pt", render=False):
 	assert env_name in all_envs, "Env name not found"
 	env_list = [x for x in env_grps.values() if env_name in x][0]
 	env_config = env_configs.get(env_list, train_config)
-	model = all_models[framework][model_name]
+	model = all_models[framework].get(model_name, None)
 	model_config = env_model_configs.get(env_list, model_configs).get(model_name, model_configs.get(model_name, net_config))
 	make_env = lambda: get_env(env_name, render)
 	return make_env, model, env_config.update(**model_config.props(), env_name=env_name)

@@ -45,13 +45,16 @@ def animate_path(track):
 	X, Y, Z = track.X, track.Y, track.Z
 	grid = np.array(list(zip(X,Y,Z)))
 	for point in grid:
-		path = track.get_path(point)
+		path = np.array(track.get_path(point))
 		xs, zs, ys = zip(*path)
 		ax.set_zlim3d(-100, 100)
 		ax.plot(X,Y,Z, color="#DDDDDD")
 		ax.plot(xs, ys, zs, linewidth=2)
+		relpath = track.get_path(point, dirn=True)
+		rx, rz, ry = map(np.array, zip(*relpath))
+		ax.plot(rx, ry, rz, linewidth=2)
 		plt.draw()
-		plt.pause(0.0000001)
+		plt.pause(0.01)
 		ax.cla()
 
 if __name__ == "__main__":

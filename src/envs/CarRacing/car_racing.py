@@ -34,7 +34,7 @@ class CarRacing(gym.Env, metaclass=EnvMeta):
 		self.cost_model = CostModel()
 		self.action_space = self.env.action_space
 		self.observation_space = gym.spaces.Box(-np.inf, np.inf, self.observation().shape)
-		self.src = '\t'.join([line for line in open(os.path.abspath(__file__), 'r')][46:57])
+		self.src = '\t'.join([line for line in open(os.path.abspath(__file__), 'r')][46:66])
 		self.max_time = max_time
 		self.reset()
 
@@ -50,10 +50,10 @@ class CarRacing(gym.Env, metaclass=EnvMeta):
 		px, pz, py = prevstate[:3]*self.pos_scale
 		x, z, y = state[:3]*self.pos_scale
 		_, _, vy = state[3:6]
-		# idle = state[29]
-		cost = self.cost_model.get_cost((x,y))
+		idle = state[29]
+		cost = self.cost_model.get_cost((x,y), transform=True)
 		progress = self.cost_model.track.get_progress([px,py,pz], [x,y,z])
-		reward = (np.tanh(progress) + (1-np.power(self.vtarget-vy, 2)/self.vtarget**2))/np.exp(cost) + (1-cost)
+		reward = np.power(vy-self.vtarget,2)/self.vtarget**2 + 1 - cost - np.tanh(idle)
 		return reward
 
 	def step(self, action):
@@ -62,7 +62,7 @@ class CarRacing(gym.Env, metaclass=EnvMeta):
 		idle = next_state[29]
 		done = done or idle>self.idle_timeout or self.time > self.max_time
 		next_state = self.observation(next_state)
-		reward = self.get_reward(next_state, self.state)
+		reward = self.get_reward(next_state, self.state) - (1-self.time/self.max_time)*int(done)
 		self.state = next_state
 		return self.state, reward, done, info
 
@@ -72,7 +72,7 @@ class CarRacing(gym.Env, metaclass=EnvMeta):
 
 	def observation(self, state=None):
 		state = self.env.reset() if state is None else state
-		target = self.cost_model.track.get_path([state[0], state[2], state[1]])
+		target = self.cost_model.track.get_path([state[0], state[2], state[1]], dirn=True)
 		target = np.array(target) - state[:3]
 		return np.concatenate([state[:3]/self.pos_scale, state[3:], *target/self.pos_scale], -1)
 

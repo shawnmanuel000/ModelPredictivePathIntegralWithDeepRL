@@ -41,10 +41,18 @@ class Track():
 		nearest = self.point_map[index[...,0],index[...,1],index[...,2]]
 		return nearest
 
-	def get_path(self, point, length=10, step:int=1):
+	def get_path(self, point, length=10, step:int=1, dirn=False):
 		nearest = self.get_nearest(point)
 		ipath = (nearest+np.arange(0,length*step,step)) % len(self.track)
 		path = itemgetter(*ipath)(self.track)
+		if not dirn: return path
+		path = np.array(path)
+		dirn = path[1]-path[0]
+		grad = np.pi/2 - np.arctan2(dirn[2],dirn[0])
+		relpath = path - path[0:1,:]
+		path = np.copy(relpath)
+		path[:,0] = relpath[:,0]*np.cos(grad) + relpath[:,2]*np.sin(grad)
+		path[:,2] = relpath[:,0]*np.sin(grad) + relpath[:,2]*np.cos(grad)
 		return path
 
 	def get_progress(self, src, dst):

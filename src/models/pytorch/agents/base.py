@@ -45,7 +45,7 @@ class PTCritic(torch.nn.Module):
 class PTNetwork(torch.nn.Module):
 	def __init__(self, config, gpu=True, name="pt"): 
 		super().__init__()
-		self.tau = config.TARGET_UPDATE_RATE
+		self.tau = config.get("TARGET_UPDATE_RATE",0)
 		self.name = name
 		self.stats = Stats()
 		self.config = config
