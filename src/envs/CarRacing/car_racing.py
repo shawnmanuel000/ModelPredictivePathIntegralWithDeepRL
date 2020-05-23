@@ -30,7 +30,7 @@ class CarRacing(gym.Env, metaclass=EnvMeta):
 		self.scale_sim = lambda s: self.channel.set_configuration_parameters(width=50*int(1+9*s), height=50*int(1+9*s), quality_level=int(1+3*s), time_scale=int(1+9*(1-s)))
 		self.env = UnityToGymWrapper(unity_env)
 		self.pos_scale = 1
-		self.vtarget = 25
+		self.vtarget = 20
 		self.cost_model = CostModel()
 		self.action_space = self.env.action_space
 		self.observation_space = gym.spaces.Box(-np.inf, np.inf, self.observation().shape)
@@ -53,7 +53,7 @@ class CarRacing(gym.Env, metaclass=EnvMeta):
 		idle = state[29]
 		cost = self.cost_model.get_cost((x,y), transform=True)
 		progress = self.cost_model.track.get_progress([px,py,pz], [x,y,z])
-		reward = np.power(vy-self.vtarget,2)/self.vtarget**2 + 1 - cost - np.tanh(idle)
+		reward = min(progress,0)*np.exp(2*cost) + max(np.tanh(progress),0)/np.exp(cost) + (1-np.power(vy-self.vtarget,2)/self.vtarget**2) + np.tanh(vy)-cost
 		return reward
 
 	def step(self, action):

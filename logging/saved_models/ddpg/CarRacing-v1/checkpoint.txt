@@ -1,4 +1,4 @@
-<src.models.Config object at 0x7f85a572c0d0>
+<src.utils.config.Config object at 0x7fab10031450>
 
 class DDPGActor(torch.nn.Module):
 	def __init__(self, state_size, action_size, config):
