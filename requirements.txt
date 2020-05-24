@@ -1,1 +1,13 @@
 mlagents-envs==0.16.0
+matplotlib==3.2.1
+atari-py==0.2.6
+torch==1.4.0
+Box2D==2.3.2
+GPUtil==1.4.0
+numpy==1.18.1
+opencv-python==4.1.2.30
+psutil==5.6.7
+tqdm==4.46.0
+scipy==1.4.1
+torchvision==0.5.0
+mpi4py==3.0.3

@@ -23,10 +23,10 @@ def plot_cost_map(cmodel):
 	ax = plt.axes(projection='3d')
 	XX,YY = np.meshgrid(cmodel.X, cmodel.Y)
 	grid = np.concatenate([XX[:,:,None],YY[:,:,None]], -1)
-	ax.plot_surface(XX, YY, cmodel.get_cost(grid), cmap='RdYlGn_r')
+	ax.plot_surface(XX, YY, np.tanh(cmodel.get_cost(grid, transform=False)/20)**2, cmap='RdYlGn_r')
 	ax.set_xlabel("X")
 	ax.set_ylabel("Y")
-	ax.set_zlim3d(0, 50)
+	ax.set_zlim3d(0, 2)
 
 def plot_track_map(track):
 	plt.figure()
@@ -62,7 +62,7 @@ if __name__ == "__main__":
 	track = cost_model.track
 	# plot_track2D(track)
 	# plot_track(track)
-	# plot_cost_map(cost_model)
+	plot_cost_map(cost_model)
 	# plot_track_map(track)
-	animate_path(track)
+	# animate_path(track)
 	plt.show()

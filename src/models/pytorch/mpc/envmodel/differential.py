@@ -16,57 +16,58 @@ class TransitionModel(torch.nn.Module):
 		next_state = state + state_diff
 		return next_state
 
+class RewardModel(torch.nn.Module):
+	def __init__(self, state_size, action_size, config):
+		super().__init__()
+		self.linear = torch.nn.Linear(action_size[-1] + 2*state_size[-1], 1)
 
+	def forward(self, action, state, next_state):
+		inputs = torch.cat([state, next_state-state],-1)
+		reward = self.linear(inputs)
+		return reward
 
 class DifferentialEnv(PTNetwork):
-	def __init__(self, state_size, action_size, config, load="", gpu=True, name="mdrnn"):
+	def __init__(self, state_size, action_size, config, load="", gpu=True, name="dfntl"):
 		super().__init__(config, gpu, name)
 		self.state_size = state_size
 		self.action_size = action_size
 		self.discrete = type(self.action_size) != tuple
+		self.reward = RewardModel(state_size, action_size, config)
 		self.dynamics = TransitionModel(state_size, action_size, config)
 		self.optimizer = torch.optim.Adam(self.parameters(), lr=config.DYN.LEARN_RATE)
 		self.scheduler = torch.optim.lr_scheduler.ReduceLROnPlateau(self.optimizer, factor=config.DYN.FACTOR, patience=config.DYN.PATIENCE)
 		self.to(self.device)
 		if load: self.load_model(load)
 
-	def forward(self, actions, states):
+	def step(self, action, state):
 		if self.discrete: actions = one_hot(actions)
-		lstm_inputs = torch.cat([actions, states], dim=-1)
-		lstm_outs, self.hidden = self.lstm(lstm_inputs, self.hidden)
-		gmm_outputs = self.gmm(lstm_outs)
-		mus, sigs, pi, rs, ds = torch.split(gmm_outputs, self.splits, -1)
-		mus = mus.view(mus.size(0), mus.size(1), self.n_gauss, *self.state_size)
-		sigs = sigs.view(sigs.size(0), sigs.size(1), self.n_gauss, *self.state_size).exp()
-		logpi = pi.view(pi.size(0), pi.size(1), self.n_gauss).log_softmax(dim=-1)
-		return mus, sigs, logpi, rs.squeeze(-1), ds.squeeze(-1).sigmoid()
+		next_state = self.dynamics(action, state)
+		reward = self.reward(action, state, next_state)
+		return next_state, reward
 
 	def reset(self, batch_size=None, state=None, **kwargs):
 		if batch_size is None: batch_size = self.hidden[0].shape[1] if hasattr(self, "hidden") else 1
 		if state is None: state = np.zeros(self.state_size)
 		self.hidden = [self.to_tensor(state).view(1, 1, -1).expand(1, batch_size, 1) for _ in range(1)]
 
-	def step(self, action, state):
-		with torch.no_grad():
-			states, actions = map(self.to_tensor, [state, action])
-			if len(states.shape)<3: states, actions = [x.view(1, 1, -1) for x in [states, actions]]
-			mus, sigs, logpi, rs, ds = self.forward(actions, states)
-			dist = torch.distributions.categorical.Categorical(logpi.exp())
-			indices = dist.sample().unsqueeze(-1).unsqueeze(-1).repeat_interleave(state.shape[-1], -1)
-			mu = mus.gather(2, indices).view(state.shape)
-			sig = sigs.gather(2, indices).view(state.shape)
-			next_states = mu + torch.randn_like(sig).mul(sig)
-			return next_states, rs.squeeze(-1).cpu().numpy()
+	def rollout(self, actions, states):
+		states, actions = map(self.to_tensor, [states, actions])
+		next_states = []
+		rewards = []
+		for action, state in zip(actions, states):
+			next_state, reward = self.step(action, state)
+			next_states.append(next_state)
+			rewards.append(reward)
+		next_states, rewards = map(torch.stack, [next_states, rewards])
+		return next_states, rewards
 
 	def get_loss(self, states, actions, next_states, rewards, dones):
-		self.reset(batch_size=states.shape[0])
-		s, a, ns, r, d = map(self.to_tensor, (states, actions, next_states, rewards, dones))
-		mus, sigs, logpi, rs, ds = self.forward(a, s)
-		mse = torch.nn.functional.mse_loss(rs, r)
-		bce = torch.nn.functional.binary_cross_entropy_with_logits(ds, d)
-		gmm = self.get_gmm_loss(mus, sigs, logpi, ns)
-		self.stats.mean(mse=mse, bce=bce, gmm=gmm)
-		return (gmm + mse + bce) / (self.state_size[-1] + 2)
+		s, a, ns, r = map(self.to_tensor, (states, actions, next_states, rewards))
+		next_states_hat, rewards_hat = self.rollout(a, s)
+		dyn_loss = (next_states_hat - ns).pow(2).sum(-1)
+		rew_loss = (rewards_hat - r).pow(2).sum(-1)
+		self.stats.mean(dyn_loss=dyn_loss, rew_loss=rew_loss)
+		return dyn_loss + rew_loss
 
 	def optimize(self, states, actions, next_states, rewards, dones):
 		loss = self.get_loss(states, actions, next_states, rewards, dones)
@@ -87,7 +88,7 @@ class DifferentialEnv(PTNetwork):
 		filepath, _ = self.get_checkpoint_path(dirname, name, net)
 		if os.path.exists(filepath):
 			self.load_state_dict(torch.load(filepath, map_location=self.device))
-			print(f"Loaded MDRNN model at {filepath}")
+			print(f"Loaded DFNTL model at {filepath}")
 		return self
 
 class MDRNNCell(torch.nn.Module):

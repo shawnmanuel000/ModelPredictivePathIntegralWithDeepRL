@@ -38,7 +38,7 @@ class CostModel():
 				dists = p.map(self.track.min_dist, points)
 			dists = np.array(dists).reshape(len(X), len(Y))
 			np.savez(cost_file, X=X, Y=Y, cost=dists.T, res=res, buffer=buffer)
-		data = np.load(cost_file)
+		data = np.load(cost_file, allow_pickle=True)
 		self.X = data["X"]
 		self.Y = data["Y"]
 		self.cost_map = data["cost"].T
