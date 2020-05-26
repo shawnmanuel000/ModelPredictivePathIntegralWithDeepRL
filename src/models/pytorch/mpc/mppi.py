@@ -17,7 +17,7 @@ class MPPIController(RandomAgent):
 		self.lamda = config.MPC.LAMBDA
 		self.horizon = config.MPC.HORIZON
 		self.nsamples = config.MPC.NSAMPLES
-		self.envmodel = envmodel(state_size, action_size, config)
+		self.envmodel = envmodel(state_size, action_size, config, load=config.env_name)
 		self.control = np.random.uniform(-1, 1, [self.horizon, *action_size])
 		self.noise = np.random.multivariate_normal(self.mu, self.cov, size=(self.nsamples, self.horizon))
 		self.step = 0
@@ -27,12 +27,12 @@ class MPPIController(RandomAgent):
 		if self.step%1 == 0:
 			costs = np.zeros(shape=[self.nsamples])
 			self.envmodel.reset(batch_size=self.nsamples, initstate=False)
-			x = torch.Tensor(state).view(1,1,-1).repeat(self.nsamples, 1, 1)
+			x = torch.Tensor(state).view(1,-1).repeat(self.nsamples, 1)
 			for t in range(self.horizon):
 				u = self.control[None,t]
 				e = self.noise[:,t]
 				v = np.clip(u + e, -1, 1)
-				x, q = self.envmodel.step(v[:,None,:], x)
+				x, q = self.envmodel.step(v, x, numpy=True)
 				costs += q + self.lamda * (u[:,None,:] @ self.icov[None,:,:] @ e[:,:,None]).flatten()
 			beta = np.min(costs)
 			costs_norm = -(costs - beta)/self.lamda

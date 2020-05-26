@@ -6,15 +6,22 @@ from ...agents.base import PTNetwork, one_hot
 class TransitionModel(torch.nn.Module):
 	def __init__(self, state_size, action_size, config):
 		super().__init__()
-		self.gru = torch.nn.GRUCell(action_size[-1], 2*state_size[-1])
-		self.linear = torch.nn.Linear(2*state_size[-1], state_size[-1])
+		self.gru = torch.nn.GRUCell(action_size[-1] + 5*state_size[-1], 5*state_size[-1])
+		self.linear = torch.nn.Linear(5*state_size[-1], 4*state_size[-1])
+		self.linear = torch.nn.Linear(4*state_size[-1], 3*state_size[-1])
+		self.linear = torch.nn.Linear(3*state_size[-1], 2*state_size[-1])
+		self.state_size = state_size
 
-	def forward(self, action, state):
-		basis = torch.cat([state, state.pow(2)],-1)
-		hidden = self.gru(action, basis)
-		state_diff = self.linear(hidden)
+	def forward(self, action, state, state_dot):
+		inputs = torch.cat([action, state, state_dot, state.pow(2), state.sin(), state.cos()],-1)
+		self.hidden = self.gru(inputs, self.hidden)
+		state_diff = self.linear(self.hidden)
 		next_state = state + state_diff
 		return next_state
+
+	def reset(self, device, batch_size=None):
+		if batch_size is None: batch_size = self.hidden[0].shape[1] if hasattr(self, "hidden") else 1
+		self.hidden = torch.zeros(batch_size, 5*self.state_size[-1], device=device)
 
 class RewardModel(torch.nn.Module):
 	def __init__(self, state_size, action_size, config):
@@ -22,12 +29,12 @@ class RewardModel(torch.nn.Module):
 		self.linear = torch.nn.Linear(action_size[-1] + 2*state_size[-1], 1)
 
 	def forward(self, action, state, next_state):
-		inputs = torch.cat([state, next_state-state],-1)
+		inputs = torch.cat([action, state, next_state-state],-1)
 		reward = self.linear(inputs)
 		return reward
 
 class DifferentialEnv(PTNetwork):
-	def __init__(self, state_size, action_size, config, load="", gpu=True, name="dfntl"):
+	def __init__(self, state_size, action_size, config, load="", gpu=True, name="dfrntl"):
 		super().__init__(config, gpu, name)
 		self.state_size = state_size
 		self.action_size = action_size
@@ -39,33 +46,37 @@ class DifferentialEnv(PTNetwork):
 		self.to(self.device)
 		if load: self.load_model(load)
 
-	def step(self, action, state):
-		if self.discrete: actions = one_hot(actions)
-		next_state = self.dynamics(action, state)
-		reward = self.reward(action, state, next_state)
-		return next_state, reward
+	def step(self, action, state, numpy=False, grad=False):
+		with torch.enable_grad() if grad else torch.no_grad():
+			state, action = map(self.to_tensor, [state, action])
+			if self.discrete: action = one_hot(action)
+			if self.state is None: self.state = state
+			state_dot = state-self.state
+			self.state = self.dynamics(action, state, state_dot)
+			reward = self.reward(action, state, self.state).squeeze(-1)
+		return [x.cpu().numpy() if numpy else x for x in [self.state, reward]]
 
-	def reset(self, batch_size=None, state=None, **kwargs):
-		if batch_size is None: batch_size = self.hidden[0].shape[1] if hasattr(self, "hidden") else 1
-		if state is None: state = np.zeros(self.state_size)
-		self.hidden = [self.to_tensor(state).view(1, 1, -1).expand(1, batch_size, 1) for _ in range(1)]
+	def reset(self, batch_size=None, **kwargs):
+		self.dynamics.reset(self.device, batch_size)
+		self.state = None
 
 	def rollout(self, actions, states):
-		states, actions = map(self.to_tensor, [states, actions])
+		states, actions = map(lambda x: self.to_tensor(x).transpose(0,1), [states, actions])
 		next_states = []
 		rewards = []
+		self.reset(batch_size=states.shape[1])
 		for action, state in zip(actions, states):
-			next_state, reward = self.step(action, state)
+			next_state, reward = self.step(action, state, grad=True)
 			next_states.append(next_state)
 			rewards.append(reward)
-		next_states, rewards = map(torch.stack, [next_states, rewards])
+		next_states, rewards = map(lambda x: torch.stack(x,1), [next_states, rewards])
 		return next_states, rewards
 
 	def get_loss(self, states, actions, next_states, rewards, dones):
 		s, a, ns, r = map(self.to_tensor, (states, actions, next_states, rewards))
 		next_states_hat, rewards_hat = self.rollout(a, s)
-		dyn_loss = (next_states_hat - ns).pow(2).sum(-1)
-		rew_loss = (rewards_hat - r).pow(2).sum(-1)
+		dyn_loss = (next_states_hat - ns).pow(2).sum(-1).mean()
+		rew_loss = (rewards_hat - r).pow(2).mean()
 		self.stats.mean(dyn_loss=dyn_loss, rew_loss=rew_loss)
 		return dyn_loss + rew_loss
 
@@ -88,58 +99,5 @@ class DifferentialEnv(PTNetwork):
 		filepath, _ = self.get_checkpoint_path(dirname, name, net)
 		if os.path.exists(filepath):
 			self.load_state_dict(torch.load(filepath, map_location=self.device))
-			print(f"Loaded DFNTL model at {filepath}")
+			print(f"Loaded DFRNTL model at {filepath}")
 		return self
-
-class MDRNNCell(torch.nn.Module):
-	def __init__(self, state_size, action_size, config, load="", gpu=True):
-		super().__init__()
-		self.state_size = state_size
-		self.action_size = action_size
-		self.n_gauss = config.DYN.NGAUSS
-		self.discrete = type(self.action_size) == list
-		self.lstm = torch.nn.LSTMCell(action_size[-1] + state_size, state_size)
-		self.gmm = torch.nn.Linear(state_size, (2*state_size+1)*self.n_gauss + 2)
-		self.device = torch.device('cuda' if gpu and torch.cuda.is_available() else 'cpu')
-		self.to(self.device)
-		if load: self.load_model(load)
-
-	def forward(self, actions, states, hiddens):
-		with torch.no_grad():
-			actions, states = [x.to(self.device) for x in (torch.from_numpy(actions), states)]
-			lstm_inputs = torch.cat([actions, states], dim=-1)
-			lstm_hidden = self.lstm(lstm_inputs, hiddens)
-			return lstm_hidden
-
-	def step(self, hiddens):
-		with torch.no_grad():
-			gmm_out = self.gmm(hiddens)
-			stride = self.n_gauss*self.state_size
-			mus = gmm_out[:,:stride]
-			sigs = gmm_out[:,stride:2*stride].exp()
-			pi = gmm_out[:,2*stride:2*stride+self.n_gauss].softmax(dim=-1)
-			rs = gmm_out[:,2*stride+self.n_gauss]
-			ds = gmm_out[:,2*stride+self.n_gauss+1].sigmoid()
-			mus = mus.view(-1, self.n_gauss, self.state_size)
-			sigs = sigs.view(-1, self.n_gauss, self.state_size)
-			dist = torch.distributions.categorical.Categorical(pi)
-			indices = dist.sample()
-			mus = mus[:,indices,:].squeeze(1)
-			sigs = sigs[:,indices,:].squeeze(1)
-			next_states = mus + torch.randn_like(sigs).mul(sigs)
-			return next_states, rs
-
-	def reset(self, batch_size=1):
-		return [torch.zeros(batch_size, self.state_size).to(self.device) for _ in range(2)]
-
-	def load_model(self, dirname="pytorch", name="best"):
-		filepath = get_checkpoint_path(dirname, name)
-		if os.path.exists(filepath):
-			self.load_state_dict({k.replace("_l0",""):v for k,v in torch.load(filepath, map_location=self.device).items()})
-			print(f"Loaded MDRNNCell model at {filepath}")
-		return self
-
-def get_checkpoint_path(self, dirname="pytorch", name="checkpoint", net=None):
-	net_path = os.path.join("./logging/saved_models", self.name if net is None else net, dirname)
-	filepath = os.path.join(net_path, f"{name}.pth")
-	return filepath, net_path

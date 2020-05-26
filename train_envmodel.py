@@ -69,7 +69,7 @@ def parse_args(envs, models, envmodels):
 	parser.add_argument("--nworkers", type=int, default=0, help="Number of workers to use to load dataloader")
 	parser.add_argument("--epochs", type=int, default=50, help="Number of epochs to train the envmodel")
 	parser.add_argument("--seq_len", type=int, default=8, help="Length of sequence to train RNN")
-	parser.add_argument("--batch_size", type=int, default=32, help="Size of batch to train RNN")
+	parser.add_argument("--batch_size", type=int, default=128, help="Size of batch to train RNN")
 	parser.add_argument("--train_prop", type=float, default=0.9, help="Proportion of trajectories to use for training")
 	return parser.parse_args()
 

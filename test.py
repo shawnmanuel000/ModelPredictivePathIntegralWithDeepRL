@@ -5,7 +5,7 @@ from src.envs import get_env
 from src.models import RandomAgent
 from src.models.input import InputController
 from src.envs.CarRacing.car_racing import CarRacing
-from src.models.pytorch.mpc import MPPIController, EnvModel, MDRNNEnv, RealEnv
+from src.models.pytorch.mpc import MPPIController, EnvModel, MDRNNEnv, RealEnv, envmodel_config
 from src.utils.envs import get_space_size
 from src.utils.config import Config
 
@@ -30,19 +30,19 @@ def test_car_sim():
 	env.close()
 
 def test_envmodel():
-	config = Config(env_name="Pendulum-v0", envmodel="mdrnn", MPC=Config(NSAMPLES=50, HORIZON=40, LAMBDA=0.5))
+	config = envmodel_config.clone(env_name="Pendulum-v0", envmodel="dfrntl", MPC=Config(NSAMPLES=500, HORIZON=50, LAMBDA=0.5))
 	env = get_env(config.env_name)
 	state_size = get_space_size(env.observation_space)
 	action_size = get_space_size(env.action_space)
 	agent = MPPIController(state_size, action_size, EnvModel, config)
 	state = env.reset()
-	for s in range(200):
+	for s in range(400):
 		action = agent.get_action(state)
-		action = RandomAgent.to_env_action(env.action_space, action)
-		state, reward, done, _ = env.step(action)
+		env_action = RandomAgent.to_env_action(env.action_space, action)
+		state, reward, done, _ = env.step(env_action)
 		agent.envmodel.reset(batch_size=1)
-		ns, r = agent.envmodel.step(action, state)
-		print(f"Step: {s:5d}, Action: {action}, Reward: {reward:5.2f} ({r}), State: {state} ({ns.cpu().numpy()})")
+		ns, r = agent.envmodel.step([action], [state], numpy=True)
+		print(f"Step: {s:5d}, Action: {action}, Reward: {reward:5.2f} ({r[0]:5.2f}), State: {state} ({ns[0]})")
 		env.render()
 
 class TestMPPIController(RandomAgent):

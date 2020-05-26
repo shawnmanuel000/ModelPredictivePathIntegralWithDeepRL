@@ -2,6 +2,8 @@ import os
 import sys
 import inspect
 import numpy as np
+import itertools as it
+import pyquaternion as pyq
 from mlagents_envs.environment import UnityEnvironment
 from mlagents_envs.side_channel.engine_configuration_channel import EngineConfigurationChannel
 from mlagents_envs import logging_util
@@ -29,12 +31,11 @@ class CarRacing(gym.Env, metaclass=EnvMeta):
 		unity_env = UnityEnvironment(file_name=sim_file, side_channels=[self.channel], worker_id=self.id + np.random.randint(10000, 20000))
 		self.scale_sim = lambda s: self.channel.set_configuration_parameters(width=50*int(1+9*s), height=50*int(1+9*s), quality_level=int(1+3*s), time_scale=int(1+9*(1-s)))
 		self.env = UnityToGymWrapper(unity_env)
-		self.pos_scale = 1
-		self.vtarget = 20
 		self.cost_model = CostModel()
 		self.action_space = self.env.action_space
-		self.observation_space = gym.spaces.Box(-np.inf, np.inf, self.observation().shape)
-		self.src = '\t'.join([line for line in open(os.path.abspath(__file__), 'r')][46:66])
+		self.cost_queries = list(it.product(np.linspace(-2,2,5), [0], np.linspace(0,4,5)))
+		self.observation_space = gym.spaces.Box(-np.inf, np.inf, self.observation()[0].shape)
+		self.src = '\t'.join([line for line in open(os.path.abspath(__file__), 'r')][48:58])
 		self.max_time = max_time
 		self.reset()
 
@@ -42,39 +43,53 @@ class CarRacing(gym.Env, metaclass=EnvMeta):
 		self.time = 0
 		self.scale_sim(0)
 		self.idle_timeout = idle_timeout if isinstance(idle_timeout, int) else np.Inf
-		self.state = self.observation()
+		self.state, self.spec = self.observation()
 		return self.state
-
-	def get_reward(self, state, prevstate=None):
-		prevstate = state if prevstate is None else prevstate
-		px, pz, py = prevstate[:3]*self.pos_scale
-		x, z, y = state[:3]*self.pos_scale
-		_, _, vy = state[3:6]
-		idle = state[29]
-		cost = self.cost_model.get_cost((x,y), transform=True)
-		progress = self.cost_model.track.get_progress([px,py,pz], [x,y,z])
-		reward = min(progress,0)*np.exp(2*cost) + np.tanh(progress)/np.exp(cost) + (1-np.power(vy-self.vtarget,2)/self.vtarget**2) + np.tanh(vy)-cost
-		return reward
 
 	def step(self, action):
 		self.time += 1
 		next_state, reward, done, info = self.env.step(action)
 		idle = next_state[29]
 		done = done or idle>self.idle_timeout or self.time > self.max_time
-		next_state = self.observation(next_state)
-		reward = self.get_reward(next_state, self.state) - (1-self.time/self.max_time)*int(done)
-		self.state = next_state
+		next_state, next_spec = self.observation(next_state)
+		terminal = -(1-self.time/self.max_time)*int(done)
+		reward = -self.cost_model.get_cost(next_spec, self.spec) + terminal
+		self.state, self.spec = next_state, next_spec
 		return self.state, reward, done, info
 
 	def render(self, mode=None, **kwargs):
 		self.scale_sim(1)
 		return self.env.render()
 
+	@staticmethod
+	def dynamics_spec(state):
+		pos = state[:3]
+		vel = state[3:6]
+		angvel = state[6:9]
+		rotation = state[9:13]
+		fl_drive = state[13:17] # steer angle, motor torque, brake torque, rpm
+		fr_drive = state[17:21]
+		rl_drive = state[21:25]
+		rr_drive = state[25:29]
+		idle = state[29:30]
+		steer_angle = fl_drive[0:1]
+		rpm = np.array([x[-1] for x in [fl_drive, fr_drive, rl_drive, rr_drive]])
+		spec = {"pos":pos, "vel":vel, "angvel":angvel, "rotation":rotation, "steer_angle":steer_angle, "rpm":rpm, "idle":idle}
+		return spec
+
+	def track_spec(self, state):
+		spec = self.dynamics_spec(state)
+		quat = pyq.Quaternion(spec["rotation"])
+		points = np.array([(x,z,y) for x,y,z in [quat.rotate(p) for p in self.cost_queries]])
+		costs = self.cost_model.get_point_cost(spec["pos"]+points, transform=False)
+		spec.update({"costs":costs})
+		return spec
+
 	def observation(self, state=None):
 		state = self.env.reset() if state is None else state
-		target = self.cost_model.track.get_path([state[0], state[2], state[1]], dirn=True)
-		target = np.array(target) - state[:3]
-		return np.concatenate([state[:3]/self.pos_scale, state[3:], *target/self.pos_scale], -1)
+		spec = self.track_spec(state)
+		values = map(spec.get, ["pos", "vel", "angvel", "steer_angle", "rpm", "idle", "costs"])
+		return np.concatenate(list(values), -1), spec
 
 	def close(self):
 		if not hasattr(self, "closed"): self.env.close()

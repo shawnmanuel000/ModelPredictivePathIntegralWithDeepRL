@@ -1,0 +1,217 @@
+Model: <class 'src.models.pytorch.mpc.envmodel.differential.DifferentialEnv'>, Env: Pendulum-v0, Date: 23/05/2020 19:50:54
+CPU: 8 Core, 5.0GHz, 62.66 GB, Linux-5.3.0-53-generic-x86_64-with-debian-buster-sid
+GPU 0: GeForce RTX 2070, 7.98 GB (Driver: 440.64.00)
+Git URL: git@github.com:shawnmanuel000/ModelPredictivePathIntegralWithDeepRL.git
+Hash: ae17e78a425ede44c64c808843a1df58fa9f889c
+Branch: master
+
+config: 
+   TRIAL_AT = 5000
+   SAVE_AT = 1
+   REG_LAMBDA = 1e-06
+   LEARN_RATE = 0.0001
+   DISCOUNT_RATE = 0.99
+   ADVANTAGE_DECAY = 0.95
+   INPUT_LAYER = 512
+   ACTOR_HIDDEN = 256
+   CRITIC_HIDDEN = 1024
+   EPS_MAX = 1.0
+   EPS_MIN = 0.1
+   EPS_DECAY = 0.998
+   NUM_STEPS = 500
+   MAX_BUFFER_SIZE = 100000
+   REPLAY_BATCH_SIZE = 32
+   TARGET_UPDATE_RATE = 0.0004
+   env_name = Pendulum-v0
+   envmodel = dfrntl
+   model = None
+   nworkers = 0
+   epochs = 50
+   seq_len = 40
+   batch_size = 32
+   train_prop = 0.9
+   DYN = 
+      FACTOR = 0.5
+      PATIENCE = 10
+      LEARN_RATE = 0.001
+      MPC = 
+         NSAMPLES = 50
+         HORIZON = 40
+         LAMBDA = 0.5,
+num_envs: 0,
+envs: <__main__.Trainer object at 0x7f28edf2cb10>,
+agent: DifferentialEnv(
+	  (reward): RewardModel(
+	    (linear): Linear(in_features=7, out_features=1, bias=True)
+	  )
+	  (dynamics): TransitionModel(
+	    (gru): GRUCell(7, 15)
+	    (linear): Linear(in_features=15, out_features=3, bias=True)
+	  )
+	) 
+	training = True
+	tau = 0.0004
+	name = dfrntl
+	stats = <src.utils.logger.Stats object at 0x7f28ec493110> 
+		mean_dict = {}
+		sum_dict = {}
+	config = <src.utils.config.Config object at 0x7f298e8bdd10> 
+		TRIAL_AT = 5000
+		SAVE_AT = 1
+		REG_LAMBDA = 1e-06
+		LEARN_RATE = 0.0001
+		DISCOUNT_RATE = 0.99
+		ADVANTAGE_DECAY = 0.95
+		INPUT_LAYER = 512
+		ACTOR_HIDDEN = 256
+		CRITIC_HIDDEN = 1024
+		EPS_MAX = 1.0
+		EPS_MIN = 0.1
+		EPS_DECAY = 0.998
+		NUM_STEPS = 500
+		MAX_BUFFER_SIZE = 100000
+		REPLAY_BATCH_SIZE = 32
+		TARGET_UPDATE_RATE = 0.0004
+		env_name = Pendulum-v0
+		envmodel = dfrntl
+		model = None
+		nworkers = 0
+		epochs = 50
+		seq_len = 40
+		batch_size = 32
+		train_prop = 0.9
+		DYN = <src.utils.config.Config object at 0x7f28eee0b7d0> 
+			FACTOR = 0.5
+			PATIENCE = 10
+			LEARN_RATE = 0.001
+			MPC = <src.utils.config.Config object at 0x7f28eee0e910> 
+				NSAMPLES = 50
+				HORIZON = 40
+				LAMBDA = 0.5
+	device = cuda
+	state_size = (3,)
+	action_size = (1,)
+	discrete = False
+	optimizer = Adam (
+	Parameter Group 0
+	    amsgrad: False
+	    betas: (0.9, 0.999)
+	    eps: 1e-08
+	    lr: 0.001
+	    weight_decay: 0
+	)
+	scheduler = <torch.optim.lr_scheduler.ReduceLROnPlateau object at 0x7f28ec49e050>,
+
+import os
+import torch
+import numpy as np
+from ...agents.base import PTNetwork, one_hot
+
+class TransitionModel(torch.nn.Module):
+	def __init__(self, state_size, action_size, config):
+		super().__init__()
+		self.gru = torch.nn.GRUCell(action_size[-1] + 2*state_size[-1], 5*state_size[-1])
+		self.linear = torch.nn.Linear(5*state_size[-1], state_size[-1])
+		self.state_size = state_size
+
+	def forward(self, action, state):
+		inputs = torch.cat([action, state, state.pow(2)],-1)
+		self.hidden = self.gru(inputs, self.hidden)
+		state_diff = self.linear(self.hidden)
+		next_state = state + state_diff
+		return next_state
+
+	def reset(self, device, batch_size=None):
+		if batch_size is None: batch_size = self.hidden[0].shape[1] if hasattr(self, "hidden") else 1
+		self.hidden = torch.zeros(batch_size, 5*self.state_size[-1], device=device)
+
+class RewardModel(torch.nn.Module):
+	def __init__(self, state_size, action_size, config):
+		super().__init__()
+		self.linear = torch.nn.Linear(action_size[-1] + 2*state_size[-1], 1)
+
+	def forward(self, action, state, next_state):
+		inputs = torch.cat([action, state, next_state-state],-1)
+		reward = self.linear(inputs)
+		return reward
+
+class DifferentialEnv(PTNetwork):
+	def __init__(self, state_size, action_size, config, load="", gpu=True, name="dfrntl"):
+		super().__init__(config, gpu, name)
+		self.state_size = state_size
+		self.action_size = action_size
+		self.discrete = type(self.action_size) != tuple
+		self.reward = RewardModel(state_size, action_size, config)
+		self.dynamics = TransitionModel(state_size, action_size, config)
+		self.optimizer = torch.optim.Adam(self.parameters(), lr=config.DYN.LEARN_RATE)
+		self.scheduler = torch.optim.lr_scheduler.ReduceLROnPlateau(self.optimizer, factor=config.DYN.FACTOR, patience=config.DYN.PATIENCE)
+		self.to(self.device)
+		if load: self.load_model(load)
+
+	def step(self, action, state, numpy=False, grad=False):
+		with torch.enable_grad() if grad else torch.no_grad():
+			state, action = map(self.to_tensor, [state, action])
+			if self.discrete: action = one_hot(action)
+			next_state = self.dynamics(action, state)
+			reward = self.reward(action, state, next_state).squeeze(-1)
+		return [x.cpu().numpy() if numpy else x for x in [next_state, reward]]
+
+	def reset(self, batch_size=None, **kwargs):
+		self.dynamics.reset(self.device, batch_size)
+
+	def rollout(self, actions, states):
+		states, actions = map(lambda x: self.to_tensor(x).transpose(0,1), [states, actions])
+		next_states = []
+		rewards = []
+		self.reset(batch_size=states.shape[1])
+		for action, state in zip(actions, states):
+			next_state, reward = self.step(action, state, grad=True)
+			next_states.append(next_state)
+			rewards.append(reward)
+		next_states, rewards = map(lambda x: torch.stack(x,1), [next_states, rewards])
+		return next_states, rewards
+
+	def get_loss(self, states, actions, next_states, rewards, dones):
+		s, a, ns, r = map(self.to_tensor, (states, actions, next_states, rewards))
+		next_states_hat, rewards_hat = self.rollout(a, s)
+		dyn_loss = (next_states_hat - ns).pow(2).sum(-1).mean()
+		rew_loss = (rewards_hat - r).pow(2).mean()
+		self.stats.mean(dyn_loss=dyn_loss, rew_loss=rew_loss)
+		return dyn_loss + rew_loss
+
+	def optimize(self, states, actions, next_states, rewards, dones):
+		loss = self.get_loss(states, actions, next_states, rewards, dones)
+		self.optimizer.zero_grad()
+		loss.backward()
+		self.optimizer.step()
+		return loss
+
+	def schedule(self, test_loss):
+		self.scheduler.step(test_loss)
+
+	def save_model(self, dirname="pytorch", name="best", net=None):
+		filepath, _ = self.get_checkpoint_path(dirname, name, net)
+		os.makedirs(os.path.dirname(filepath), exist_ok=True)
+		torch.save(self.state_dict(), filepath)
+		
+	def load_model(self, dirname="pytorch", name="best", net=None):
+		filepath, _ = self.get_checkpoint_path(dirname, name, net)
+		if os.path.exists(filepath):
+			self.load_state_dict(torch.load(filepath, map_location=self.device))
+			print(f"Loaded DFRNTL model at {filepath}")
+		return self
+
+
+Step:       0, Reward:     0.268 [   5.067], Avg:     0.268 (1.000) <0-00:00:00> ({'dyn_loss':     2.4819, 'rew_loss':     2.1051})
+Step:       1, Reward:     0.076 [   0.138], Avg:     0.172 (1.000) <0-00:03:42> ({'dyn_loss':     0.1239, 'rew_loss':     0.0081})
+Step:       2, Reward:     0.057 [   0.066], Avg:     0.134 (1.000) <0-00:07:24> ({'dyn_loss':     0.0580, 'rew_loss':     0.0072})
+Step:       3, Reward:     0.060 [   0.053], Avg:     0.115 (1.000) <0-00:11:07> ({'dyn_loss':     0.0457, 'rew_loss':     0.0082})
+Step:       4, Reward:     0.050 [   0.048], Avg:     0.102 (1.000) <0-00:14:48> ({'dyn_loss':     0.0406, 'rew_loss':     0.0072})
+Step:       5, Reward:     0.039 [   0.045], Avg:     0.092 (1.000) <0-00:18:31> ({'dyn_loss':     0.0376, 'rew_loss':     0.0064})
+Step:       6, Reward:     0.049 [   0.042], Avg:     0.085 (1.000) <0-00:22:14> ({'dyn_loss':     0.0352, 'rew_loss':     0.0073})
+Step:       7, Reward:     0.037 [   0.039], Avg:     0.079 (1.000) <0-00:26:02> ({'dyn_loss':     0.0333, 'rew_loss':     0.0057})
+Step:       8, Reward:     0.034 [   0.037], Avg:     0.074 (1.000) <0-00:29:41> ({'dyn_loss':     0.0316, 'rew_loss':     0.0052})
+Step:       9, Reward:     0.031 [   0.035], Avg:     0.070 (1.000) <0-00:33:16> ({'dyn_loss':     0.0300, 'rew_loss':     0.0049})
+Step:      10, Reward:     0.030 [   0.034], Avg:     0.066 (1.000) <0-00:37:00> ({'dyn_loss':     0.0285, 'rew_loss':     0.0048})
+Step:      11, Reward:     0.030 [   0.032], Avg:     0.063 (1.000) <0-00:40:35> ({'dyn_loss':     0.0271, 'rew_loss':     0.0045})
+Step:      12, Reward:     0.027 [   0.030], Avg:     0.061 (1.000) <0-00:44:09> ({'dyn_loss':     0.0258, 'rew_loss':     0.0044})

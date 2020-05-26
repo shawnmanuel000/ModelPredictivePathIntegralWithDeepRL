@@ -1,0 +1,210 @@
+Model: <class 'src.models.pytorch.mpc.envmodel.differential.DifferentialEnv'>, Env: Pendulum-v0, Date: 23/05/2020 20:39:06
+CPU: 8 Core, 5.0GHz, 62.66 GB, Linux-5.3.0-53-generic-x86_64-with-debian-buster-sid
+GPU 0: GeForce RTX 2070, 7.98 GB (Driver: 440.64.00)
+Git URL: git@github.com:shawnmanuel000/ModelPredictivePathIntegralWithDeepRL.git
+Hash: ae17e78a425ede44c64c808843a1df58fa9f889c
+Branch: master
+
+config: 
+   TRIAL_AT = 5000
+   SAVE_AT = 1
+   REG_LAMBDA = 1e-06
+   LEARN_RATE = 0.0001
+   DISCOUNT_RATE = 0.99
+   ADVANTAGE_DECAY = 0.95
+   INPUT_LAYER = 512
+   ACTOR_HIDDEN = 256
+   CRITIC_HIDDEN = 1024
+   EPS_MAX = 1.0
+   EPS_MIN = 0.1
+   EPS_DECAY = 0.998
+   NUM_STEPS = 500
+   MAX_BUFFER_SIZE = 100000
+   REPLAY_BATCH_SIZE = 32
+   TARGET_UPDATE_RATE = 0.0004
+   env_name = Pendulum-v0
+   envmodel = dfrntl
+   model = None
+   nworkers = 0
+   epochs = 50
+   seq_len = 40
+   batch_size = 128
+   train_prop = 0.9
+   DYN = 
+      FACTOR = 0.5
+      PATIENCE = 5
+      LEARN_RATE = 0.0005
+      MPC = 
+         NSAMPLES = 500
+         HORIZON = 20
+         LAMBDA = 0.5,
+num_envs: 0,
+envs: <__main__.Trainer object at 0x7f2708905e50>,
+agent: DifferentialEnv(
+	  (reward): RewardModel(
+	    (linear): Linear(in_features=7, out_features=1, bias=True)
+	  )
+	  (dynamics): TransitionModel(
+	    (gru): GRUCell(16, 15)
+	    (linear): Linear(in_features=15, out_features=3, bias=True)
+	  )
+	) 
+	training = True
+	tau = 0.0004
+	name = dfrntl
+	stats = <src.utils.logger.Stats object at 0x7f2706057e90> 
+		mean_dict = {}
+		sum_dict = {}
+	config = <src.utils.config.Config object at 0x7f270e9aeed0> 
+		TRIAL_AT = 5000
+		SAVE_AT = 1
+		REG_LAMBDA = 1e-06
+		LEARN_RATE = 0.0001
+		DISCOUNT_RATE = 0.99
+		ADVANTAGE_DECAY = 0.95
+		INPUT_LAYER = 512
+		ACTOR_HIDDEN = 256
+		CRITIC_HIDDEN = 1024
+		EPS_MAX = 1.0
+		EPS_MIN = 0.1
+		EPS_DECAY = 0.998
+		NUM_STEPS = 500
+		MAX_BUFFER_SIZE = 100000
+		REPLAY_BATCH_SIZE = 32
+		TARGET_UPDATE_RATE = 0.0004
+		env_name = Pendulum-v0
+		envmodel = dfrntl
+		model = None
+		nworkers = 0
+		epochs = 50
+		seq_len = 40
+		batch_size = 128
+		train_prop = 0.9
+		DYN = <src.utils.config.Config object at 0x7f2667e31810> 
+			FACTOR = 0.5
+			PATIENCE = 5
+			LEARN_RATE = 0.0005
+			MPC = <src.utils.config.Config object at 0x7f2667e34950> 
+				NSAMPLES = 500
+				HORIZON = 20
+				LAMBDA = 0.5
+	device = cuda
+	state_size = (3,)
+	action_size = (1,)
+	discrete = False
+	optimizer = Adam (
+	Parameter Group 0
+	    amsgrad: False
+	    betas: (0.9, 0.999)
+	    eps: 1e-08
+	    lr: 0.0005
+	    weight_decay: 0
+	)
+	scheduler = <torch.optim.lr_scheduler.ReduceLROnPlateau object at 0x7f27039e2190>,
+
+import os
+import torch
+import numpy as np
+from ...agents.base import PTNetwork, one_hot
+
+class TransitionModel(torch.nn.Module):
+	def __init__(self, state_size, action_size, config):
+		super().__init__()
+		self.gru = torch.nn.GRUCell(action_size[-1] + 5*state_size[-1], 5*state_size[-1])
+		self.linear = torch.nn.Linear(5*state_size[-1], state_size[-1])
+		self.state_size = state_size
+
+	def forward(self, action, state, state_dot):
+		inputs = torch.cat([action, state, state_dot, state.pow(2), state.sin(), state.cos()],-1)
+		self.hidden = self.gru(inputs, self.hidden)
+		state_diff = self.linear(self.hidden)
+		next_state = state + state_diff
+		return next_state
+
+	def reset(self, device, batch_size=None):
+		if batch_size is None: batch_size = self.hidden[0].shape[1] if hasattr(self, "hidden") else 1
+		self.hidden = torch.zeros(batch_size, 5*self.state_size[-1], device=device)
+
+class RewardModel(torch.nn.Module):
+	def __init__(self, state_size, action_size, config):
+		super().__init__()
+		self.linear = torch.nn.Linear(action_size[-1] + 2*state_size[-1], 1)
+
+	def forward(self, action, state, next_state):
+		inputs = torch.cat([action, state, next_state-state],-1)
+		reward = self.linear(inputs)
+		return reward
+
+class DifferentialEnv(PTNetwork):
+	def __init__(self, state_size, action_size, config, load="", gpu=True, name="dfrntl"):
+		super().__init__(config, gpu, name)
+		self.state_size = state_size
+		self.action_size = action_size
+		self.discrete = type(self.action_size) != tuple
+		self.reward = RewardModel(state_size, action_size, config)
+		self.dynamics = TransitionModel(state_size, action_size, config)
+		self.optimizer = torch.optim.Adam(self.parameters(), lr=config.DYN.LEARN_RATE)
+		self.scheduler = torch.optim.lr_scheduler.ReduceLROnPlateau(self.optimizer, factor=config.DYN.FACTOR, patience=config.DYN.PATIENCE)
+		self.to(self.device)
+		if load: self.load_model(load)
+
+	def step(self, action, state, numpy=False, grad=False):
+		with torch.enable_grad() if grad else torch.no_grad():
+			state, action = map(self.to_tensor, [state, action])
+			if self.discrete: action = one_hot(action)
+			if self.state is None: self.state = state
+			state_dot = state-self.state
+			next_state = self.dynamics(action, state, state_dot)
+			reward = self.reward(action, state, next_state).squeeze(-1)
+		return [x.cpu().numpy() if numpy else x for x in [next_state, reward]]
+
+	def reset(self, batch_size=None, **kwargs):
+		self.dynamics.reset(self.device, batch_size)
+		self.state = None
+
+	def rollout(self, actions, states):
+		states, actions = map(lambda x: self.to_tensor(x).transpose(0,1), [states, actions])
+		next_states = []
+		rewards = []
+		self.reset(batch_size=states.shape[1])
+		for action, state in zip(actions, states):
+			next_state, reward = self.step(action, state, grad=True)
+			next_states.append(next_state)
+			rewards.append(reward)
+		next_states, rewards = map(lambda x: torch.stack(x,1), [next_states, rewards])
+		return next_states, rewards
+
+	def get_loss(self, states, actions, next_states, rewards, dones):
+		s, a, ns, r = map(self.to_tensor, (states, actions, next_states, rewards))
+		next_states_hat, rewards_hat = self.rollout(a, s)
+		dyn_loss = (next_states_hat - ns).pow(2).sum(-1).mean()
+		rew_loss = (rewards_hat - r).pow(2).mean()
+		self.stats.mean(dyn_loss=dyn_loss, rew_loss=rew_loss)
+		return dyn_loss + rew_loss
+
+	def optimize(self, states, actions, next_states, rewards, dones):
+		loss = self.get_loss(states, actions, next_states, rewards, dones)
+		self.optimizer.zero_grad()
+		loss.backward()
+		self.optimizer.step()
+		return loss
+
+	def schedule(self, test_loss):
+		self.scheduler.step(test_loss)
+
+	def save_model(self, dirname="pytorch", name="best", net=None):
+		filepath, _ = self.get_checkpoint_path(dirname, name, net)
+		os.makedirs(os.path.dirname(filepath), exist_ok=True)
+		torch.save(self.state_dict(), filepath)
+		
+	def load_model(self, dirname="pytorch", name="best", net=None):
+		filepath, _ = self.get_checkpoint_path(dirname, name, net)
+		if os.path.exists(filepath):
+			self.load_state_dict(torch.load(filepath, map_location=self.device))
+			print(f"Loaded DFRNTL model at {filepath}")
+		return self
+
+
+Step:       0, Reward:     9.869 [  25.025], Avg:     9.869 (1.000) <0-00:00:00> ({'dyn_loss':     8.7803, 'rew_loss':    14.7288})
+Step:       1, Reward:     3.986 [   6.340], Avg:     6.927 (1.000) <0-00:01:02> ({'dyn_loss':     5.0529, 'rew_loss':     1.0515})
+Step:       2, Reward:     1.847 [   2.776], Avg:     5.234 (1.000) <0-00:02:13> ({'dyn_loss':     2.4170, 'rew_loss':     0.2662})

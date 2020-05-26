@@ -14,9 +14,22 @@ class CostModel():
 		self.load_cost_map(cost_name)
 		self.min_point = np.array([self.X[0], self.Y[0], 0])
 		self.max_point = np.array([self.X[-1], self.Y[-1], 0])
+		self.src = '\t'.join([line for line in open(os.path.abspath(__file__), 'r')][19:29])
+		self.vtarget = 20
 
-	def get_cost(self, point, transform=True):
-		point = np.array(point)
+	def get_cost(self, state, prevstate=None):
+		prevstate = state if prevstate is None else prevstate
+		px, pz, py = prevstate["pos"]
+		x, z, y = state["pos"]
+		_, _, vy = state["vel"]
+		idle = state.get("idle",[0])[0]
+		cost = self.get_point_cost((x,y), transform=True)
+		progress = self.track.get_progress([px,py,pz], [x,y,z])
+		reward = min(progress,0) + 2*progress + np.tanh(vy/self.vtarget)-np.power(self.vtarget-vy,2)/self.vtarget**2 - cost**2
+		return -reward
+
+	def get_point_cost(self, pos, transform=True):
+		point = np.array(pos)
 		shape = list(point.shape)
 		minref = self.min_point[:shape[-1]].reshape(*[1]*(len(shape)-1), -1)
 		maxref = self.max_point[:shape[-1]].reshape(*[1]*(len(shape)-1), -1)
