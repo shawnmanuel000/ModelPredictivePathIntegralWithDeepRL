@@ -3,6 +3,7 @@ import cv2
 import time
 import torch
 import random
+import importlib
 import collections
 import numpy as np
 import matplotlib.pyplot as plt
@@ -18,6 +19,12 @@ def seed_all(env, seed=None):
 	np.random.seed(seed)
 	torch.manual_seed(seed)
 	return seed
+
+def load_module(name):
+    mod_name, attr_name = name.split(":")
+    mod = importlib.import_module(mod_name.replace("gym", "src.envs.Gym.gym"))
+    fn = getattr(mod, attr_name)
+    return fn
 
 def rmdir(path, exts=[".pth", ".txt"]):
 	[os.remove(f"{path}/{f}") for f in os.listdir(path) if np.any([f.endswith(x) for x in exts])]

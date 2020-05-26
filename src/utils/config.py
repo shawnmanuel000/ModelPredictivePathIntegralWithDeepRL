@@ -17,6 +17,9 @@ class Config(object):
 	def get(self, key, default=None):
 		return getattr(self, key, default)
 
+	def merge(self, config):
+		self.update(**config.props())
+
 	def clone(self, **kwargs):
 		return self.__class__(**self.props()).update(**kwargs)
 

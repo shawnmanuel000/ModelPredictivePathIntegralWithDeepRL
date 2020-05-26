@@ -1,23 +1,26 @@
 import os
 import torch
 import numpy as np
+from src.utils.misc import load_module
 from ...agents.base import PTNetwork, one_hot
 
 class TransitionModel(torch.nn.Module):
 	def __init__(self, state_size, action_size, config):
 		super().__init__()
 		self.gru = torch.nn.GRUCell(action_size[-1] + 5*state_size[-1], 5*state_size[-1])
-		self.linear = torch.nn.Linear(5*state_size[-1], 4*state_size[-1])
-		self.linear = torch.nn.Linear(4*state_size[-1], 3*state_size[-1])
-		self.linear = torch.nn.Linear(3*state_size[-1], 2*state_size[-1])
+		self.linear1 = torch.nn.Linear(5*state_size[-1], 3*state_size[-1])
+		self.linear2 = torch.nn.Linear(3*state_size[-1], 3*state_size[-1])
+		self.linear3 = torch.nn.Linear(3*state_size[-1], state_size[-1])
 		self.state_size = state_size
 
 	def forward(self, action, state, state_dot):
 		inputs = torch.cat([action, state, state_dot, state.pow(2), state.sin(), state.cos()],-1)
 		self.hidden = self.gru(inputs, self.hidden)
-		state_diff = self.linear(self.hidden)
-		next_state = state + state_diff
-		return next_state
+		linear1 = self.linear1(self.hidden).relu()
+		linear2 = self.linear2(linear1).relu() + linear1
+		state_dot = self.linear3(linear2).relu()
+		next_state = state + state_dot
+		return next_state, state_dot
 
 	def reset(self, device, batch_size=None):
 		if batch_size is None: batch_size = self.hidden[0].shape[1] if hasattr(self, "hidden") else 1
@@ -26,11 +29,18 @@ class TransitionModel(torch.nn.Module):
 class RewardModel(torch.nn.Module):
 	def __init__(self, state_size, action_size, config):
 		super().__init__()
-		self.linear = torch.nn.Linear(action_size[-1] + 2*state_size[-1], 1)
+		self.linear = torch.nn.Linear(2*state_size[-1], 1)
+		self.cost = load_module(config.REWARD_MODEL)() if config.get("REWARD_MODEL") else None
+		self.dyn_spec = load_module(config.DYNAMICS_SPEC) if config.get("DYNAMICS_SPEC") else None
 
-	def forward(self, action, state, next_state):
-		inputs = torch.cat([action, state, next_state-state],-1)
-		reward = self.linear(inputs)
+	def forward(self, next_state, state_dot):
+		if self.cost and self.dyn_spec:
+			next_state, state_dot = [x.cpu().numpy() for x in [next_state, state_dot]]
+			ns_spec, s_spec = map(self.dyn_spec.observation_spec, [next_state, next_state-state_dot])
+			reward = -self.cost.get_cost(ns_spec, s_spec)
+		else:
+			inputs = torch.cat([next_state, state_dot],-1)
+			reward = self.linear(inputs)
 		return reward
 
 class DifferentialEnv(PTNetwork):
@@ -39,46 +49,53 @@ class DifferentialEnv(PTNetwork):
 		self.state_size = state_size
 		self.action_size = action_size
 		self.discrete = type(self.action_size) != tuple
-		self.reward = RewardModel(state_size, action_size, config)
-		self.dynamics = TransitionModel(state_size, action_size, config)
+		self.dyn_index = config.get("dynamics_size", state_size[-1])
+		self.reward = RewardModel([self.dyn_index], action_size, config)
+		self.dynamics = TransitionModel([self.dyn_index], action_size, config)
 		self.optimizer = torch.optim.Adam(self.parameters(), lr=config.DYN.LEARN_RATE)
 		self.scheduler = torch.optim.lr_scheduler.ReduceLROnPlateau(self.optimizer, factor=config.DYN.FACTOR, patience=config.DYN.PATIENCE)
 		self.to(self.device)
 		if load: self.load_model(load)
 
 	def step(self, action, state, numpy=False, grad=False):
+		state = state[:,:self.dyn_index]
 		with torch.enable_grad() if grad else torch.no_grad():
 			state, action = map(self.to_tensor, [state, action])
 			if self.discrete: action = one_hot(action)
 			if self.state is None: self.state = state
-			state_dot = state-self.state
-			self.state = self.dynamics(action, state, state_dot)
-			reward = self.reward(action, state, self.state).squeeze(-1)
-		return [x.cpu().numpy() if numpy else x for x in [self.state, reward]]
+			self.state, self.state_dot = self.dynamics(action, state, self.state_dot)
+			reward = self.reward(self.state.detach(), self.state_dot.detach()).squeeze(-1)
+		return [x.cpu().numpy() if numpy else x for x in [self.state, reward, self.state_dot]]
 
-	def reset(self, batch_size=None, **kwargs):
+	def reset(self, batch_size=None, state=None, **kwargs):
+		if state is not None: state = state[:,:self.dyn_index]
 		self.dynamics.reset(self.device, batch_size)
-		self.state = None
+		self.state = self.to_tensor(state)
+		self.state_dot = torch.zeros_like(self.state) if state is not None else None
 
-	def rollout(self, actions, states):
-		states, actions = map(lambda x: self.to_tensor(x).transpose(0,1), [states, actions])
+	def rollout(self, actions, state):
+		actions = self.to_tensor(actions).transpose(0,1)
 		next_states = []
+		states_dot = []
 		rewards = []
-		self.reset(batch_size=states.shape[1])
-		for action, state in zip(actions, states):
-			next_state, reward = self.step(action, state, grad=True)
+		self.reset(batch_size=state.shape[0], state=state)
+		for action in actions:
+			next_state, reward, state_dot = self.step(action, self.state, grad=True)
 			next_states.append(next_state)
+			states_dot.append(state_dot)
 			rewards.append(reward)
-		next_states, rewards = map(lambda x: torch.stack(x,1), [next_states, rewards])
-		return next_states, rewards
+		next_states, rewards, states_dot = map(lambda x: torch.stack(x,1), [next_states, rewards, states_dot])
+		return next_states, rewards, states_dot
 
 	def get_loss(self, states, actions, next_states, rewards, dones):
 		s, a, ns, r = map(self.to_tensor, (states, actions, next_states, rewards))
-		next_states_hat, rewards_hat = self.rollout(a, s)
-		dyn_loss = (next_states_hat - ns).pow(2).sum(-1).mean()
-		rew_loss = (rewards_hat - r).pow(2).mean()
-		self.stats.mean(dyn_loss=dyn_loss, rew_loss=rew_loss)
-		return dyn_loss + rew_loss
+		s, ns = [x[:,:,:self.dyn_index] for x in [s, ns]]
+		next_states, rewards, states_dot = self.rollout(a, s[:,0])
+		dyn_loss = (next_states - ns).pow(2).sum(-1).mean()
+		dot_loss = (states_dot - (ns-s)).pow(2).sum(-1).mean()
+		rew_loss = (rewards - r).pow(2).mean()
+		self.stats.mean(dyn_loss=dyn_loss, dot_loss=dot_loss, rew_loss=rew_loss)
+		return dyn_loss + dot_loss + rew_loss
 
 	def optimize(self, states, actions, next_states, rewards, dones):
 		loss = self.get_loss(states, actions, next_states, rewards, dones)

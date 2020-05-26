@@ -58,7 +58,7 @@ class Track():
 	def get_progress(self, src, dst):
 		start = self.get_nearest(src)
 		fin = self.get_nearest(dst)
-		offset = len(self.track)/2
+		offset = int(0.9*len(self.track))
 		progress = (offset + fin - start)%len(self.track) - offset
 		return progress
 

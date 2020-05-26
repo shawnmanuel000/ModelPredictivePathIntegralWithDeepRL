@@ -1,0 +1,271 @@
+Model: <class 'src.models.pytorch.mpc.envmodel.differential.DifferentialEnv'>, Env: CarRacing-v1, Date: 26/05/2020 01:46:21
+CPU: 8 Core, 5.0GHz, 62.66 GB, Linux-5.3.0-53-generic-x86_64-with-Ubuntu-18.04-bionic
+GPU 0: GeForce RTX 2070, 7.98 GB (Driver: 440.64.00)
+Git URL: git@github.com:shawnmanuel000/ModelPredictivePathIntegralWithDeepRL.git
+Hash: d47ed25a99b50100c13c4c2c98a58a333562a112
+Branch: master
+
+config: 
+   TRIAL_AT = 5000
+   SAVE_AT = 1
+   dynamics_size = 15
+   REG_LAMBDA = 1e-06
+   LEARN_RATE = 0.0001
+   DISCOUNT_RATE = 0.99
+   ADVANTAGE_DECAY = 0.95
+   INPUT_LAYER = 512
+   ACTOR_HIDDEN = 256
+   CRITIC_HIDDEN = 1024
+   EPS_MAX = 1.0
+   EPS_MIN = 0.1
+   EPS_DECAY = 0.998
+   NUM_STEPS = 500
+   MAX_BUFFER_SIZE = 100000
+   REPLAY_BATCH_SIZE = 32
+   TARGET_UPDATE_RATE = 0.0004
+   env_name = CarRacing-v1
+   envmodel = dfrntl
+   model = None
+   nworkers = 0
+   epochs = 50
+   seq_len = 40
+   batch_size = 128
+   train_prop = 0.9
+   DYN = 
+      FACTOR = 0.5
+      PATIENCE = 5
+      LEARN_RATE = 0.0005
+      MPC = 
+         NSAMPLES = 500
+         HORIZON = 20
+         LAMBDA = 0.5,
+num_envs: 0,
+envs: <__main__.Trainer object at 0x7f08b08f0510>,
+agent: DifferentialEnv(
+	  (reward): RewardModel(
+	    (linear): Linear(in_features=30, out_features=1, bias=True)
+	  )
+	  (dynamics): TransitionModel(
+	    (gru): GRUCell(78, 75)
+	    (linear1): Linear(in_features=75, out_features=45, bias=True)
+	    (linear2): Linear(in_features=45, out_features=45, bias=True)
+	    (linear3): Linear(in_features=45, out_features=15, bias=True)
+	  )
+	) 
+	training = True
+	tau = 0.0004
+	name = dfrntl
+	stats = <src.utils.logger.Stats object at 0x7f08ad38ea50> 
+		mean_dict = {}
+		sum_dict = {}
+	config = <src.utils.config.Config object at 0x7f08b3be1b10> 
+		TRIAL_AT = 5000
+		SAVE_AT = 1
+		dynamics_size = 15
+		REG_LAMBDA = 1e-06
+		LEARN_RATE = 0.0001
+		DISCOUNT_RATE = 0.99
+		ADVANTAGE_DECAY = 0.95
+		INPUT_LAYER = 512
+		ACTOR_HIDDEN = 256
+		CRITIC_HIDDEN = 1024
+		EPS_MAX = 1.0
+		EPS_MIN = 0.1
+		EPS_DECAY = 0.998
+		NUM_STEPS = 500
+		MAX_BUFFER_SIZE = 100000
+		REPLAY_BATCH_SIZE = 32
+		TARGET_UPDATE_RATE = 0.0004
+		env_name = CarRacing-v1
+		envmodel = dfrntl
+		model = None
+		nworkers = 0
+		epochs = 50
+		seq_len = 40
+		batch_size = 128
+		train_prop = 0.9
+		DYN = <src.utils.config.Config object at 0x7f08b3bccb10> 
+			FACTOR = 0.5
+			PATIENCE = 5
+			LEARN_RATE = 0.0005
+			MPC = <src.utils.config.Config object at 0x7f08b3bccf90> 
+				NSAMPLES = 500
+				HORIZON = 20
+				LAMBDA = 0.5
+	device = cuda
+	state_size = (40,)
+	action_size = (3,)
+	discrete = False
+	dyn_index = 15
+	optimizer = Adam (
+	Parameter Group 0
+	    amsgrad: False
+	    betas: (0.9, 0.999)
+	    eps: 1e-08
+	    lr: 0.0005
+	    weight_decay: 0
+	)
+	scheduler = <torch.optim.lr_scheduler.ReduceLROnPlateau object at 0x7f08ad3ee610>,
+
+import os
+import torch
+import numpy as np
+from ...agents.base import PTNetwork, one_hot
+
+class TransitionModel(torch.nn.Module):
+	def __init__(self, state_size, action_size, config):
+		super().__init__()
+		self.gru = torch.nn.GRUCell(action_size[-1] + 5*state_size[-1], 5*state_size[-1])
+		self.linear1 = torch.nn.Linear(5*state_size[-1], 3*state_size[-1])
+		self.linear2 = torch.nn.Linear(3*state_size[-1], 3*state_size[-1])
+		self.linear3 = torch.nn.Linear(3*state_size[-1], state_size[-1])
+		self.state_size = state_size
+
+	def forward(self, action, state, state_dot):
+		inputs = torch.cat([action, state, state_dot, state.pow(2), state.sin(), state.cos()],-1)
+		self.hidden = self.gru(inputs, self.hidden)
+		linear1 = self.linear1(self.hidden).relu()
+		linear2 = self.linear2(linear1).relu() + linear1
+		state_dot = self.linear3(linear2).relu()
+		next_state = state + state_dot
+		return next_state, state_dot
+
+	def reset(self, device, batch_size=None):
+		if batch_size is None: batch_size = self.hidden[0].shape[1] if hasattr(self, "hidden") else 1
+		self.hidden = torch.zeros(batch_size, 5*self.state_size[-1], device=device)
+
+class RewardModel(torch.nn.Module):
+	def __init__(self, state_size, action_size, config):
+		super().__init__()
+		self.linear = torch.nn.Linear(2*state_size[-1], 1)
+
+	def forward(self, next_state, state_dot):
+		inputs = torch.cat([next_state, state_dot],-1)
+		reward = self.linear(inputs)
+		return reward
+
+class DifferentialEnv(PTNetwork):
+	def __init__(self, state_size, action_size, config, load="", gpu=True, name="dfrntl"):
+		super().__init__(config, gpu, name)
+		self.state_size = state_size
+		self.action_size = action_size
+		self.discrete = type(self.action_size) != tuple
+		self.dyn_index = config.get("dynamics_size", state_size[-1])
+		self.reward = RewardModel([self.dyn_index], action_size, config)
+		self.dynamics = TransitionModel([self.dyn_index], action_size, config)
+		self.optimizer = torch.optim.Adam(self.parameters(), lr=config.DYN.LEARN_RATE)
+		self.scheduler = torch.optim.lr_scheduler.ReduceLROnPlateau(self.optimizer, factor=config.DYN.FACTOR, patience=config.DYN.PATIENCE)
+		self.to(self.device)
+		if load: self.load_model(load)
+
+	def step(self, action, state, numpy=False, grad=False):
+		with torch.enable_grad() if grad else torch.no_grad():
+			state, action = map(self.to_tensor, [state, action])
+			if self.discrete: action = one_hot(action)
+			if self.state is None: self.state = state
+			self.state, self.state_dot = self.dynamics(action, state, self.state_dot)
+			reward = self.reward(self.state.detach(), self.state_dot.detach()).squeeze(-1)
+		return [x.cpu().numpy() if numpy else x for x in [self.state, reward, self.state_dot]]
+
+	def reset(self, batch_size=None, state=None, **kwargs):
+		self.dynamics.reset(self.device, batch_size)
+		self.state = self.to_tensor(state)
+		self.state_dot = torch.zeros_like(state) if state is not None else None
+
+	def rollout(self, actions, state):
+		actions = self.to_tensor(actions).transpose(0,1)
+		next_states = []
+		states_dot = []
+		rewards = []
+		self.reset(batch_size=state.shape[0], state=state)
+		for action in actions:
+			next_state, reward, state_dot = self.step(action, self.state, grad=True)
+			next_states.append(next_state)
+			states_dot.append(state_dot)
+			rewards.append(reward)
+		next_states, rewards, states_dot = map(lambda x: torch.stack(x,1), [next_states, rewards, states_dot])
+		return next_states, rewards, states_dot
+
+	def get_loss(self, states, actions, next_states, rewards, dones):
+		s, a, ns, r = map(self.to_tensor, (states, actions, next_states, rewards))
+		s, ns = [x[:,:,:self.dyn_index] for x in [s, ns]]
+		next_states, rewards, states_dot = self.rollout(a, s[:,0])
+		dyn_loss = (next_states - ns).pow(2).sum(-1).mean()
+		dot_loss = (states_dot - (ns-s)).pow(2).sum(-1).mean()
+		rew_loss = (rewards - r).pow(2).mean()
+		self.stats.mean(dyn_loss=dyn_loss, dot_loss=dot_loss, rew_loss=rew_loss)
+		return dyn_loss + dot_loss + rew_loss
+
+	def optimize(self, states, actions, next_states, rewards, dones):
+		loss = self.get_loss(states, actions, next_states, rewards, dones)
+		self.optimizer.zero_grad()
+		loss.backward()
+		self.optimizer.step()
+		return loss
+
+	def schedule(self, test_loss):
+		self.scheduler.step(test_loss)
+
+	def save_model(self, dirname="pytorch", name="best", net=None):
+		filepath, _ = self.get_checkpoint_path(dirname, name, net)
+		os.makedirs(os.path.dirname(filepath), exist_ok=True)
+		torch.save(self.state_dict(), filepath)
+		
+	def load_model(self, dirname="pytorch", name="best", net=None):
+		filepath, _ = self.get_checkpoint_path(dirname, name, net)
+		if os.path.exists(filepath):
+			self.load_state_dict(torch.load(filepath, map_location=self.device))
+			print(f"Loaded DFRNTL model at {filepath}")
+		return self
+
+
+Step:       0, Reward:   418.209 [ 479.652], Avg:   418.209 (1.000) <0-00:00:00> ({'dyn_loss':   123.8473, 'dot_loss':     8.0161, 'rew_loss':   341.6961})
+Step:       1, Reward:   410.141 [ 459.622], Avg:   414.175 (1.000) <0-00:00:57> ({'dyn_loss':   106.4822, 'dot_loss':     7.8847, 'rew_loss':   340.3484})
+Step:       2, Reward:   405.622 [ 454.774], Avg:   411.324 (1.000) <0-00:01:55> ({'dyn_loss':   101.8418, 'dot_loss':     7.8246, 'rew_loss':   340.2341})
+Step:       3, Reward:   404.415 [ 451.179], Avg:   409.597 (1.000) <0-00:02:53> ({'dyn_loss':    98.9801, 'dot_loss':     7.7949, 'rew_loss':   339.7672})
+Step:       4, Reward:   405.939 [ 449.748], Avg:   408.865 (1.000) <0-00:03:51> ({'dyn_loss':    97.8109, 'dot_loss':     7.7773, 'rew_loss':   339.8158})
+Step:       5, Reward:   402.691 [ 448.755], Avg:   407.836 (1.000) <0-00:04:49> ({'dyn_loss':    96.3702, 'dot_loss':     7.7647, 'rew_loss':   340.0525})
+Step:       6, Reward:   401.472 [ 446.892], Avg:   406.927 (1.000) <0-00:05:47> ({'dyn_loss':    94.7857, 'dot_loss':     7.7500, 'rew_loss':   339.8528})
+Step:       7, Reward:   399.892 [ 443.924], Avg:   406.047 (1.000) <0-00:06:45> ({'dyn_loss':    91.8249, 'dot_loss':     7.7316, 'rew_loss':   340.0017})
+Step:       8, Reward:   398.984 [ 442.766], Avg:   405.263 (1.000) <0-00:07:43> ({'dyn_loss':    90.8907, 'dot_loss':     7.7246, 'rew_loss':   339.8094})
+Step:       9, Reward:   399.365 [ 441.891], Avg:   404.673 (1.000) <0-00:08:41> ({'dyn_loss':    90.0080, 'dot_loss':     7.7151, 'rew_loss':   339.9512})
+Step:      10, Reward:   401.959 [ 440.855], Avg:   404.426 (1.000) <0-00:09:40> ({'dyn_loss':    89.4811, 'dot_loss':     7.7071, 'rew_loss':   339.8097})
+Step:      11, Reward:   399.441 [ 440.337], Avg:   404.011 (1.000) <0-00:10:37> ({'dyn_loss':    88.9855, 'dot_loss':     7.7056, 'rew_loss':   339.5906})
+Step:      12, Reward:   398.590 [ 440.460], Avg:   403.594 (1.000) <0-00:11:35> ({'dyn_loss':    88.6020, 'dot_loss':     7.6996, 'rew_loss':   340.0062})
+Step:      13, Reward:   398.753 [ 439.750], Avg:   403.248 (1.000) <0-00:12:34> ({'dyn_loss':    88.2018, 'dot_loss':     7.6962, 'rew_loss':   339.7871})
+Step:      14, Reward:   401.479 [ 438.468], Avg:   403.130 (1.000) <0-00:13:32> ({'dyn_loss':    87.7039, 'dot_loss':     7.6875, 'rew_loss':   339.4085})
+Step:      15, Reward:   398.522 [ 439.734], Avg:   402.842 (1.000) <0-00:14:30> ({'dyn_loss':    88.1711, 'dot_loss':     7.6893, 'rew_loss':   339.7874})
+Step:      16, Reward:   398.602 [ 438.212], Avg:   402.593 (1.000) <0-00:15:28> ({'dyn_loss':    86.8819, 'dot_loss':     7.6811, 'rew_loss':   339.7215})
+Step:      17, Reward:   398.599 [ 438.100], Avg:   402.371 (1.000) <0-00:16:26> ({'dyn_loss':    86.8341, 'dot_loss':     7.6779, 'rew_loss':   339.6714})
+Step:      18, Reward:   400.339 [ 437.503], Avg:   402.264 (1.000) <0-00:17:24> ({'dyn_loss':    86.7477, 'dot_loss':     7.6779, 'rew_loss':   339.3927})
+Step:      19, Reward:   397.082 [ 437.667], Avg:   402.005 (1.000) <0-00:18:23> ({'dyn_loss':    86.5817, 'dot_loss':     7.6808, 'rew_loss':   339.3805})
+Step:      20, Reward:   398.912 [ 437.933], Avg:   401.857 (1.000) <0-00:19:21> ({'dyn_loss':    86.7434, 'dot_loss':     7.6809, 'rew_loss':   339.6397})
+Step:      21, Reward:   396.840 [ 438.401], Avg:   401.629 (1.000) <0-00:20:20> ({'dyn_loss':    86.5395, 'dot_loss':     7.6798, 'rew_loss':   340.0603})
+Step:      22, Reward:   397.299 [ 437.498], Avg:   401.441 (1.000) <0-00:21:18> ({'dyn_loss':    86.0576, 'dot_loss':     7.6768, 'rew_loss':   339.7774})
+Step:      23, Reward:   396.695 [ 437.318], Avg:   401.243 (1.000) <0-00:22:16> ({'dyn_loss':    85.7631, 'dot_loss':     7.6738, 'rew_loss':   339.8528})
+Step:      24, Reward:   397.064 [ 437.398], Avg:   401.076 (1.000) <0-00:23:14> ({'dyn_loss':    85.8775, 'dot_loss':     7.6769, 'rew_loss':   339.8440})
+Step:      25, Reward:   400.082 [ 436.978], Avg:   401.038 (1.000) <0-00:24:12> ({'dyn_loss':    86.2163, 'dot_loss':     7.6773, 'rew_loss':   339.4255})
+Step:      26, Reward:   396.879 [ 436.978], Avg:   400.884 (1.000) <0-00:25:10> ({'dyn_loss':    85.5383, 'dot_loss':     7.6729, 'rew_loss':   339.7910})
+Step:      27, Reward:   397.633 [ 436.744], Avg:   400.768 (1.000) <0-00:26:08> ({'dyn_loss':    85.6402, 'dot_loss':     7.6692, 'rew_loss':   339.5563})
+Step:      28, Reward:   395.377 [ 435.771], Avg:   400.582 (1.000) <0-00:27:08> ({'dyn_loss':    84.5632, 'dot_loss':     7.6598, 'rew_loss':   339.5429})
+Step:      29, Reward:   396.732 [ 436.177], Avg:   400.454 (1.000) <0-00:28:06> ({'dyn_loss':    84.9549, 'dot_loss':     7.6624, 'rew_loss':   339.6485})
+Step:      30, Reward:   396.871 [ 436.375], Avg:   400.338 (1.000) <0-00:29:04> ({'dyn_loss':    84.9339, 'dot_loss':     7.6637, 'rew_loss':   339.8603})
+Step:      31, Reward:   399.721 [ 441.900], Avg:   400.319 (1.000) <0-00:30:02> ({'dyn_loss':    90.2632, 'dot_loss':     7.6929, 'rew_loss':   339.7611})
+Step:      32, Reward:   397.713 [ 439.813], Avg:   400.240 (1.000) <0-00:31:02> ({'dyn_loss':    88.5454, 'dot_loss':     7.6839, 'rew_loss':   339.4095})
+Step:      33, Reward:   399.607 [ 437.944], Avg:   400.221 (1.000) <0-00:32:00> ({'dyn_loss':    86.8150, 'dot_loss':     7.6733, 'rew_loss':   339.6546})
+Step:      34, Reward:   399.464 [ 436.673], Avg:   400.199 (1.000) <0-00:32:59> ({'dyn_loss':    85.9350, 'dot_loss':     7.6676, 'rew_loss':   339.3813})
+Step:      35, Reward:   395.931 [ 434.941], Avg:   400.081 (1.000) <0-00:33:57> ({'dyn_loss':    83.5661, 'dot_loss':     7.6507, 'rew_loss':   339.8565})
+Step:      36, Reward:   396.377 [ 434.348], Avg:   399.981 (1.000) <0-00:34:56> ({'dyn_loss':    83.2938, 'dot_loss':     7.6473, 'rew_loss':   339.6422})
+Step:      37, Reward:   396.366 [ 433.850], Avg:   399.886 (1.000) <0-00:35:54> ({'dyn_loss':    83.0037, 'dot_loss':     7.6460, 'rew_loss':   339.4836})
+Step:      38, Reward:   395.527 [ 435.502], Avg:   399.774 (1.000) <0-00:36:53> ({'dyn_loss':    84.1342, 'dot_loss':     7.6506, 'rew_loss':   339.7531})
+Step:      39, Reward:   397.007 [ 433.904], Avg:   399.705 (1.000) <0-00:37:51> ({'dyn_loss':    83.1242, 'dot_loss':     7.6452, 'rew_loss':   339.4758})
+Step:      40, Reward:   396.703 [ 433.393], Avg:   399.632 (1.000) <0-00:38:48> ({'dyn_loss':    82.7512, 'dot_loss':     7.6432, 'rew_loss':   339.3607})
+Step:      41, Reward:   395.555 [ 432.506], Avg:   399.534 (1.000) <0-00:39:47> ({'dyn_loss':    81.5875, 'dot_loss':     7.6363, 'rew_loss':   339.6183})
+Step:      42, Reward:   395.266 [ 431.912], Avg:   399.435 (1.000) <0-00:40:45> ({'dyn_loss':    81.3131, 'dot_loss':     7.6339, 'rew_loss':   339.3311})
+Step:      43, Reward:   397.308 [ 431.840], Avg:   399.387 (1.000) <0-00:41:44> ({'dyn_loss':    81.2186, 'dot_loss':     7.6321, 'rew_loss':   339.5658})
+Step:      44, Reward:   396.340 [ 431.559], Avg:   399.319 (1.000) <0-00:42:42> ({'dyn_loss':    81.0580, 'dot_loss':     7.6323, 'rew_loss':   339.3769})
+Step:      45, Reward:   395.425 [ 431.618], Avg:   399.235 (1.000) <0-00:43:42> ({'dyn_loss':    80.7816, 'dot_loss':     7.6293, 'rew_loss':   339.6183})
+Step:      46, Reward:   395.878 [ 431.307], Avg:   399.163 (1.000) <0-00:44:39> ({'dyn_loss':    80.6598, 'dot_loss':     7.6281, 'rew_loss':   339.5063})
+Step:      47, Reward:   395.212 [ 431.821], Avg:   399.081 (1.000) <0-00:45:38> ({'dyn_loss':    80.7285, 'dot_loss':     7.6300, 'rew_loss':   339.8326})
+Step:      48, Reward:   395.743 [ 431.483], Avg:   399.013 (1.000) <0-00:46:36> ({'dyn_loss':    80.6333, 'dot_loss':     7.6272, 'rew_loss':   339.6789})
+Step:      49, Reward:   396.175 [ 431.625], Avg:   398.956 (1.000) <0-00:47:35> ({'dyn_loss':    80.6959, 'dot_loss':     7.6287, 'rew_loss':   339.7850})

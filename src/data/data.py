@@ -1,4 +1,5 @@
 import os
+import re
 import sys
 import argparse
 import numpy as np
@@ -6,6 +7,7 @@ import matplotlib.pyplot as plt
 from multiprocessing import Pool
 from mpl_toolkits import mplot3d
 sys.path.append(os.path.abspath("./"))
+from src.utils.misc import seed_all
 from src.models import all_models, get_config
 from src.envs import all_envs
 
@@ -37,7 +39,9 @@ class RolloutCollector():
 		s = np.array(self.s_rollout)
 		r = np.array(self.r_rollout)
 		d = np.array(self.d_rollout)
-		np.savez(os.path.join(self.save_path, f"rollout_{number}"), actions=a, states=s, rewards=r, dones=d)
+		path = os.path.join(self.save_path, f"rollout_{number}.npz")
+		np.savez(path, actions=a, states=s, rewards=r, dones=d)
+		print(f"Saving {path}, Reward: {np.sum(r):8.2f}, Len: {len(r):5d}")
 		self.reset_rollout()
 
 def sample_single(arg):
@@ -49,6 +53,7 @@ def sample_single(arg):
 	action_size = [env.action_space.n] if hasattr(env.action_space, 'n') else env.action_space.shape
 	agent = model(state_size, action_size, config, load=config.env_name, gpu=not config.no_gpu)
 	for ep in eps:
+		seed_all(env, ep)
 		state = env.reset()
 		total_reward = 0
 		done = False
@@ -56,20 +61,20 @@ def sample_single(arg):
 		while not done:
 			env_action, action = agent.get_env_action(env, state, eps=0)
 			state, reward, done, _ = env.step(env_action)
-			rollout.step(action, state, reward, done, ep)
+			rollout.step(action, state, reward, done, number=ep)
 			total_reward += reward
-		print(f"Ep: {ep}, Reward: {total_reward}")
 	env.close()
 
 def sample(make_env, model, config, data_dir, number=None, render=False):
 	args = []
-	newsamples = max(config.nsamples-len(os.listdir(data_dir)),0)
-	eps = np.arange(config.nsamples-newsamples, config.nsamples)
-	if len(eps)==0: return
-	groups = np.split(eps, np.arange(0, len(eps), len(eps)//config.nworkers)[1:-1])
+	existing = {int(re.match(r"rollout_(.*).npz",f).groups()[0]) for f in os.listdir(data_dir)}
+	eps = [k for k in np.arange(config.nsamples) if k not in existing]
+	groups = np.split(eps, np.arange(0, len(eps), len(eps)//config.nworkers)[1:-1]) if config.nworkers > 0 else [eps]
 	for group in groups:
 		arg = (group, config, data_dir)
 		args.append(arg)
+	if config.nworkers==0: 
+		return [sample_single(arg) for arg in args]
 	with Pool(config.nworkers) as p:
 		p.map(sample_single, args)
 
@@ -96,7 +101,7 @@ def parse_args(envs, models):
 	parser.add_argument("env_name", type=str, choices=envs, help="Name of the environment to use. Allowed values are:\n"+', '.join(envs), metavar="env_name")
 	parser.add_argument("--model", type=str, default="rand", choices=models, help="Which RL algorithm to use as the agent. Allowed values are:\n"+', '.join(models), metavar="model")
 	parser.add_argument("--nsamples", type=int, default=0, help="How many rollouts to save")
-	parser.add_argument("--nworkers", type=int, default=1, help="Number of workers to use to load dataloader")
+	parser.add_argument("--nworkers", type=int, default=0, help="Number of workers to use to load dataloader")
 	parser.add_argument("--no_gpu", action="store_true", help="Whether to use gpu for rollouts")
 	parser.add_argument("--render", action="store_true", help="Whether to render rollouts")
 	return parser.parse_args()
@@ -109,5 +114,3 @@ if __name__ == "__main__":
 	config.update(**args.__dict__)
 	if args.nsamples > 0:
 		sample(make_env, model, config, data_dir, render=args.render)
-	else:
-		visualize(data_dir)

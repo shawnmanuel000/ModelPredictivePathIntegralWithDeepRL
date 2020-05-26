@@ -21,10 +21,9 @@ def test_car_sim():
 		done = False
 		step = 0
 		while not done:
-			# action = np.random.uniform([-1, -1, -1], [1, 1, 1], size=action_size)
 			action = agent.get_action(state)
 			state, reward, done, _ = env.step(action)
-			print(f"Step: {step:5d}, R: {reward}, A: {action}, Pos: {state[:3]}, Vel: {state[3:6]}, Idle: {state[-1]}")
+			print(f"Step: {step:5d}, R: {reward}, A: {action}, Pos: {state[:3]}, Vel: {state[3:6]}, Idle: {state[14]}")
 			env.render()
 			step += 1
 	env.close()
@@ -97,5 +96,6 @@ def test_mppi():
 
 
 if __name__ == "__main__":
+	test_car_sim()
 	# test_mppi()
-	test_envmodel()
+	# test_envmodel()

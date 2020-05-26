@@ -63,17 +63,17 @@ class CarRacing(gym.Env, metaclass=EnvMeta):
 
 	@staticmethod
 	def dynamics_spec(state):
-		pos = state[:3]
-		vel = state[3:6]
-		angvel = state[6:9]
-		rotation = state[9:13]
-		fl_drive = state[13:17] # steer angle, motor torque, brake torque, rpm
-		fr_drive = state[17:21]
-		rl_drive = state[21:25]
-		rr_drive = state[25:29]
-		idle = state[29:30]
-		steer_angle = fl_drive[0:1]
-		rpm = np.array([x[-1] for x in [fl_drive, fr_drive, rl_drive, rr_drive]])
+		pos = state[...,:3]
+		vel = state[...,3:6]
+		angvel = state[...,6:9]
+		rotation = state[...,9:13]
+		fl_drive = state[...,13:17] # steer angle, motor torque, brake torque, rpm
+		fr_drive = state[...,17:21]
+		rl_drive = state[...,21:25]
+		rr_drive = state[...,25:29]
+		idle = state[...,29:30]
+		steer_angle = fl_drive[...,0:1]
+		rpm = np.array([x[...,-1] for x in [fl_drive, fr_drive, rl_drive, rr_drive]])
 		spec = {"pos":pos, "vel":vel, "angvel":angvel, "rotation":rotation, "steer_angle":steer_angle, "rpm":rpm, "idle":idle}
 		return spec
 
@@ -89,7 +89,21 @@ class CarRacing(gym.Env, metaclass=EnvMeta):
 		state = self.env.reset() if state is None else state
 		spec = self.track_spec(state)
 		values = map(spec.get, ["pos", "vel", "angvel", "steer_angle", "rpm", "idle", "costs"])
-		return np.concatenate(list(values), -1), spec
+		observation = np.concatenate(list(values), -1)
+		self.dynamics_size = len(observation) - len(spec["costs"])
+		return observation, spec
+
+	@staticmethod
+	def observation_spec(observation):
+		spec = {}
+		spec["pos"] = observation[...,:3]
+		spec["vel"] = observation[...,3:6]
+		spec["angvel"] = observation[...,6:9]
+		spec["steer_angle"] = observation[...,9:10]
+		spec["rpm"] = observation[...,10:14]
+		spec["idle"] = observation[...,14:15]
+		spec["costs"] = observation[...,15:]
+		return spec
 
 	def close(self):
 		if not hasattr(self, "closed"): self.env.close()

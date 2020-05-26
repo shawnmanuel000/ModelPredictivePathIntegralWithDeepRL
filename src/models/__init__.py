@@ -1,10 +1,12 @@
+import inspect
 import numpy as np
 from src.utils.rand import RandomAgent
 from src.utils.config import Config
 from src.envs import get_env, all_envs, env_grps
+from src.envs.CarRacing.car_racing import CostModel, CarRacing
 from .rllib import rPPOAgent, rSACAgent, rDDPGAgent, rDDQNAgent
 from .pytorch import PPOAgent, SACAgent, DDQNAgent, DDPGAgent, MPOAgent, MPPIController
-from .pytorch.mpc import all_envmodels
+from .pytorch.mpc import all_envmodels, set_dynamics_size
 
 all_models = {
 	"pt": {
@@ -55,6 +57,9 @@ model_configs = {
 		ENTROPY_WEIGHT = 0.005,			# The weight for the entropy term of the Actor loss
 		CLIP_PARAM = 0.05,				# The limit of the ratio of new action probabilities to old probabilities
 	),
+	"mppi": net_config.clone(
+		ENV_MODEL = "dfrntl",
+	)
 }
 
 env_model_configs = {
@@ -67,6 +72,12 @@ env_model_configs = {
 		"ddpg": net_config.clone(),
 		"ddqn": net_config.clone(),
 		"sac": net_config.clone(),
+	},
+	env_grps["unt"]: {
+		"mppi": Config(
+			REWARD_MODEL = f"{inspect.getmodule(CostModel).__name__}:{CostModel.__name__}",
+			DYNAMICS_SPEC = f"{inspect.getmodule(CarRacing).__name__}:{CarRacing.__name__}"
+		)
 	}
 }
 
@@ -85,6 +96,10 @@ def get_config(env_name, model_name, framework="pt", render=False):
 	env_list = [x for x in env_grps.values() if env_name in x][0]
 	env_config = env_configs.get(env_list, train_config)
 	model = all_models[framework].get(model_name, None)
-	model_config = env_model_configs.get(env_list, model_configs).get(model_name, model_configs.get(model_name, net_config))
+	model_config = model_configs.get(model_name, net_config)
+	env_model_config = env_model_configs.get(env_list, model_configs).get(model_name, model_configs.get(model_name, net_config))
+	model_config.merge(env_model_config)
+	env_config.merge(model_config)
 	make_env = lambda: get_env(env_name, render)
-	return make_env, model, env_config.update(**model_config.props(), env_name=env_name)
+	set_dynamics_size(env_config, make_env)
+	return make_env, model, env_config.update(env_name=env_name)
