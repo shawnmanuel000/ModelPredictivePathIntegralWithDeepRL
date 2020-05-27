@@ -36,6 +36,7 @@ class CostModel():
 		maxref = self.max_point[:shape[-1]].reshape(*[1]*(len(shape)-1), -1)
 		point = np.clip(point, minref, maxref)
 		index = np.round((point-minref)/self.res).astype(np.int32)
+		zindex = np.round(index[...,2]*self.res/(self.max_point[2] - self.min_point[2])).astype(np.int32)
 		cost = self.cost_map[index[...,0],index[...,1]]
 		return np.tanh(cost/2)**2 if transform else cost
 
@@ -50,13 +51,13 @@ class CostModel():
 			Y = np.arange(y_min-buffer, y_max+buffer, res)
 			Z = np.array([z_min, z_max])
 			points = list(it.product(X, Y, Z))
-			with Pool(16) as p:
+			with Pool(32) as p:
 				dists = p.map(self.track.min_dist, points)
 			dists = np.array(dists).reshape(len(X), len(Y), len(Z))
 			np.savez(cost_file, X=X, Y=Y, Z=Z, cost=dists.T, res=res, buffer=buffer)
 		data = np.load(cost_file, allow_pickle=True)
 		self.X = data["X"]
 		self.Y = data["Y"]
-		self.Z = data["Z"]
+		self.Z = data["Z"] if "Z" in data else [0,1]
 		self.cost_map = data["cost"].T
 		self.res = res

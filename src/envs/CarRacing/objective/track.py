@@ -18,7 +18,7 @@ class Track():
 		
 	def min_dist(self, point):
 		xt, yt, zt = point
-		dists = [np.sqrt((xt-x)**2 + (yt-y)**2 + (zt-z)**2) for x,z,y in self.track]
+		dists = [np.sqrt((xt-x)**2 + (yt-y)**2 + 0.1*(zt-z)**2) for x,z,y in self.track]
 		return min(dists)
 
 	def nearest_point(self, point):

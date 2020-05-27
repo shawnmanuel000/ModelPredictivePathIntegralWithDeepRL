@@ -13,7 +13,7 @@ os.makedirs(plot_dir, exist_ok=True)
 def plot_track2D(track):
 	plt.figure()
 	plt.plot(track.X,track.Y)
-	plt.savefig("Track2D", bounding_box="tight")
+	plt.savefig(f"{plot_dir}/Track2D", bounding_box="tight")
 
 def plot_track(track):
 	plt.figure()
@@ -22,7 +22,7 @@ def plot_track(track):
 	ax.set_xlim3d(-200, 200)
 	ax.set_ylim3d(-200, 200)
 	ax.set_zlim3d(-100, 100)
-	plt.savefig("Track3D", bounding_box="tight")
+	plt.savefig(f"{plot_dir}/Track3D", bounding_box="tight")
 
 def plot_cost_map(cmodel):
 	plt.figure()
