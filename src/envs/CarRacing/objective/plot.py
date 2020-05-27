@@ -6,9 +6,14 @@ from mpl_toolkits import mplot3d
 sys.path.append(os.path.abspath("./src/envs/CarRacing"))
 from cost import CostModel
 
+root = os.path.dirname(os.path.abspath(__file__))
+plot_dir = os.path.join(root, "plots")
+os.makedirs(plot_dir, exist_ok=True)
+
 def plot_track2D(track):
 	plt.figure()
 	plt.plot(track.X,track.Y)
+	plt.savefig("Track2D", bounding_box="tight")
 
 def plot_track(track):
 	plt.figure()
@@ -17,6 +22,7 @@ def plot_track(track):
 	ax.set_xlim3d(-200, 200)
 	ax.set_ylim3d(-200, 200)
 	ax.set_zlim3d(-100, 100)
+	plt.savefig("Track3D", bounding_box="tight")
 
 def plot_cost_map(cmodel):
 	plt.figure()
@@ -60,9 +66,9 @@ def animate_path(track):
 if __name__ == "__main__":
 	cost_model = CostModel()
 	track = cost_model.track
-	# plot_track2D(track)
-	# plot_track(track)
-	plot_cost_map(cost_model)
+	plot_track2D(track)
+	plot_track(track)
+	# plot_cost_map(cost_model)
 	# plot_track_map(track)
 	# animate_path(track)
-	plt.show()
+	# plt.show()
