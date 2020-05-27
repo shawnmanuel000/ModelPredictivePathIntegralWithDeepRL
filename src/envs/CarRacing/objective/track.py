@@ -17,9 +17,9 @@ class Track():
 		self.max_point = np.array([self.Xmap[-1], self.Ymap[-1], self.Zmap[-1]])
 		
 	def min_dist(self, point):
-		xt, yt, zt = point
-		if zt<1: print(point)
-		dists = [np.sqrt((xt-x)**2 + (yt-y)**2 + 0.1*(zt-z)**2) for x,z,y in self.track]
+		i,(xt, yt, zt) = point
+		if i%10000==0: print(point)
+		dists = [np.sqrt((xt-x)**2 + (yt-y)**2 + 0.02*(zt-z)**2) for x,z,y in self.track]
 		return min(dists)
 
 	def nearest_point(self, point):

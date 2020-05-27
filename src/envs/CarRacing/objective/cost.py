@@ -10,7 +10,7 @@ root = os.path.dirname(os.path.abspath(__file__))
 map_dir = os.path.abspath(f"{root}/cost_maps")
 
 class CostModel():
-	def __init__(self, cost_name="cost_map3Ddense"):
+	def __init__(self, cost_name="cost_map2Ddense"):
 		self.track = Track()
 		self.load_cost_map(cost_name)
 		self.min_point = np.array([self.X[0], self.Y[0], self.Z[0]])
@@ -50,7 +50,7 @@ class CostModel():
 			X = np.arange(x_min-buffer, x_max+buffer, res)
 			Y = np.arange(y_min-buffer, y_max+buffer, res)
 			Z = np.array([z_min, z_max])
-			points = list(it.product(X, Y, Z))
+			points = enumerate(list(it.product(X, Y, Z)))
 			with Pool(32) as p:
 				dists = p.map(self.track.min_dist, points)
 			dists = np.array(dists).reshape(len(X), len(Y), len(Z))
