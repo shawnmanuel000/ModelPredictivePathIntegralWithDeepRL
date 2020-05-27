@@ -10,12 +10,6 @@ all_envmodels = {
 	"dfrntl": DifferentialEnv
 }
 
-mpc_config = Config(
-	NSAMPLES=500, 
-	HORIZON=20, 
-	LAMBDA=0.5
-)
-
 envmodel_config = Config(
 	FACTOR = 0.5,
 	PATIENCE = 5,
@@ -40,7 +34,7 @@ def set_dynamics_size(config, make_env):
 def get_envmodel(state_size, action_size, config, load="", gpu=True):
 	envmodel = config.get("ENV_MODEL")
 	dyn_config = dynamics_configs.get(envmodel, envmodel_config)
-	config.update(DYN=dyn_config, MPC=mpc_config)
+	config.update(DYN=dyn_config)
 	return all_envmodels[envmodel](state_size, action_size, config, load=load, gpu=gpu)
 
 class EnvModel():
@@ -49,7 +43,7 @@ class EnvModel():
 		self.state_size = state_size
 		self.action_size = action_size
 
-	def step(self, action, state, **kwargs):
+	def step(self, action, state=None, **kwargs):
 		next_state, reward = self.network.step(action, state, **kwargs)
 		return next_state, reward
 

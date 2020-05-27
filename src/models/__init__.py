@@ -59,6 +59,12 @@ model_configs = {
 	),
 	"mppi": net_config.clone(
 		ENV_MODEL = "dfrntl",
+		MPC = Config(
+			NSAMPLES = 2500, 
+			HORIZON = 100, 
+			LAMBDA = 0.5,
+			CONTROL_FREQ = 2
+		)
 	)
 }
 

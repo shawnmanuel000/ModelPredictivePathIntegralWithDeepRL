@@ -88,9 +88,11 @@ class CarRacing(gym.Env, metaclass=EnvMeta):
 	def observation(self, state=None):
 		state = self.env.reset() if state is None else state
 		spec = self.track_spec(state)
-		values = map(spec.get, ["pos", "vel", "angvel", "steer_angle", "rpm", "idle", "costs"])
-		observation = np.concatenate(list(values), -1)
-		self.dynamics_size = len(observation) - len(spec["costs"])
+		self.dynamics_keys = ["pos", "vel", "angvel", "steer_angle", "rpm", "idle", "costs"]
+		values = list(map(spec.get, self.dynamics_keys))
+		self.dynamics_lens = list(map(len, values))
+		observation = np.concatenate(values, -1)
+		self.dynamics_size = sum(self.dynamics_lens[:-1])
 		return observation, spec
 
 	@staticmethod

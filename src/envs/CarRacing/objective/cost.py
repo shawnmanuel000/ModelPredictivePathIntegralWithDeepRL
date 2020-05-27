@@ -20,13 +20,12 @@ class CostModel():
 
 	def get_cost(self, state, prevstate=None):
 		prevstate = state if prevstate is None else prevstate
-		px, pz, py = prevstate["pos"]
-		x, z, y = state["pos"]
-		_, _, vy = state["vel"]
-		idle = state.get("idle",[0])[0]
-		cost = self.get_point_cost((x,y), transform=True)
-		progress = self.track.get_progress([px,py,pz], [x,y,z])
-		reward = min(progress,0) + 2*progress + np.tanh(vy/self.vtarget)-np.power(self.vtarget-vy,2)/self.vtarget**2 - cost**2
+		prevpos = prevstate["pos"][...,[0,2,1]]
+		pos = state["pos"][...,[0,2,1]]
+		vy = state["vel"][...,-1]
+		cost = self.get_point_cost(pos, transform=True)
+		progress = self.track.get_progress(prevpos, pos)
+		reward = np.minimum(progress,0) + 2*progress + np.tanh(vy/self.vtarget)-np.power(self.vtarget-vy,2)/self.vtarget**2 - cost**2
 		return -reward
 
 	def get_point_cost(self, pos, transform=True):

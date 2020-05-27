@@ -37,7 +37,7 @@ class RewardModel(torch.nn.Module):
 		if self.cost and self.dyn_spec:
 			next_state, state_dot = [x.cpu().numpy() for x in [next_state, state_dot]]
 			ns_spec, s_spec = map(self.dyn_spec.observation_spec, [next_state, next_state-state_dot])
-			reward = -self.cost.get_cost(ns_spec, s_spec)
+			reward = -torch.FloatTensor(self.cost.get_cost(ns_spec, s_spec))
 		else:
 			inputs = torch.cat([next_state, state_dot],-1)
 			reward = self.linear(inputs)
@@ -57,15 +57,15 @@ class DifferentialEnv(PTNetwork):
 		self.to(self.device)
 		if load: self.load_model(load)
 
-	def step(self, action, state, numpy=False, grad=False):
-		state = state[:,:self.dyn_index]
+	def step(self, action, state=None, numpy=False, grad=False):
+		state = (self.state if state is None else state)[:,:self.dyn_index]
 		with torch.enable_grad() if grad else torch.no_grad():
 			state, action = map(self.to_tensor, [state, action])
 			if self.discrete: action = one_hot(action)
 			if self.state is None: self.state = state
 			self.state, self.state_dot = self.dynamics(action, state, self.state_dot)
 			reward = self.reward(self.state.detach(), self.state_dot.detach()).squeeze(-1)
-		return [x.cpu().numpy() if numpy else x for x in [self.state, reward, self.state_dot]]
+		return [x.cpu().numpy() if numpy else x for x in [self.state, reward]]
 
 	def reset(self, batch_size=None, state=None, **kwargs):
 		if state is not None: state = state[:,:self.dyn_index]
@@ -80,17 +80,17 @@ class DifferentialEnv(PTNetwork):
 		rewards = []
 		self.reset(batch_size=state.shape[0], state=state)
 		for action in actions:
-			next_state, reward, state_dot = self.step(action, self.state, grad=True)
+			next_state, reward = self.step(action, self.state, grad=True)
 			next_states.append(next_state)
-			states_dot.append(state_dot)
+			states_dot.append(self.state_dot)
 			rewards.append(reward)
-		next_states, rewards, states_dot = map(lambda x: torch.stack(x,1), [next_states, rewards, states_dot])
-		return next_states, rewards, states_dot
+		next_states, states_dot, rewards = map(lambda x: torch.stack(x,1), [next_states, states_dot, rewards])
+		return (next_states, states_dot), rewards
 
 	def get_loss(self, states, actions, next_states, rewards, dones):
 		s, a, ns, r = map(self.to_tensor, (states, actions, next_states, rewards))
 		s, ns = [x[:,:,:self.dyn_index] for x in [s, ns]]
-		next_states, rewards, states_dot = self.rollout(a, s[:,0])
+		(next_states, states_dot), rewards = self.rollout(a, s[:,0])
 		dyn_loss = (next_states - ns).pow(2).sum(-1).mean()
 		dot_loss = (states_dot - (ns-s)).pow(2).sum(-1).mean()
 		rew_loss = (rewards - r).pow(2).mean()
