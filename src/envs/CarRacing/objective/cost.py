@@ -10,7 +10,7 @@ root = os.path.dirname(os.path.abspath(__file__))
 map_dir = os.path.abspath(f"{root}/cost_maps")
 
 class CostModel():
-	def __init__(self, cost_name="cost_map2Ddense"):
+	def __init__(self, cost_name="cost_map3Ddense"):
 		self.track = Track()
 		self.load_cost_map(cost_name)
 		self.min_point = np.array([self.X[0], self.Y[0], self.Z[0]])
