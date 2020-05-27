@@ -15,12 +15,14 @@ class Track():
 		self.load_point_map(map_name)
 		self.min_point = np.array([self.Xmap[0], self.Ymap[0], self.Zmap[0]])
 		self.max_point = np.array([self.Xmap[-1], self.Ymap[-1], self.Zmap[-1]])
-		
+
 	def min_dist(self, point):
 		i,(xt, yt, zt) = point
 		if i%10000==0: print(point)
-		dists = [np.sqrt((xt-x)**2 + (yt-y)**2 + 0.02*(zt-z)**2) for x,z,y in self.track]
-		return min(dists)
+		idx = self.nearest_point((xt,yt,zt))
+		x,z,y = self.track[idx]
+		dist = np.sqrt((xt-x)**2 + (yt-y)**2)
+		return dist
 
 	def nearest_point(self, point):
 		xt, yt, zt = point
