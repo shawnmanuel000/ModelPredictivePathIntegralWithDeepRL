@@ -25,7 +25,8 @@ class CostModel():
 		vy = state["vel"][...,-1]
 		cost = self.get_point_cost(pos, transform=True)
 		progress = self.track.get_progress(prevpos, pos)
-		reward = np.minimum(progress,0) + 2*progress + np.tanh(vy/self.vtarget)-np.power(self.vtarget-vy,2)/self.vtarget**2 - cost**2
+		# reward = np.minimum(progress,0) + 2*progress + np.tanh(vy/self.vtarget)-np.power(self.vtarget-vy,2)/self.vtarget**2 - cost**2
+		reward = progress + 0.5*np.tanh(vy/self.vtarget)-0.5*np.power(self.vtarget-vy,2)/self.vtarget**2 - 0.5*cost**2
 		return -reward
 
 	def get_point_cost(self, pos, transform=True):

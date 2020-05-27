@@ -1,0 +1,238 @@
+Model: <class 'src.models.pytorch.mpc.envmodel.differential.DifferentialEnv'>, Env: CarRacing-v1, Date: 26/05/2020 22:33:38
+CPU: 8 Core, 5.0GHz, 62.66 GB, Linux-5.3.0-53-generic-x86_64-with-debian-buster-sid
+GPU 0: GeForce RTX 2070, 7.98 GB (Driver: 440.64.00)
+Git URL: git@github.com:shawnmanuel000/ModelPredictivePathIntegralWithDeepRL.git
+Hash: 6a19267a43391e9a01849288d2acc56e2fb9f169
+Branch: master
+
+config: 
+   TRIAL_AT = 5000
+   SAVE_AT = 1
+   REG_LAMBDA = 1e-06
+   LEARN_RATE = 0.0001
+   DISCOUNT_RATE = 0.99
+   ADVANTAGE_DECAY = 0.95
+   INPUT_LAYER = 512
+   ACTOR_HIDDEN = 256
+   CRITIC_HIDDEN = 1024
+   EPS_MAX = 1.0
+   EPS_MIN = 0.1
+   EPS_DECAY = 0.998
+   NUM_STEPS = 500
+   MAX_BUFFER_SIZE = 100000
+   REPLAY_BATCH_SIZE = 32
+   TARGET_UPDATE_RATE = 0.0004
+   dynamics_size = 10
+   env_name = CarRacing-v1
+   envmodel = dfrntl
+   model = None
+   nworkers = 0
+   epochs = 50
+   seq_len = 50
+   batch_size = 32
+   train_prop = 0.9
+   DYN = 
+      FACTOR = 0.5
+      PATIENCE = 5
+      LEARN_RATE = 0.0005
+      TRANSITION_HIDDEN = 256,
+num_envs: 0,
+envs: <__main__.Trainer object at 0x7fc1074081d0>,
+agent: DifferentialEnv(
+	  (reward): RewardModel(
+	    (linear): Linear(in_features=20, out_features=1, bias=True)
+	  )
+	  (dynamics): TransitionModel(
+	    (gru): GRUCell(53, 256)
+	    (linear1): Linear(in_features=256, out_features=256, bias=True)
+	    (linear2): Linear(in_features=256, out_features=256, bias=True)
+	    (linear3): Linear(in_features=256, out_features=10, bias=True)
+	  )
+	) 
+	training = True
+	tau = 0.0004
+	name = dfrntl
+	stats = <src.utils.logger.Stats object at 0x7fc1027e6d50> 
+		mean_dict = {}
+		sum_dict = {}
+	config = <src.utils.config.Config object at 0x7fc10cb06f10> 
+		TRIAL_AT = 5000
+		SAVE_AT = 1
+		REG_LAMBDA = 1e-06
+		LEARN_RATE = 0.0001
+		DISCOUNT_RATE = 0.99
+		ADVANTAGE_DECAY = 0.95
+		INPUT_LAYER = 512
+		ACTOR_HIDDEN = 256
+		CRITIC_HIDDEN = 1024
+		EPS_MAX = 1.0
+		EPS_MIN = 0.1
+		EPS_DECAY = 0.998
+		NUM_STEPS = 500
+		MAX_BUFFER_SIZE = 100000
+		REPLAY_BATCH_SIZE = 32
+		TARGET_UPDATE_RATE = 0.0004
+		dynamics_size = 10
+		env_name = CarRacing-v1
+		envmodel = dfrntl
+		model = None
+		nworkers = 0
+		epochs = 50
+		seq_len = 50
+		batch_size = 32
+		train_prop = 0.9
+		DYN = <src.utils.config.Config object at 0x7fc10cafcf90> 
+			FACTOR = 0.5
+			PATIENCE = 5
+			LEARN_RATE = 0.0005
+			TRANSITION_HIDDEN = 256
+	device = cuda
+	state_size = (40,)
+	action_size = (3,)
+	discrete = False
+	dyn_index = 10
+	optimizer = Adam (
+	Parameter Group 0
+	    amsgrad: False
+	    betas: (0.9, 0.999)
+	    eps: 1e-08
+	    lr: 0.0005
+	    weight_decay: 0
+	)
+	scheduler = <torch.optim.lr_scheduler.ReduceLROnPlateau object at 0x7fc102787850>,
+
+import os
+import torch
+import numpy as np
+from src.utils.misc import load_module
+from ...agents.base import PTNetwork, one_hot
+
+class TransitionModel(torch.nn.Module):
+	def __init__(self, state_size, action_size, config):
+		super().__init__()
+		self.gru = torch.nn.GRUCell(action_size[-1] + 5*state_size[-1], config.DYN.TRANSITION_HIDDEN)
+		self.linear1 = torch.nn.Linear(config.DYN.TRANSITION_HIDDEN, config.DYN.TRANSITION_HIDDEN)
+		self.linear2 = torch.nn.Linear(config.DYN.TRANSITION_HIDDEN, config.DYN.TRANSITION_HIDDEN)
+		self.linear3 = torch.nn.Linear(config.DYN.TRANSITION_HIDDEN, state_size[-1])
+		self.config = config
+
+	def forward(self, action, state, state_dot):
+		inputs = torch.cat([action, state, state_dot, state.pow(2), state.sin(), state.cos()],-1)
+		self.hidden = self.gru(inputs, self.hidden)
+		linear1 = self.linear1(self.hidden).relu() + self.hidden
+		linear2 = self.linear2(linear1).relu() + linear1
+		state_dot = self.linear3(linear2).relu()
+		next_state = state + state_dot
+		return next_state, state_dot
+
+	def reset(self, device, batch_size=None):
+		if batch_size is None: batch_size = self.hidden[0].shape[1] if hasattr(self, "hidden") else 1
+		self.hidden = torch.zeros(batch_size, self.config.DYN.TRANSITION_HIDDEN, device=device)
+
+class RewardModel(torch.nn.Module):
+	def __init__(self, state_size, action_size, config):
+		super().__init__()
+		self.linear = torch.nn.Linear(2*state_size[-1], 1)
+		self.cost = load_module(config.REWARD_MODEL)() if config.get("REWARD_MODEL") else None
+		self.dyn_spec = load_module(config.DYNAMICS_SPEC) if config.get("DYNAMICS_SPEC") else None
+
+	def forward(self, next_state, state_dot):
+		if self.cost and self.dyn_spec:
+			next_state, state_dot = [x.cpu().numpy() for x in [next_state, state_dot]]
+			ns_spec, s_spec = map(self.dyn_spec.observation_spec, [next_state, next_state-state_dot])
+			reward = -torch.FloatTensor(self.cost.get_cost(ns_spec, s_spec))
+		else:
+			inputs = torch.cat([next_state, state_dot],-1)
+			reward = self.linear(inputs)
+		return reward
+
+class DifferentialEnv(PTNetwork):
+	def __init__(self, state_size, action_size, config, load="", gpu=True, name="dfrntl"):
+		super().__init__(config, gpu, name)
+		self.state_size = state_size
+		self.action_size = action_size
+		self.discrete = type(self.action_size) != tuple
+		self.dyn_index = config.get("dynamics_size", state_size[-1])
+		self.reward = RewardModel([self.dyn_index], action_size, config)
+		self.dynamics = TransitionModel([self.dyn_index], action_size, config)
+		self.optimizer = torch.optim.Adam(self.parameters(), lr=config.DYN.LEARN_RATE)
+		self.scheduler = torch.optim.lr_scheduler.ReduceLROnPlateau(self.optimizer, factor=config.DYN.FACTOR, patience=config.DYN.PATIENCE)
+		self.to(self.device)
+		if load: self.load_model(load)
+
+	def step(self, action, state=None, numpy=False, grad=False):
+		state = (self.state if state is None else state)[:,:self.dyn_index]
+		with torch.enable_grad() if grad else torch.no_grad():
+			state, action = map(self.to_tensor, [state, action])
+			if self.discrete: action = one_hot(action)
+			if self.state is None: self.state = state
+			self.state, self.state_dot = self.dynamics(action, state, self.state_dot)
+			reward = self.reward(self.state.detach(), self.state_dot.detach()).squeeze(-1)
+		return [x.cpu().numpy() if numpy else x for x in [self.state, reward]]
+
+	def reset(self, batch_size=None, state=None, **kwargs):
+		if state is not None: state = state[:,:self.dyn_index]
+		self.dynamics.reset(self.device, batch_size)
+		self.state = self.to_tensor(state)
+		self.state_dot = torch.zeros_like(self.state) if state is not None else None
+
+	def rollout(self, actions, state):
+		actions = self.to_tensor(actions).transpose(0,1)
+		next_states = []
+		states_dot = []
+		rewards = []
+		self.reset(batch_size=state.shape[0], state=state)
+		for action in actions:
+			next_state, reward = self.step(action, self.state, grad=True)
+			next_states.append(next_state)
+			states_dot.append(self.state_dot)
+			rewards.append(reward)
+		next_states, states_dot, rewards = map(lambda x: torch.stack(x,1), [next_states, states_dot, rewards])
+		return (next_states, states_dot), rewards
+
+	def get_loss(self, states, actions, next_states, rewards, dones):
+		s, a, ns, r = map(self.to_tensor, (states, actions, next_states, rewards))
+		s, ns = [x[:,:,:self.dyn_index] for x in [s, ns]]
+		(next_states, states_dot), rewards = self.rollout(a, s[:,0])
+		dyn_loss = (next_states - ns).pow(2).mean(-1).mean()
+		dot_loss = (states_dot - (ns-s)).pow(2).sum(-1).mean()
+		rew_loss = 0.1*(rewards - r).pow(2).mean()
+		self.stats.mean(dyn_loss=dyn_loss, dot_loss=dot_loss, rew_loss=rew_loss)
+		return dyn_loss + dot_loss + rew_loss
+
+	def optimize(self, states, actions, next_states, rewards, dones):
+		loss = self.get_loss(states, actions, next_states, rewards, dones)
+		self.optimizer.zero_grad()
+		loss.backward()
+		self.optimizer.step()
+		return loss
+
+	def schedule(self, test_loss):
+		self.scheduler.step(test_loss)
+
+	def save_model(self, dirname="pytorch", name="best", net=None):
+		filepath, _ = self.get_checkpoint_path(dirname, name, net)
+		os.makedirs(os.path.dirname(filepath), exist_ok=True)
+		torch.save(self.state_dict(), filepath)
+		
+	def load_model(self, dirname="pytorch", name="best", net=None):
+		filepath, _ = self.get_checkpoint_path(dirname, name, net)
+		if os.path.exists(filepath):
+			self.load_state_dict(torch.load(filepath, map_location=self.device))
+			print(f"Loaded DFRNTL model at {filepath}")
+		return self
+
+
+Step:       0, Reward:    51.399 [  58.684], Avg:    51.399 (1.000) <0-00:00:00> ({'dyn_loss':    14.6030, 'dot_loss':     7.1701, 'rew_loss':    36.1938})
+Step:       1, Reward:    50.258 [  55.663], Avg:    50.828 (1.000) <0-00:04:00> ({'dyn_loss':    12.0672, 'dot_loss':     6.9528, 'rew_loss':    36.1110})
+Step:       2, Reward:    49.784 [  54.663], Avg:    50.480 (1.000) <0-00:08:00> ({'dyn_loss':    11.3049, 'dot_loss':     6.7910, 'rew_loss':    36.0866})
+Step:       3, Reward:    49.844 [  54.371], Avg:    50.321 (1.000) <0-00:11:59> ({'dyn_loss':    11.0796, 'dot_loss':     6.7181, 'rew_loss':    36.1280})
+Step:       4, Reward:    49.731 [  54.122], Avg:    50.203 (1.000) <0-00:16:00> ({'dyn_loss':    10.8542, 'dot_loss':     6.7027, 'rew_loss':    36.1329})
+Step:       5, Reward:    49.429 [  54.060], Avg:    50.074 (1.000) <0-00:20:02> ({'dyn_loss':    10.7806, 'dot_loss':     6.6965, 'rew_loss':    36.1271})
+Step:       6, Reward:    49.449 [  53.913], Avg:    49.985 (1.000) <0-00:24:03> ({'dyn_loss':    10.6274, 'dot_loss':     6.6918, 'rew_loss':    36.1541})
+Step:       7, Reward:    49.786 [  53.633], Avg:    49.960 (1.000) <0-00:28:04> ({'dyn_loss':    10.5082, 'dot_loss':     6.6780, 'rew_loss':    36.0684})
+Step:       8, Reward:    49.420 [  53.650], Avg:    49.900 (1.000) <0-00:32:05> ({'dyn_loss':    10.4928, 'dot_loss':     6.6703, 'rew_loss':    36.0707})
+Step:       9, Reward:    49.290 [  53.611], Avg:    49.839 (1.000) <0-00:43:02> ({'dyn_loss':    10.4464, 'dot_loss':     6.6702, 'rew_loss':    36.0691})
+Step:      10, Reward:    49.575 [  53.553], Avg:    49.815 (1.000) <0-01:01:17> ({'dyn_loss':    10.4168, 'dot_loss':     6.6736, 'rew_loss':    36.0708})
+Step:      11, Reward:    49.363 [  53.439], Avg:    49.777 (1.000) <0-01:19:33> ({'dyn_loss':    10.3076, 'dot_loss':     6.6602, 'rew_loss':    36.0701})
+Step:      12, Reward:    50.941 [  53.834], Avg:    49.867 (1.000) <0-01:37:45> ({'dyn_loss':    10.7563, 'dot_loss':     6.7200, 'rew_loss':    36.0731})

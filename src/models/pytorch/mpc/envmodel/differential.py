@@ -7,16 +7,16 @@ from ...agents.base import PTNetwork, one_hot
 class TransitionModel(torch.nn.Module):
 	def __init__(self, state_size, action_size, config):
 		super().__init__()
-		self.gru = torch.nn.GRUCell(action_size[-1] + 5*state_size[-1], 5*state_size[-1])
-		self.linear1 = torch.nn.Linear(5*state_size[-1], 3*state_size[-1])
-		self.linear2 = torch.nn.Linear(3*state_size[-1], 3*state_size[-1])
-		self.linear3 = torch.nn.Linear(3*state_size[-1], state_size[-1])
-		self.state_size = state_size
+		self.gru = torch.nn.GRUCell(action_size[-1] + 5*state_size[-1], config.DYN.TRANSITION_HIDDEN)
+		self.linear1 = torch.nn.Linear(config.DYN.TRANSITION_HIDDEN, config.DYN.TRANSITION_HIDDEN)
+		self.linear2 = torch.nn.Linear(config.DYN.TRANSITION_HIDDEN, config.DYN.TRANSITION_HIDDEN)
+		self.linear3 = torch.nn.Linear(config.DYN.TRANSITION_HIDDEN, state_size[-1])
+		self.config = config
 
 	def forward(self, action, state, state_dot):
 		inputs = torch.cat([action, state, state_dot, state.pow(2), state.sin(), state.cos()],-1)
 		self.hidden = self.gru(inputs, self.hidden)
-		linear1 = self.linear1(self.hidden).relu()
+		linear1 = self.linear1(self.hidden).relu() + self.hidden
 		linear2 = self.linear2(linear1).relu() + linear1
 		state_dot = self.linear3(linear2).relu()
 		next_state = state + state_dot
@@ -24,7 +24,7 @@ class TransitionModel(torch.nn.Module):
 
 	def reset(self, device, batch_size=None):
 		if batch_size is None: batch_size = self.hidden[0].shape[1] if hasattr(self, "hidden") else 1
-		self.hidden = torch.zeros(batch_size, 5*self.state_size[-1], device=device)
+		self.hidden = torch.zeros(batch_size, self.config.DYN.TRANSITION_HIDDEN, device=device)
 
 class RewardModel(torch.nn.Module):
 	def __init__(self, state_size, action_size, config):
@@ -91,9 +91,9 @@ class DifferentialEnv(PTNetwork):
 		s, a, ns, r = map(self.to_tensor, (states, actions, next_states, rewards))
 		s, ns = [x[:,:,:self.dyn_index] for x in [s, ns]]
 		(next_states, states_dot), rewards = self.rollout(a, s[:,0])
-		dyn_loss = (next_states - ns).pow(2).sum(-1).mean()
+		dyn_loss = (next_states - ns).pow(2).mean(-1).mean()
 		dot_loss = (states_dot - (ns-s)).pow(2).sum(-1).mean()
-		rew_loss = (rewards - r).pow(2).mean()
+		rew_loss = 0.1*(rewards - r).pow(2).mean()
 		self.stats.mean(dyn_loss=dyn_loss, dot_loss=dot_loss, rew_loss=rew_loss)
 		return dyn_loss + dot_loss + rew_loss
 

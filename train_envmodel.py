@@ -23,7 +23,7 @@ class Trainer():
 		self.action_size = [env.action_space.n] if hasattr(env.action_space, 'n') else env.action_space.shape
 		env.close()
 
-	def train_loop(self, ep, envmodel, update=10):
+	def train_loop(self, ep, envmodel, update=1):
 		batch_losses = []
 		envmodel.network.train()
 		with tqdm.tqdm(total=len(self.dataset_train)) as pbar:
@@ -68,8 +68,8 @@ def parse_args(envs, models, envmodels):
 	parser.add_argument("--model", type=str, default=None, choices=models, help="Which RL algorithm to use as the agent. Allowed values are:\n"+', '.join(models), metavar="model")
 	parser.add_argument("--nworkers", type=int, default=0, help="Number of workers to use to load dataloader")
 	parser.add_argument("--epochs", type=int, default=50, help="Number of epochs to train the envmodel")
-	parser.add_argument("--seq_len", type=int, default=8, help="Length of sequence to train RNN")
-	parser.add_argument("--batch_size", type=int, default=128, help="Size of batch to train RNN")
+	parser.add_argument("--seq_len", type=int, default=50, help="Length of sequence to train RNN")
+	parser.add_argument("--batch_size", type=int, default=32, help="Size of batch to train RNN")
 	parser.add_argument("--train_prop", type=float, default=0.9, help="Proportion of trajectories to use for training")
 	return parser.parse_args()
 

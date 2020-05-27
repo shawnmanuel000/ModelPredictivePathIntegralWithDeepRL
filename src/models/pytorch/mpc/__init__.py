@@ -17,10 +17,12 @@ envmodel_config = Config(
 )
 
 dynamics_configs = {
-	"real": envmodel_config.clone(),
 	"mdrnn": envmodel_config.clone(
 		HIDDEN_SIZE = 32,
 		NGAUSS = 1,
+	),
+	"dfrntl": envmodel_config.clone(
+		TRANSITION_HIDDEN = 256
 	)
 }
 
@@ -32,7 +34,7 @@ def set_dynamics_size(config, make_env):
 	return config
 
 def get_envmodel(state_size, action_size, config, load="", gpu=True):
-	envmodel = config.get("ENV_MODEL")
+	envmodel = config.get("envmodel", config.get("ENV_MODEL"))
 	dyn_config = dynamics_configs.get(envmodel, envmodel_config)
 	config.update(DYN=dyn_config)
 	return all_envmodels[envmodel](state_size, action_size, config, load=load, gpu=gpu)

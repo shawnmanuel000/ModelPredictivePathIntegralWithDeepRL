@@ -92,7 +92,7 @@ class CarRacing(gym.Env, metaclass=EnvMeta):
 		values = list(map(spec.get, self.dynamics_keys))
 		self.dynamics_lens = list(map(len, values))
 		observation = np.concatenate(values, -1)
-		self.dynamics_size = sum(self.dynamics_lens[:-1])
+		self.dynamics_size = sum(self.dynamics_lens[:4])
 		return observation, spec
 
 	@staticmethod
