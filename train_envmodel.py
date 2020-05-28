@@ -18,10 +18,6 @@ class Trainer():
 		self.dataset_test = RolloutSequenceDataset(config, train=False)
 		self.train_loader = torch.utils.data.DataLoader(self.dataset_train, batch_size=config.batch_size, shuffle=True, num_workers=config.nworkers)
 		self.test_loader = torch.utils.data.DataLoader(self.dataset_test, batch_size=config.batch_size, shuffle=False, num_workers=config.nworkers)
-		env = make_env()
-		self.state_size = [env.observation_space.n] if hasattr(env.observation_space, 'n') else env.observation_space.shape
-		self.action_size = [env.action_space.n] if hasattr(env.action_space, 'n') else env.action_space.shape
-		env.close()
 
 	def train_loop(self, ep, envmodel, update=1):
 		batch_losses = []
@@ -47,7 +43,7 @@ class Trainer():
 
 def train(make_env, config):
 	trainer = Trainer(make_env, config)
-	envmodel = EnvModel(trainer.state_size, trainer.action_size, config, load="", gpu=True)
+	envmodel = EnvModel(config.state_size, config.action_size, config, load="", gpu=True)
 	checkpoint = f"{config.env_name}"
 	logger = Logger(trainer, envmodel.network, config)
 	ep_train_losses = []
@@ -68,7 +64,7 @@ def parse_args(envs, models, envmodels):
 	parser.add_argument("--model", type=str, default=None, choices=models, help="Which RL algorithm to use as the agent. Allowed values are:\n"+', '.join(models), metavar="model")
 	parser.add_argument("--nworkers", type=int, default=0, help="Number of workers to use to load dataloader")
 	parser.add_argument("--epochs", type=int, default=50, help="Number of epochs to train the envmodel")
-	parser.add_argument("--seq_len", type=int, default=50, help="Length of sequence to train RNN")
+	parser.add_argument("--seq_len", type=int, default=20, help="Length of sequence to train RNN")
 	parser.add_argument("--batch_size", type=int, default=32, help="Size of batch to train RNN")
 	parser.add_argument("--train_prop", type=float, default=0.9, help="Proportion of trajectories to use for training")
 	return parser.parse_args()
