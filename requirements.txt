@@ -11,3 +11,4 @@ tqdm==4.46.0
 scipy==1.4.1
 torchvision==0.5.0
 mpi4py==3.0.3
+pyquaternion==0.9.5

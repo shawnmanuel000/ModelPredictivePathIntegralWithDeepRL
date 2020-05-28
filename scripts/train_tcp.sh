@@ -38,11 +38,11 @@ run()
 
 	for j in `seq $numWorkers -1 1` 
 	do
-		open_terminal "python3.7 -B train_agent.py $env $agent pt --nsteps $steps --tcp_rank $j --tcp_ports $port_string --train_prop $trainprop" &
+		open_terminal "python3.7 -B train_agent.py $env $agent --nsteps $steps --tcp_rank $j --tcp_ports $port_string --train_prop $trainprop" &
 		sleep 0.4
 	done
 	sleep 30
-	python3.7 -B train_agent.py $env $agent pt --nsteps $steps --tcp_rank 0 --tcp_ports $port_string --train_prop $trainprop
+	python3.7 -B train_agent.py $env $agent --nsteps $steps --tcp_rank 0 --tcp_ports $port_string --train_prop $trainprop
 }
 
 run $steps $env $model $workers

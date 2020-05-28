@@ -81,7 +81,7 @@ def parse_args(envs, models, frameworks):
 	parser = argparse.ArgumentParser(description="Gym Trainer")
 	parser.add_argument("env_name", type=str, choices=envs, help="Name of the environment to use. Allowed values are:\n"+', '.join(envs), metavar="env_name")
 	parser.add_argument("model", type=str, choices=models, help="Which RL algorithm to use as the agent. Allowed values are:\n"+', '.join(models), metavar="model")
-	parser.add_argument("framework", type=str, choices=frameworks, help="Which framework to use for training. Allowed values are:\n"+', '.join(frameworks), metavar="framework")
+	parser.add_argument("--framework", type=str, default=frameworks[0], choices=frameworks, help="Which framework to use for training. Allowed values are:\n"+', '.join(frameworks), metavar="framework")
 	parser.add_argument("--train_prop", type=float, default=1.0, help="The proportion of train works to eval workers when using multiprocessing")
 	parser.add_argument("--tcp_ports", type=int, default=[], nargs="+", help="The list of worker ports to connect to")
 	parser.add_argument("--tcp_rank", type=int, default=0, help="Which port to listen on (as a worker server)")
@@ -94,7 +94,7 @@ def parse_args(envs, models, frameworks):
 	return parser.parse_args()
 
 if __name__ == "__main__":
-	args = parse_args(all_envs, list(all_models.values())[0].keys(), all_models.keys())
+	args = parse_args(all_envs, list(all_models.values())[0].keys(), list(all_models.keys()))
 	make_env, model, config = get_config(args.env_name, args.model, args.framework, args.render)
 	rank, size = set_rank_size(args.tcp_rank, args.tcp_ports)
 	split = max(int((size-1)*args.train_prop)+1, 1)

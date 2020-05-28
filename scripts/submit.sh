@@ -3,9 +3,9 @@
 base=$1
 env_name="CarRacing-v1"
 nsteps=500000
-models=([0]="sac" [1]="ddpg" [2]="ppo", [3]="rand")
+models=([0]="sac" [1]="ddpg" [2]="ppo" [3]="rand")
 
-for i in `seq 0 2` 
+for i in 1 2 0
 do
 	model=${models[$i]}
 	port=$(($base+1000+$(($i*1000))))

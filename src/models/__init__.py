@@ -61,9 +61,9 @@ model_configs = {
 		ENV_MODEL = "dfrntl",
 		MPC = Config(
 			NSAMPLES = 2500, 
-			HORIZON = 100, 
+			HORIZON = 50, 
 			LAMBDA = 0.5,
-			CONTROL_FREQ = 2
+			CONTROL_FREQ = 1
 		)
 	)
 }

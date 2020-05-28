@@ -26,7 +26,7 @@ class CostModel():
 		cost = self.get_point_cost(pos, transform=True)
 		progress = self.track.get_progress(prevpos, pos)
 		# reward = np.minimum(progress,0) + 2*progress + np.tanh(vy/self.vtarget)-np.power(self.vtarget-vy,2)/self.vtarget**2 - cost**2
-		reward = 2*progress + np.tanh(vy/self.vtarget) - np.power(self.vtarget-vy,2)/self.vtarget**2 - cost**2
+		reward = np.where(progress<0,3,2)*progress + np.tanh(vy/self.vtarget) - np.power(self.vtarget-vy,2)/self.vtarget**2 - cost**2
 		return -reward
 
 	def get_point_cost(self, pos, transform=True):
@@ -37,7 +37,7 @@ class CostModel():
 		point = np.clip(point, minref, maxref)
 		index = np.round((point-minref)/self.res).astype(np.int32)
 		zindex = np.round(index[...,2]*self.res/(self.max_point[2] - self.min_point[2])).astype(np.int32)
-		cost = self.cost_map[index[...,0],index[...,1]]
+		cost = self.cost_map[index[...,0],index[...,1],zindex]
 		return np.tanh(cost/2)**2 if transform else cost
 
 	def load_cost_map(self, cost_name, res=0.1, buffer=50):

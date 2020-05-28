@@ -107,12 +107,12 @@ class DifferentialEnv(PTNetwork):
 	def schedule(self, test_loss):
 		self.scheduler.step(test_loss)
 
-	def save_model(self, dirname="pytorch", name="best", net=None):
+	def save_model(self, dirname="pytorch", name="checkpoint", net=None):
 		filepath, _ = self.get_checkpoint_path(dirname, name, net)
 		os.makedirs(os.path.dirname(filepath), exist_ok=True)
 		torch.save(self.state_dict(), filepath)
 		
-	def load_model(self, dirname="pytorch", name="best", net=None):
+	def load_model(self, dirname="pytorch", name="checkpoint", net=None):
 		filepath, _ = self.get_checkpoint_path(dirname, name, net)
 		if os.path.exists(filepath):
 			self.load_state_dict(torch.load(filepath, map_location=self.device))
