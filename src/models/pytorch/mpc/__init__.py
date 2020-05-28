@@ -13,7 +13,7 @@ all_envmodels = {
 envmodel_config = Config(
 	FACTOR = 0.5,
 	PATIENCE = 5,
-	LEARN_RATE = 0.0005,
+	LEARN_RATE = 0.001,
 )
 
 dynamics_configs = {
@@ -22,14 +22,20 @@ dynamics_configs = {
 		NGAUSS = 1,
 	),
 	"dfrntl": envmodel_config.clone(
-		TRANSITION_HIDDEN = 256
+		TRANSITION_HIDDEN = 256,
+		BETA_DYN = 0,
+		BETA_DOT = 1,
+		BETA_REW = 0
 	)
 }
 
 def set_dynamics_size(config, make_env):
 	env = make_env()
 	state_size = get_space_size(env.observation_space)
+	action_size = get_space_size(env.action_space)
 	config.dynamics_size = getattr(env.unwrapped, "dynamics_size", state_size[-1])
+	config.state_size = state_size
+	config.action_size = action_size
 	env.close()
 	return config
 

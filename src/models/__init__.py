@@ -57,11 +57,14 @@ model_configs = {
 		ENTROPY_WEIGHT = 0.01,			# The weight for the entropy term of the Actor loss
 		CLIP_PARAM = 0.05,				# The limit of the ratio of new action probabilities to old probabilities
 	),
+	"ddpg": net_config.clone(
+		EPS_DECAY = 0.999,             	# The rate at which eps decays from EPS_MAX to EPS_MIN
+	),
 	"mppi": net_config.clone(
 		ENV_MODEL = "dfrntl",
 		MPC = Config(
 			NSAMPLES = 2500, 
-			HORIZON = 50, 
+			HORIZON = 20, 
 			LAMBDA = 0.5,
 			CONTROL_FREQ = 1
 		)
@@ -90,6 +93,7 @@ env_model_configs = {
 train_config = Config(
 	TRIAL_AT = 5000,					# Number of steps between each evaluation rollout
 	SAVE_AT = 1, 						# Number of evaluation rollouts between each save weights
+	SEED = 0,
 )
 
 env_configs = {

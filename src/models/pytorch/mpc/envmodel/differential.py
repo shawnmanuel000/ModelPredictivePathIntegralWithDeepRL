@@ -93,9 +93,9 @@ class DifferentialEnv(PTNetwork):
 		(next_states, states_dot), rewards = self.rollout(a, s[:,0])
 		dyn_loss = (next_states - ns).pow(2).mean(-1).mean()
 		dot_loss = (states_dot - (ns-s)).pow(2).sum(-1).mean()
-		rew_loss = 0.1*(rewards - r).pow(2).mean()
+		rew_loss = (rewards - r).pow(2).mean()
 		self.stats.mean(dyn_loss=dyn_loss, dot_loss=dot_loss, rew_loss=rew_loss)
-		return dyn_loss + dot_loss + rew_loss
+		return self.config.DYN.BETA_DYN*dyn_loss + self.config.DYN.BETA_DOT*dot_loss + self.config.DYN.BETA_REW*rew_loss
 
 	def optimize(self, states, actions, next_states, rewards, dones):
 		loss = self.get_loss(states, actions, next_states, rewards, dones)
@@ -106,6 +106,9 @@ class DifferentialEnv(PTNetwork):
 
 	def schedule(self, test_loss):
 		self.scheduler.step(test_loss)
+
+	def get_stats(self):
+		return {**super().get_stats(), "lr": self.optimizer.param_groups[0]["lr"] if self.optimizer else None}
 
 	def save_model(self, dirname="pytorch", name="checkpoint", net=None):
 		filepath, _ = self.get_checkpoint_path(dirname, name, net)
