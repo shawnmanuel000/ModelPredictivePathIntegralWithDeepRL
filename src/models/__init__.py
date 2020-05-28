@@ -54,7 +54,7 @@ model_configs = {
 	"ppo": net_config.clone(
 		BATCH_SIZE = 32,				# Number of samples to train on for each train step
 		PPO_EPOCHS = 2,					# Number of iterations to sample batches for training
-		ENTROPY_WEIGHT = 0.005,			# The weight for the entropy term of the Actor loss
+		ENTROPY_WEIGHT = 0.01,			# The weight for the entropy term of the Actor loss
 		CLIP_PARAM = 0.05,				# The limit of the ratio of new action probabilities to old probabilities
 	),
 	"mppi": net_config.clone(

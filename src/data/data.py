@@ -57,9 +57,12 @@ def sample_single(arg):
 		state = env.reset()
 		total_reward = 0
 		done = False
+		epsilon = 0
 		rollout.s_rollout.append(state)
+		scale = np.random.uniform(0.5,0.8)
 		while not done:
-			env_action, action = agent.get_env_action(env, state, eps=0)
+			epsilon = np.tanh(epsilon + np.random.random())
+			env_action, action = agent.get_env_action(env, state, eps=scale*epsilon)
 			state, reward, done, _ = env.step(env_action)
 			rollout.step(action, state, reward, done, number=ep)
 			total_reward += reward

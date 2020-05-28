@@ -1,4 +1,4 @@
-<src.utils.config.Config object at 0x7f7cf9caaf50>
+<src.utils.config.Config object at 0x7fe750185250>
 
 class SACActor(torch.nn.Module):
 	def __init__(self, state_size, action_size, config, use_discrete=False):
