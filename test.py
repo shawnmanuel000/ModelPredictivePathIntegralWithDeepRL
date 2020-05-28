@@ -1,11 +1,12 @@
 import os
 import sys
 import numpy as np
+import matplotlib.pyplot as plt
 from src.envs import get_env
 from src.models import RandomAgent
 from src.models.input import InputController
 from src.envs.CarRacing.car_racing import CarRacing
-from src.models.pytorch.mpc import MPPIController, EnvModel, MDRNNEnv, RealEnv, envmodel_config
+from src.models.pytorch.mpc import MPPIController, EnvModel, MDRNNEnv, RealEnv, envmodel_config, set_dynamics_size
 from src.utils.envs import get_space_size
 from src.utils.config import Config
 
@@ -27,6 +28,55 @@ def test_car_sim():
 			env.render()
 			step += 1
 	env.close()
+
+
+class PathAnimator():
+	def __init__(self, track):
+		self.track = track
+		plt.ion()
+		plt.figure()
+		self.ax = plt.axes(projection='3d')
+		self.X, self.Y, self.Z = track.X, track.Y, track.Z
+
+	def animate_path(self, trajectories):
+		self.ax.cla()
+		point = trajectories[0,0]
+		# index = self.track.nearest_point(point)
+		# view = 200
+		# X, Y, Z = map(lambda x: np.roll(x,view-index)[:2*view], [self.X, self.Y, self.Z])
+		X, Y, Z = map(lambda x: x, [self.X, self.Y, self.Z])
+		self.ax.plot(X,Y,Z, color="#DDDDDD")
+		self.ax.set_zlim3d(-100, 100)
+		self.ax.set_xlim3d(point[0]-10, point[0]+10)
+		self.ax.set_ylim3d(point[2]-10, point[2]+10)
+		for path in trajectories:
+			xs, zs, ys = path[:,0], path[:,1], path[:,2]
+			self.ax.plot(xs, ys, zs, linewidth=0.2)
+		plt.draw()
+		plt.pause(0.0000001)
+
+def visualize_envmodel():
+	config = envmodel_config.clone(env_name="CarRacing-v1", envmodel="dfrntl", MPC=Config(NSAMPLES=500, HORIZON=20, LAMBDA=0.5, CONTROL_FREQ=1))
+	env = get_env(config.env_name)
+	set_dynamics_size(config, lambda: get_env(config.env_name))
+	state_size = get_space_size(env.observation_space)
+	action_size = get_space_size(env.action_space)
+	agent = MPPIController(state_size, action_size, EnvModel, config)
+	envmodel = EnvModel(state_size, action_size, config, load=config.env_name)
+	state = env.reset()
+	envmodel.reset(batch_size=1, state=[state])
+	animator = PathAnimator(env.unwrapped.cost_model.track)
+	env.render()
+	for s in range(500):
+		action = agent.get_action(state)
+		trajectories = np.stack(agent.states, 1)
+		spec = CarRacing.observation_spec(trajectories)
+		animator.animate_path(spec["pos"])
+		env_action = RandomAgent.to_env_action(env.action_space, action)
+		state, reward, done, _ = env.step(env_action)
+		ns, r = envmodel.step([action], numpy=True)
+		print(f"Step: {s:5d}, Action: {action}, Reward: {reward:5.2f} ({r[0]:5.2f}), Pos: {state[:3]} ({ns[0][:3]})")
+		if done: break
 
 def test_envmodel():
 	config = envmodel_config.clone(env_name="Pendulum-v0", envmodel="dfrntl", MPC=Config(NSAMPLES=500, HORIZON=50, LAMBDA=0.5))
@@ -96,6 +146,7 @@ def test_mppi():
 
 
 if __name__ == "__main__":
-	test_car_sim()
+	visualize_envmodel()
+	# test_car_sim()
 	# test_mppi()
 	# test_envmodel()

@@ -27,7 +27,8 @@ class MPPIController(RandomAgent):
 			self.envmodel.reset(batch_size=self.nsamples, state=x, initstate=False)
 			# costs = self.lamda * np.copy(self.init_cost)
 			controls = np.clip(self.control[None,:,:] + self.noise, -1, 1)
-			costs = np.sum([self.envmodel.step(controls[:,t], numpy=True)[1] for t in range(self.horizon)], 0)
+			self.states, costs = zip(*[self.envmodel.step(controls[:,t], numpy=True) for t in range(self.horizon)])
+			costs = np.sum(costs, 0)
 			beta = np.min(costs)
 			costs_norm = -(costs - beta)/self.lamda
 			weights = sp.special.softmax(costs_norm)

@@ -18,9 +18,13 @@ spec.loader.exec_module(envs)
 
 models = ["rand", "ddpg", "ppo", "sac", "ddqn"]
 lighter_cols = ["#EEEEEE", "#44DFFF", "#FF4493", "#BDFF4F", "#FFED44"]
-light_cols = ["#CCCCCC", "#00BFFF", "#FF1493", "#ADFF2F", "#FFED00"]
+light_cols = ["#CCCCCC", "#00BFFF", "#FF1493", "#9DFF2F", "#FFED00"]
 dark_cols = ["#777777", "#0000CD", "#FF0000", "#008000", "#FFA500"]
 root = "./logging/logs"
+
+indices = {
+	"CarRacing-v1": {"ppo": 23, "ddpg": 12, "sac": 33}
+}
 
 def cat_stats(steps, stats):
 	try:
@@ -40,7 +44,7 @@ def read_log(path):
 	steps = []
 	rewards = []
 	rolling = []
-	averages = deque(maxlen=100)
+	averages = deque(maxlen=25)
 	fields_list = []
 	with open(path, "r") as f:
 		lines = [line for line in f if re.match(r"^Step:", line)]
@@ -50,7 +54,7 @@ def read_log(path):
 		fields = [int(step), float(reward), float(std), float(avg), float(eps), time, stats]
 		averages.append(fields[1])
 		rolling.append(np.mean(averages, axis=0))
-		if len(averages)==0: averages.extend([averages[-1]]*(len(lines)//5))
+		if len(averages)==0: averages.extend([averages[-1]]*(len(lines)//10))
 		fields_list.append(fields)
 	steps, rewards, stds, avgs, epss, times, stats = map(list, zip(*fields_list))
 	return steps, rewards, rolling, stds, avgs, epss, times, cat_stats(steps, stats)
@@ -63,9 +67,10 @@ def graph_logs(env_name, show=False):
 			folder = f"{root}/{framework}/{model}/{env_name}/"
 			if os.path.exists(folder):
 				files = sorted(os.listdir(folder), key=lambda v: str(len(v)) + v)
-				steps, rewards, rolling, stds, avgs, epss, times, stats = read_log(os.path.join(folder, files[-1]))
-				plt.plot(steps, rewards, ls=":" if rl else "-", color=(lighter_cols if rl else light_cols)[m], linewidth=0.5, zorder=0)
-				plt.plot(steps, rolling, ls="--" if rl else "-", color=dark_cols[m], label=f"Avg {model.upper()} ({framework}) <{times[-1]}>", zorder=1)
+				index = indices.get(env_name, {}).get(model, len(files)-1)
+				steps, rewards, rolling, stds, avgs, epss, times, stats = read_log(os.path.join(folder, files[index]))
+				plt.plot(steps, rewards, "--", color=light_cols[m], label=f"Trial {model.upper()} [logs_{index}]", linewidth=0.7, zorder=0)
+				plt.plot(steps, rolling, "-", color=dark_cols[m], label=f"Avg {model.upper()} <{times[-1]}>", zorder=1)
 	try: 
 		steps
 		plt.xlabel("Step")
@@ -73,7 +78,7 @@ def graph_logs(env_name, show=False):
 		plt.legend(loc="best", prop={'size': 8})
 		plt.grid(linewidth=0.3, linestyle='-')
 		plt.title(f"Eval Rewards for {env_name}")
-		graph_folder = "Robosuite" if env_name in envs.env_grps["rbs"] else "OpenAI"
+		graph_folder = "Unity" if env_name in envs.env_grps["unt"] else "OpenAI"
 		path = f"{root}/graphs/{graph_folder}"
 		os.makedirs(path, exist_ok=True)
 		print(f"Saving: {path}/{env_name}.pdf")
@@ -81,80 +86,6 @@ def graph_logs(env_name, show=False):
 		if show: plt.show()
 	except NameError:
 		pass
-
-def get_laser_path(env_name, dirname, laser="laser"):
-	graph_folder = f"LASER/{env_name}/{laser}/{dirname}"
-	path = f"{root}/graphs/{graph_folder}"
-	os.makedirs(path, exist_ok=True)
-	return path
-
-def graph_laser_use(latent="laser", show=False, index=-1, envs=None):
-	base = os.path.join(root, "pt")
-	env_names = envs if envs is not None else os.listdir(f"{base}/laser")
-	for env_name in env_names:
-		plt.figure()
-		fkeys = []
-		laser_folder = os.path.join(base, "laser", env_name, latent)
-		for m,model in enumerate(models):
-			for i,folder in enumerate([os.path.join(base, model, env_name), os.path.join(laser_folder, "use", model)]):
-				laser = i==1
-				ind = index if laser else -1
-				if os.path.exists(folder):
-					files = sorted(os.listdir(folder), key=lambda v: str(len(v)) + v)
-					steps, rewards, rolling, stds, avgs, epss, times, stats = read_log(os.path.join(folder, files[ind]))
-					plt.plot(steps, rewards, ls=":" if laser else "-", color=(lighter_cols if laser else light_cols)[m], linewidth=0.5, zorder=0)
-					plt.plot(steps, rolling, ls="--" if laser else "-", color=dark_cols[m], label=f"{model.upper()} ({'laser' if laser else 'pt'}) [{files[ind].replace('.txt','')}]", zorder=1)
-					if laser: fkeys.append(f"_{str(len(files)+ind)}")
-
-		try: 
-			steps
-			plt.xlabel("Step")
-			plt.ylabel("Total Reward")
-			plt.legend(loc="lower right", prop={'size': 5})
-			plt.grid(linewidth=0.3, linestyle='-')
-			plt.title(f"Eval Rewards for {env_name}")
-			path = get_laser_path(env_name, "use", latent)
-			name = f"{path}/{env_name}{''.join(fkeys)}_use.pdf"
-			print(f"Saving: {name}")
-			plt.savefig(name, bbox_inches='tight')
-			if show: plt.show()
-		except NameError:
-			pass
-
-def graph_laser_train(latent="laser", show=False, index=-1, envs=None):
-	base = os.path.join(root, "pt", "laser")
-	env_names = envs if envs is not None else os.listdir(base)
-	for env_name in env_names:
-		fig = plt.figure()
-		fig.tight_layout()
-		fig.subplots_adjust(hspace=0.4, wspace=0.4)
-		fig.suptitle(f"Losses for training {env_name}")
-		fkeys = []
-		grid = 2
-		for m,model in enumerate(models[:grid*grid]):
-			ax = fig.add_subplot(grid,grid,m+1)
-			ax.set_title(model.upper())
-			folder = os.path.join(base, env_name, latent, "train", model)
-			if os.path.exists(folder):
-				files = sorted(os.listdir(folder), key=lambda v: str(len(v)) + v)
-				steps, rewards, rolling, stds, avgs, epss, times, stats = read_log(os.path.join(folder, files[index]))
-				loss_keys = [k for k in stats.keys() if "loss" in k]
-				for key, mar in zip(loss_keys, ["--", ":", "-"]):
-					ax.plot(steps, stats[key], linewidth=0.8, zorder=0, label=f"{key} [{files[index].replace('.txt','')}]")
-				fkeys.append(f"_{str(len(files)+index)}")
-				if m>=(grid*(grid-1)): ax.set_xlabel("Step")
-				if m%grid==0: ax.set_ylabel(f"Loss")
-				ax.legend(loc="best", prop={'size': 5})
-				ax.grid(linewidth=0.3, linestyle='-')
-		try: 
-			steps
-			path = get_laser_path(env_name, "train", latent)
-			name = f"{path}/{env_name}{''.join(fkeys)}_train.pdf"
-			print(f"Saving: {name}")
-			plt.savefig(name, bbox_inches='tight')
-			if show: plt.show()
-		except NameError:
-			pass
 
 def graph_grid(Xs, Ys, xlabels, title, save_config=None):
 	fig = plt.figure()
@@ -196,9 +127,5 @@ def get_env_names():
 	
 if __name__ == "__main__":
 	index = -1
-	# for env_name in get_env_names(): 
-	# 	graph_logs(env_name, False)
-	for enc in ["", "c"]:
-		for latent in ["ae","vae","dynae","dynvae"]:
-			graph_laser_use(enc+latent, index=index, envs=["Reacher"])
-			graph_laser_train(enc+latent, index=index, envs=["Reacher"])
+	for env_name in get_env_names(): 
+		graph_logs(env_name, False)

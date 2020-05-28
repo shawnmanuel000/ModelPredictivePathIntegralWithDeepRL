@@ -58,6 +58,7 @@ class DifferentialEnv(PTNetwork):
 		if load: self.load_model(load)
 
 	def step(self, action, state=None, numpy=False, grad=False):
+		action, state = map(self.to_tensor, [action, state])
 		state = (self.state if state is None else state)[:,:self.dyn_index]
 		with torch.enable_grad() if grad else torch.no_grad():
 			state, action = map(self.to_tensor, [state, action])
@@ -68,9 +69,8 @@ class DifferentialEnv(PTNetwork):
 		return [x.cpu().numpy() if numpy else x for x in [self.state, reward]]
 
 	def reset(self, batch_size=None, state=None, **kwargs):
-		if state is not None: state = state[:,:self.dyn_index]
 		self.dynamics.reset(self.device, batch_size)
-		self.state = self.to_tensor(state)
+		self.state = self.to_tensor(state)[:,:self.dyn_index] if state is not None else None
 		self.state_dot = torch.zeros_like(self.state) if state is not None else None
 
 	def rollout(self, actions, state):
