@@ -10,7 +10,7 @@ class RolloutDataset(torch.utils.data.Dataset):
 	def __init__(self, config, buffer_size=10000, train=True): 
 		self.root = get_data_dir(config.env_name, config.get("model"))
 		self._files = sorted([os.path.join(self.root, f) for f in glob.glob(f"{self.root}/**/*.npz", recursive=True)])
-		self._files = train_test_split(self._files, train_size=config.train_prop, shuffle=False)[1-int(train)]
+		self._files = train_test_split(self._files, train_size=config.train_prop, shuffle=True, random_state=config.SEED)[1-int(train)]
 		self._cum_size = None
 		self._buffer = None
 		self._buffer_fnames = None

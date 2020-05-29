@@ -35,7 +35,7 @@ class CarRacing(gym.Env, metaclass=EnvMeta):
 		self.action_space = self.env.action_space
 		self.cost_queries = list(it.product(np.linspace(-2,2,5), [0], np.linspace(0,4,5)))
 		self.observation_space = gym.spaces.Box(-np.inf, np.inf, self.observation()[0].shape)
-		self.src = '\t'.join([line for line in open(os.path.abspath(__file__), 'r')][48:58])
+		self.src = '\t'.join([line for line in open(os.path.abspath(__file__), 'r')][47:58])
 		self.max_time = max_time
 		self.reset()
 
