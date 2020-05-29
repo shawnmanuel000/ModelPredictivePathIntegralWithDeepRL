@@ -38,7 +38,7 @@ class PathAnimator():
 		self.ax = plt.axes(projection='3d')
 		self.X, self.Y, self.Z = track.X, track.Y, track.Z
 
-	def animate_path(self, trajectories, chosen=None, view=10):
+	def animate_path(self, trajectories, chosen=None, view=20):
 		self.ax.cla()
 		point = trajectories[0,0]
 		X, Y, Z = map(lambda x: x, [self.X, self.Y, self.Z])
@@ -50,14 +50,14 @@ class PathAnimator():
 			xs, zs, ys = path[:,0], path[:,1], path[:,2]
 			self.ax.plot(xs, ys, zs, linewidth=0.2)
 		if chosen is not None:
-			x,y,z = chosen[0,:,0], chosen[0,:,1], chosen[0,:,2]
+			x,z,y = chosen[0,:,0], chosen[0,:,1], chosen[0,:,2]
 			self.ax.plot(x, y, z, color="black", linewidth=1)
 		plt.draw()
 		plt.pause(0.0000001)
 
 def visualize_envmodel():
 	make_env, model, config = get_config("CarRacing-v1", "mppi")
-	config.MPC.update(NSAMPLES=100, HORIZON=200, LAMBDA=0.5, CONTROL_FREQ=1)
+	config.MPC.update(NSAMPLES=100, HORIZON=50, LAMBDA=0.1, CONTROL_FREQ=1)
 	env = make_env()
 	state_size = get_space_size(env.observation_space)
 	action_size = get_space_size(env.action_space)
@@ -71,17 +71,17 @@ def visualize_envmodel():
 		action = agent.get_action(state)
 		trajectories = np.stack(agent.states, 1)
 		(path, states_dot), rewards = envmodel.network.rollout([agent.control], [state])
-		envmodel.reset(batch_size=1, state=[state])
 		spec, path_spec = map(CarRacing.observation_spec, (trajectories, path.detach().cpu().numpy()))
 		animator.animate_path(spec["pos"], path_spec["pos"])
 		env_action = RandomAgent.to_env_action(env.action_space, action)
 		state, reward, done, _ = env.step(env_action)
+		envmodel.reset(batch_size=1, state=[state])
 		ns, r = envmodel.step([action], numpy=True)
 		print(f"Step: {s:5d}, Action: {action}, Reward: {reward:5.2f} ({r[0]:5.2f}), Pos: {state[:3]} ({ns[0][:3]})")
 		if done: break
 
 def test_envmodel():
-	config = envmodel_config.clone(env_name="Pendulum-v0", envmodel="dfrntl", MPC=Config(NSAMPLES=500, HORIZON=50, LAMBDA=0.5))
+	config = envmodel_config.clone(env_name="Pendulum-v0", envmodel="dfrntl", MPC=Config(NSAMPLES=1000, HORIZON=50, LAMBDA=0.1))
 	env = get_env(config.env_name)
 	state_size = get_space_size(env.observation_space)
 	action_size = get_space_size(env.action_space)
@@ -91,7 +91,7 @@ def test_envmodel():
 		action = agent.get_action(state)
 		env_action = RandomAgent.to_env_action(env.action_space, action)
 		state, reward, done, _ = env.step(env_action)
-		agent.envmodel.reset(batch_size=1)
+		agent.envmodel.reset(batch_size=1, state=[state])
 		ns, r = agent.envmodel.step([action], [state], numpy=True)
 		print(f"Step: {s:5d}, Action: {action}, Reward: {reward:5.2f} ({r[0]:5.2f}), State: {state} ({ns[0]})")
 		env.render()
@@ -149,6 +149,6 @@ def test_mppi():
 
 if __name__ == "__main__":
 	visualize_envmodel()
+	# test_envmodel()
 	# test_car_sim()
 	# test_mppi()
-	# test_envmodel()

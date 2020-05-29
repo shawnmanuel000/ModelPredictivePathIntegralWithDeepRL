@@ -37,7 +37,7 @@ class RewardModel(torch.nn.Module):
 		if self.cost and self.dyn_spec:
 			next_state, state_dot = [x.cpu().numpy() for x in [next_state, state_dot]]
 			ns_spec, s_spec = map(self.dyn_spec.observation_spec, [next_state, next_state-state_dot])
-			reward = -torch.FloatTensor(self.cost.get_cost(ns_spec, s_spec)).unsqueeze(-1)
+			reward = -torch.FloatTensor(self.cost.get_cost(ns_spec, s_spec, mpc=True)).unsqueeze(-1)
 		else:
 			inputs = torch.cat([next_state, state_dot],-1)
 			reward = self.linear(inputs)
@@ -73,14 +73,14 @@ class DifferentialEnv(PTNetwork):
 		self.state = self.to_tensor(state)[:,:self.dyn_index] if state is not None else None
 		self.state_dot = torch.zeros_like(self.state) if state is not None else None
 
-	def rollout(self, actions, state):
+	def rollout(self, actions, state, grad=False):
 		self.reset(batch_size=len(state), state=state)
 		actions = self.to_tensor(actions).transpose(0,1)
 		next_states = []
 		states_dot = []
 		rewards = []
 		for action in actions:
-			next_state, reward = self.step(action, self.state, grad=True)
+			next_state, reward = self.step(action, grad=grad)
 			next_states.append(next_state)
 			states_dot.append(self.state_dot)
 			rewards.append(reward)
@@ -90,9 +90,10 @@ class DifferentialEnv(PTNetwork):
 	def get_loss(self, states, actions, next_states, rewards, dones):
 		s, a, ns, r = map(self.to_tensor, (states, actions, next_states, rewards))
 		s, ns = [x[:,:,:self.dyn_index] for x in [s, ns]]
-		(next_states, states_dot), rewards = self.rollout(a, s[:,0])
+		s_dot = (ns-s)
+		(next_states, states_dot), rewards = self.rollout(a, s[:,0], grad=True)
 		dyn_loss = (next_states - ns).pow(2).sum(-1).mean()
-		dot_loss = (states_dot - (ns-s)).pow(2).sum(-1).mean()
+		dot_loss = (states_dot - s_dot).pow(2).sum(-1).mean()
 		rew_loss = (rewards - r).pow(2).mean()
 		self.stats.mean(dyn_loss=dyn_loss, dot_loss=dot_loss, rew_loss=rew_loss)
 		return self.config.DYN.BETA_DYN*dyn_loss + self.config.DYN.BETA_DOT*dot_loss + self.config.DYN.BETA_REW*rew_loss

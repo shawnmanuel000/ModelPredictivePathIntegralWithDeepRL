@@ -91,7 +91,7 @@ env_model_configs = {
 }
 
 train_config = Config(
-	TRIAL_AT = 5000,					# Number of steps between each evaluation rollout
+	TRIAL_AT = 1000,					# Number of steps between each evaluation rollout
 	SAVE_AT = 1, 						# Number of evaluation rollouts between each save weights
 	SEED = 0,
 )

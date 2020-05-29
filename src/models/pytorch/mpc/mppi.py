@@ -9,7 +9,7 @@ class MPPIController(RandomAgent):
 	def __init__(self, state_size, action_size, envmodel, config, gpu=True):
 		self.envmodel = envmodel(state_size, action_size, config, load=config.env_name)
 		self.mu = np.zeros(action_size)
-		self.cov = np.diag(np.ones(action_size))
+		self.cov = np.diag(np.ones(action_size))*0.5
 		self.icov = np.linalg.inv(self.cov)
 		self.lamda = config.MPC.LAMBDA
 		self.horizon = config.MPC.HORIZON
@@ -22,13 +22,12 @@ class MPPIController(RandomAgent):
 
 	def get_action(self, state, eps=None, sample=True):
 		self.step += 1
-		if self.step%self.config.MPC.CONTROL_FREQ == 0:
+		if self.step%self.config.MPC.get("CONTROL_FREQ",1) == 0:
 			x = torch.Tensor(state).view(1,-1).repeat(self.nsamples, 1)
-			self.envmodel.reset(batch_size=self.nsamples, state=x, initstate=False)
-			# costs = self.lamda * np.copy(self.init_cost)
 			controls = np.clip(self.control[None,:,:] + self.noise, -1, 1)
-			self.states, costs = zip(*[self.envmodel.step(controls[:,t], numpy=True) for t in range(self.horizon)])
-			costs = np.sum(costs, 0)
+			self.envmodel.reset(batch_size=self.nsamples, state=x)
+			self.states, rewards = zip(*[self.envmodel.step(controls[:,t], numpy=True) for t in range(self.horizon)])
+			costs = -np.sum(rewards, 0) #+ self.lamda * np.copy(self.init_cost)
 			beta = np.min(costs)
 			costs_norm = -(costs - beta)/self.lamda
 			weights = sp.special.softmax(costs_norm)

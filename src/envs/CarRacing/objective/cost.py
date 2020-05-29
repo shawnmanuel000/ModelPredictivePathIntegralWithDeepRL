@@ -18,16 +18,16 @@ class CostModel():
 		self.src = '\t'.join([line for line in open(os.path.abspath(__file__), 'r')][19:29])
 		self.vtarget = 20
 
-	def get_cost(self, state, prevstate=None):
+	def get_cost(self, state, prevstate=None, mpc=True):
 		prevstate = state if prevstate is None else prevstate
 		prevpos = prevstate["pos"][...,[0,2,1]]
 		pos = state["pos"][...,[0,2,1]]
 		vy = state["vel"][...,-1]
 		cost = self.get_point_cost(pos, transform=True)
 		progress = self.track.get_progress(prevpos, pos)
-		# reward = np.minimum(progress,0) + 2*progress + np.tanh(vy/self.vtarget)-np.power(self.vtarget-vy,2)/self.vtarget**2 - cost**2
-		reward = np.where(progress<0,4,2)*progress + np.tanh(vy/self.vtarget) - np.power(self.vtarget-vy,2)/self.vtarget**2 - cost**2
-		return -reward
+		reward = np.minimum(progress,0) + 2*progress + np.tanh(vy/self.vtarget)-np.power(self.vtarget-vy,2)/self.vtarget**2 - cost**2
+		# reward = np.where(progress<0,4,2)*progress + np.tanh(vy/self.vtarget) - np.power(self.vtarget-vy,2)/self.vtarget**2 - cost**2
+		return -reward if not mpc else -(progress - cost + np.tanh(vy/self.vtarget))
 
 	def get_point_cost(self, pos, transform=True):
 		point = np.array(pos)
@@ -38,7 +38,7 @@ class CostModel():
 		index = np.round((point-minref)/self.res).astype(np.int32)
 		zindex = np.round(index[...,2]*self.res/(self.max_point[2] - self.min_point[2])).astype(np.int32)
 		cost = self.cost_map[index[...,0],index[...,1],zindex]
-		return np.tanh(cost/2)**2 if transform else cost
+		return np.tanh(cost/4)**2 if transform else cost
 
 	def load_cost_map(self, cost_name, res=0.1, buffer=50):
 		cost_file = os.path.join(map_dir, f"{cost_name}.npz")
