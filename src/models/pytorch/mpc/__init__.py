@@ -25,7 +25,7 @@ dynamics_configs = {
 		TRANSITION_HIDDEN = 256,
 		BETA_DYN = 1,
 		BETA_DOT = 1,
-		BETA_REW = 1
+		BETA_DDOT = 1
 	)
 }
 

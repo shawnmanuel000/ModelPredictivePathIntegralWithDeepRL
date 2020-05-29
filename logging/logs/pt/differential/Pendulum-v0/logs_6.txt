@@ -1,3 +1,118 @@
+Model: <class 'src.models.pytorch.mpc.envmodel.differential.DifferentialEnv'>, Env: Pendulum-v0, Date: 29/05/2020 15:48:53
+CPU: 8 Core, 5.0GHz, 62.66 GB, Linux-5.3.0-53-generic-x86_64-with-debian-buster-sid
+GPU 0: GeForce RTX 2070, 7.98 GB (Driver: 440.64.00)
+Git URL: git@github.com:shawnmanuel000/ModelPredictivePathIntegralWithDeepRL.git
+Hash: e7be50a3bd4821e221e81b88dbb66fcb28a09214
+Branch: master
+
+config: 
+   TRIAL_AT = 1000
+   SAVE_AT = 1
+   SEED = 0
+   REG_LAMBDA = 1e-06
+   LEARN_RATE = 0.0001
+   DISCOUNT_RATE = 0.99
+   ADVANTAGE_DECAY = 0.95
+   INPUT_LAYER = 512
+   ACTOR_HIDDEN = 256
+   CRITIC_HIDDEN = 1024
+   EPS_MAX = 1.0
+   EPS_MIN = 0.1
+   EPS_DECAY = 0.998
+   NUM_STEPS = 500
+   MAX_BUFFER_SIZE = 100000
+   REPLAY_BATCH_SIZE = 32
+   TARGET_UPDATE_RATE = 0.0004
+   dynamics_size = 3
+   state_size = (3,)
+   action_size = (1,)
+   env_name = Pendulum-v0
+   envmodel = dfrntl
+   model = None
+   nworkers = 0
+   epochs = 50
+   seq_len = 40
+   batch_size = 256
+   train_prop = 0.9
+   DYN = 
+      FACTOR = 0.5
+      PATIENCE = 5
+      LEARN_RATE = 0.001
+      TRANSITION_HIDDEN = 256
+      BETA_DYN = 1
+      BETA_DOT = 1
+      BETA_DDOT = 1,
+num_envs: 0,
+envs: <__main__.Trainer object at 0x7fed05159750>,
+agent: DifferentialEnv(
+	  (reward): RewardModel(
+	    (linear): Linear(in_features=6, out_features=1, bias=True)
+	  )
+	  (dynamics): TransitionModel(
+	    (gru): GRUCell(7, 256)
+	    (linear1): Linear(in_features=256, out_features=256, bias=True)
+	    (linear2): Linear(in_features=256, out_features=256, bias=True)
+	    (linear3): Linear(in_features=256, out_features=3, bias=True)
+	  )
+	) 
+	training = True
+	tau = 0.0004
+	name = dfrntl
+	stats = <src.utils.logger.Stats object at 0x7fed9f2f6910> 
+		mean_dict = {}
+		sum_dict = {}
+	config = <src.utils.config.Config object at 0x7feda795a3d0> 
+		TRIAL_AT = 1000
+		SAVE_AT = 1
+		SEED = 0
+		REG_LAMBDA = 1e-06
+		LEARN_RATE = 0.0001
+		DISCOUNT_RATE = 0.99
+		ADVANTAGE_DECAY = 0.95
+		INPUT_LAYER = 512
+		ACTOR_HIDDEN = 256
+		CRITIC_HIDDEN = 1024
+		EPS_MAX = 1.0
+		EPS_MIN = 0.1
+		EPS_DECAY = 0.998
+		NUM_STEPS = 500
+		MAX_BUFFER_SIZE = 100000
+		REPLAY_BATCH_SIZE = 32
+		TARGET_UPDATE_RATE = 0.0004
+		dynamics_size = 3
+		state_size = (3,)
+		action_size = (1,)
+		env_name = Pendulum-v0
+		envmodel = dfrntl
+		model = None
+		nworkers = 0
+		epochs = 50
+		seq_len = 40
+		batch_size = 256
+		train_prop = 0.9
+		DYN = <src.utils.config.Config object at 0x7feda7951910> 
+			FACTOR = 0.5
+			PATIENCE = 5
+			LEARN_RATE = 0.001
+			TRANSITION_HIDDEN = 256
+			BETA_DYN = 1
+			BETA_DOT = 1
+			BETA_DDOT = 1
+	device = cuda
+	state_size = (3,)
+	action_size = (1,)
+	discrete = False
+	dyn_index = 3
+	optimizer = Adam (
+	Parameter Group 0
+	    amsgrad: False
+	    betas: (0.9, 0.999)
+	    eps: 1e-08
+	    lr: 0.001
+	    weight_decay: 0
+	)
+	scheduler = <torch.optim.lr_scheduler.ReduceLROnPlateau object at 0x7fed9f2fa690>,
+
 import os
 import torch
 import numpy as np
@@ -128,3 +243,14 @@ class DifferentialEnv(PTNetwork):
 			self.load_state_dict(torch.load(filepath, map_location=self.device))
 			print(f"Loaded DFRNTL model at {filepath}")
 		return self
+
+Step:       0, Reward:    55.698 [  97.705], Avg:    55.698 (1.000) <0-00:00:00> ({'dyn_loss':    42.9148, 'dot_loss':     2.9691, 'ddot_loss':     0.3667, 'rew_loss':    47.2536, 'lr':     0.0010})
+Step:       1, Reward:    41.898 [  48.122], Avg:    48.798 (1.000) <0-00:00:51> ({'dyn_loss':    11.3979, 'dot_loss':     0.3947, 'ddot_loss':     0.1084, 'rew_loss':    35.5984, 'lr':     0.0010})
+Step:       2, Reward:    26.986 [  33.591], Avg:    41.527 (1.000) <0-00:01:40> ({'dyn_loss':     5.3314, 'dot_loss':     0.5026, 'ddot_loss':     0.0909, 'rew_loss':    27.0058, 'lr':     0.0010})
+Step:       3, Reward:    19.322 [  23.023], Avg:    35.976 (1.000) <0-00:02:29> ({'dyn_loss':     2.2722, 'dot_loss':     0.5467, 'ddot_loss':     0.1015, 'rew_loss':    19.7322, 'lr':     0.0010})
+Step:       4, Reward:    14.367 [  17.091], Avg:    31.654 (1.000) <0-00:03:18> ({'dyn_loss':     1.6379, 'dot_loss':     0.5492, 'ddot_loss':     0.1042, 'rew_loss':    14.5271, 'lr':     0.0010})
+Step:       5, Reward:    11.518 [  13.142], Avg:    28.298 (1.000) <0-00:04:07> ({'dyn_loss':     1.2413, 'dot_loss':     0.5553, 'ddot_loss':     0.1057, 'rew_loss':    11.0775, 'lr':     0.0010})
+Step:       6, Reward:    10.874 [  10.952], Avg:    25.809 (1.000) <0-00:04:56> ({'dyn_loss':     1.1325, 'dot_loss':     0.5520, 'ddot_loss':     0.1056, 'rew_loss':     9.1543, 'lr':     0.0010})
+Step:       7, Reward:     8.525 [   9.685], Avg:    23.648 (1.000) <0-00:05:48> ({'dyn_loss':     0.9727, 'dot_loss':     0.5463, 'ddot_loss':     0.1059, 'rew_loss':     7.9438, 'lr':     0.0010})
+Step:       8, Reward:     8.273 [   8.675], Avg:    21.940 (1.000) <0-00:06:39> ({'dyn_loss':     0.8417, 'dot_loss':     0.5333, 'ddot_loss':     0.1050, 'rew_loss':     7.1550, 'lr':     0.0010})
+Step:       9, Reward:     8.499 [   8.050], Avg:    20.596 (1.000) <0-00:07:28> ({'dyn_loss':     0.7937, 'dot_loss':     0.5201, 'ddot_loss':     0.1043, 'rew_loss':     6.6765, 'lr':     0.0010})
