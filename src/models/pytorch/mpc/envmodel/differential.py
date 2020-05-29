@@ -91,7 +91,7 @@ class DifferentialEnv(PTNetwork):
 		s, a, ns, r = map(self.to_tensor, (states, actions, next_states, rewards))
 		s, ns = [x[:,:,:self.dyn_index] for x in [s, ns]]
 		(next_states, states_dot), rewards = self.rollout(a, s[:,0])
-		dyn_loss = (next_states - ns).pow(2).mean(-1).mean()
+		dyn_loss = (next_states - ns).pow(2).sum(-1).mean()
 		dot_loss = (states_dot - (ns-s)).pow(2).sum(-1).mean()
 		rew_loss = (rewards - r).pow(2).mean()
 		self.stats.mean(dyn_loss=dyn_loss, dot_loss=dot_loss, rew_loss=rew_loss)
