@@ -1,3 +1,118 @@
+Model: <class 'src.models.pytorch.mpc.envmodel.differential.DifferentialEnv'>, Env: CarRacing-v1, Date: 28/05/2020 16:47:50
+CPU: 8 Core, 5.0GHz, 62.66 GB, Linux-5.3.0-53-generic-x86_64-with-debian-buster-sid
+GPU 0: GeForce RTX 2070, 7.98 GB (Driver: 440.64.00)
+Git URL: git@github.com:shawnmanuel000/ModelPredictivePathIntegralWithDeepRL.git
+Hash: 826d60376c8b418067528f7f08a8f412dd6aca63
+Branch: master
+
+config: 
+   TRIAL_AT = 5000
+   SAVE_AT = 1
+   SEED = 0
+   REG_LAMBDA = 1e-06
+   LEARN_RATE = 0.0001
+   DISCOUNT_RATE = 0.99
+   ADVANTAGE_DECAY = 0.95
+   INPUT_LAYER = 512
+   ACTOR_HIDDEN = 256
+   CRITIC_HIDDEN = 1024
+   EPS_MAX = 1.0
+   EPS_MIN = 0.1
+   EPS_DECAY = 0.998
+   NUM_STEPS = 500
+   MAX_BUFFER_SIZE = 100000
+   REPLAY_BATCH_SIZE = 32
+   TARGET_UPDATE_RATE = 0.0004
+   dynamics_size = 10
+   state_size = (40,)
+   action_size = (3,)
+   env_name = CarRacing-v1
+   envmodel = dfrntl
+   model = None
+   nworkers = 0
+   epochs = 50
+   seq_len = 20
+   batch_size = 32
+   train_prop = 0.9
+   DYN = 
+      FACTOR = 0.5
+      PATIENCE = 5
+      LEARN_RATE = 0.001
+      TRANSITION_HIDDEN = 256
+      BETA_DYN = 1
+      BETA_DOT = 1
+      BETA_REW = 0,
+num_envs: 0,
+envs: <__main__.Trainer object at 0x7fb4ce917fd0>,
+agent: DifferentialEnv(
+	  (reward): RewardModel(
+	    (linear): Linear(in_features=20, out_features=1, bias=True)
+	  )
+	  (dynamics): TransitionModel(
+	    (gru): GRUCell(23, 256)
+	    (linear1): Linear(in_features=256, out_features=256, bias=True)
+	    (linear2): Linear(in_features=256, out_features=256, bias=True)
+	    (linear3): Linear(in_features=256, out_features=10, bias=True)
+	  )
+	) 
+	training = True
+	tau = 0.0004
+	name = dfrntl
+	stats = <src.utils.logger.Stats object at 0x7fb56a9e6f50> 
+		mean_dict = {}
+		sum_dict = {}
+	config = <src.utils.config.Config object at 0x7fb5742b0fd0> 
+		TRIAL_AT = 5000
+		SAVE_AT = 1
+		SEED = 0
+		REG_LAMBDA = 1e-06
+		LEARN_RATE = 0.0001
+		DISCOUNT_RATE = 0.99
+		ADVANTAGE_DECAY = 0.95
+		INPUT_LAYER = 512
+		ACTOR_HIDDEN = 256
+		CRITIC_HIDDEN = 1024
+		EPS_MAX = 1.0
+		EPS_MIN = 0.1
+		EPS_DECAY = 0.998
+		NUM_STEPS = 500
+		MAX_BUFFER_SIZE = 100000
+		REPLAY_BATCH_SIZE = 32
+		TARGET_UPDATE_RATE = 0.0004
+		dynamics_size = 10
+		state_size = (40,)
+		action_size = (3,)
+		env_name = CarRacing-v1
+		envmodel = dfrntl
+		model = None
+		nworkers = 0
+		epochs = 50
+		seq_len = 20
+		batch_size = 32
+		train_prop = 0.9
+		DYN = <src.utils.config.Config object at 0x7fb5742a4f90> 
+			FACTOR = 0.5
+			PATIENCE = 5
+			LEARN_RATE = 0.001
+			TRANSITION_HIDDEN = 256
+			BETA_DYN = 1
+			BETA_DOT = 1
+			BETA_REW = 0
+	device = cuda
+	state_size = (40,)
+	action_size = (3,)
+	discrete = False
+	dyn_index = 10
+	optimizer = Adam (
+	Parameter Group 0
+	    amsgrad: False
+	    betas: (0.9, 0.999)
+	    eps: 1e-08
+	    lr: 0.001
+	    weight_decay: 0
+	)
+	scheduler = <torch.optim.lr_scheduler.ReduceLROnPlateau object at 0x7fb56a9e1090>,
+
 import os
 import torch
 import numpy as np
@@ -70,7 +185,7 @@ class DifferentialEnv(PTNetwork):
 
 	def reset(self, batch_size=None, state=None, **kwargs):
 		self.dynamics.reset(self.device, batch_size)
-		self.state = self.to_tensor(state)[:,:self.dyn_index] if state is not None else None
+		self.state = self.to_tensor(state[:,:self.dyn_index]) if state is not None else None
 		self.state_dot = torch.zeros_like(self.state) if state is not None else None
 
 	def rollout(self, actions, state):
@@ -121,3 +236,11 @@ class DifferentialEnv(PTNetwork):
 			self.load_state_dict(torch.load(filepath, map_location=self.device))
 			print(f"Loaded DFRNTL model at {filepath}")
 		return self
+
+
+Step:       0, Reward:     7.329 [   9.763], Avg:     7.329 (1.000) <0-00:00:00> ({'dyn_loss':     5.9850, 'dot_loss':     3.5244, 'rew_loss':   250.7304, 'lr':     0.0010})
+Step:       1, Reward:     5.669 [   5.763], Avg:     6.499 (1.000) <0-00:04:13> ({'dyn_loss':     3.2187, 'dot_loss':     2.5345, 'rew_loss':   251.7940, 'lr':     0.0010})
+Step:       2, Reward:     5.581 [   5.273], Avg:     6.193 (1.000) <0-00:08:28> ({'dyn_loss':     2.8865, 'dot_loss':     2.4182, 'rew_loss':   252.0449, 'lr':     0.0010})
+Step:       3, Reward:     5.686 [   4.825], Avg:     6.066 (1.000) <0-00:12:48> ({'dyn_loss':     2.6028, 'dot_loss':     2.3122, 'rew_loss':   252.1296, 'lr':     0.0010})
+Step:       4, Reward:     7.160 [   4.677], Avg:     6.285 (1.000) <0-00:17:09> ({'dyn_loss':     2.5851, 'dot_loss':     2.3504, 'rew_loss':   252.3821, 'lr':     0.0010})
+Step:       5, Reward:     5.426 [   4.511], Avg:     6.142 (1.000) <0-00:21:26> ({'dyn_loss':     2.3595, 'dot_loss':     2.2465, 'rew_loss':   252.1848, 'lr':     0.0010})

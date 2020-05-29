@@ -58,7 +58,7 @@ model_configs = {
 		CLIP_PARAM = 0.05,				# The limit of the ratio of new action probabilities to old probabilities
 	),
 	"ddpg": net_config.clone(
-		EPS_DECAY = 0.999,             	# The rate at which eps decays from EPS_MAX to EPS_MIN
+		EPS_DECAY = 0.998,             	# The rate at which eps decays from EPS_MAX to EPS_MIN
 	),
 	"mppi": net_config.clone(
 		ENV_MODEL = "dfrntl",

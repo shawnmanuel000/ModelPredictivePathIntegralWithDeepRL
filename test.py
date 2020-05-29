@@ -2,6 +2,7 @@ import os
 import sys
 import numpy as np
 import matplotlib.pyplot as plt
+from mpl_toolkits import mplot3d
 from src.envs import get_env
 from src.models import RandomAgent
 from src.models.input import InputController
@@ -29,7 +30,6 @@ def test_car_sim():
 			step += 1
 	env.close()
 
-
 class PathAnimator():
 	def __init__(self, track):
 		self.track = track
@@ -41,9 +41,6 @@ class PathAnimator():
 	def animate_path(self, trajectories):
 		self.ax.cla()
 		point = trajectories[0,0]
-		# index = self.track.nearest_point(point)
-		# view = 200
-		# X, Y, Z = map(lambda x: np.roll(x,view-index)[:2*view], [self.X, self.Y, self.Z])
 		X, Y, Z = map(lambda x: x, [self.X, self.Y, self.Z])
 		self.ax.plot(X,Y,Z, color="#DDDDDD")
 		self.ax.set_zlim3d(-100, 100)

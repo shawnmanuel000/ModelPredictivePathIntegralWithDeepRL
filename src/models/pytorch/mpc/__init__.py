@@ -23,7 +23,7 @@ dynamics_configs = {
 	),
 	"dfrntl": envmodel_config.clone(
 		TRANSITION_HIDDEN = 256,
-		BETA_DYN = 0,
+		BETA_DYN = 1,
 		BETA_DOT = 1,
 		BETA_REW = 0
 	)
