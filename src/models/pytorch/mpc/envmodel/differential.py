@@ -37,7 +37,7 @@ class RewardModel(torch.nn.Module):
 		if self.cost and self.dyn_spec:
 			next_state, state_dot = [x.cpu().numpy() for x in [next_state, state_dot]]
 			ns_spec, s_spec = map(self.dyn_spec.observation_spec, [next_state, next_state-state_dot])
-			reward = -torch.FloatTensor(self.cost.get_cost(ns_spec, s_spec))
+			reward = -torch.FloatTensor(self.cost.get_cost(ns_spec, s_spec)).unsqueeze(-1)
 		else:
 			inputs = torch.cat([next_state, state_dot],-1)
 			reward = self.linear(inputs)
@@ -74,11 +74,11 @@ class DifferentialEnv(PTNetwork):
 		self.state_dot = torch.zeros_like(self.state) if state is not None else None
 
 	def rollout(self, actions, state):
+		self.reset(batch_size=len(state), state=state)
 		actions = self.to_tensor(actions).transpose(0,1)
 		next_states = []
 		states_dot = []
 		rewards = []
-		self.reset(batch_size=state.shape[0], state=state)
 		for action in actions:
 			next_state, reward = self.step(action, self.state, grad=True)
 			next_states.append(next_state)
