@@ -1,0 +1,258 @@
+Model: <class 'src.models.pytorch.mpc.envmodel.differential.DifferentialEnv'>, Env: Pendulum-v0, Date: 29/05/2020 15:58:45
+CPU: 8 Core, 5.0GHz, 62.66 GB, Linux-5.3.0-53-generic-x86_64-with-debian-buster-sid
+GPU 0: GeForce RTX 2070, 7.98 GB (Driver: 440.64.00)
+Git URL: git@github.com:shawnmanuel000/ModelPredictivePathIntegralWithDeepRL.git
+Hash: b0659115fd31a8c0a350fceeb3053fb2955e7f3b
+Branch: master
+
+config: 
+   TRIAL_AT = 1000
+   SAVE_AT = 1
+   SEED = 0
+   REG_LAMBDA = 1e-06
+   LEARN_RATE = 0.0001
+   DISCOUNT_RATE = 0.99
+   ADVANTAGE_DECAY = 0.95
+   INPUT_LAYER = 512
+   ACTOR_HIDDEN = 256
+   CRITIC_HIDDEN = 1024
+   EPS_MAX = 1.0
+   EPS_MIN = 0.1
+   EPS_DECAY = 0.998
+   NUM_STEPS = 500
+   MAX_BUFFER_SIZE = 100000
+   REPLAY_BATCH_SIZE = 32
+   TARGET_UPDATE_RATE = 0.0004
+   dynamics_size = 3
+   state_size = (3,)
+   action_size = (1,)
+   env_name = Pendulum-v0
+   envmodel = dfrntl
+   model = None
+   nworkers = 0
+   epochs = 50
+   seq_len = 40
+   batch_size = 256
+   train_prop = 0.9
+   DYN = 
+      FACTOR = 0.5
+      PATIENCE = 5
+      LEARN_RATE = 0.001
+      TRANSITION_HIDDEN = 256
+      BETA_DYN = 1
+      BETA_DOT = 1
+      BETA_DDOT = 1,
+num_envs: 0,
+envs: <__main__.Trainer object at 0x7fd44e2a5ed0>,
+agent: DifferentialEnv(
+	  (reward): RewardModel(
+	    (linear): Linear(in_features=6, out_features=1, bias=True)
+	  )
+	  (dynamics): TransitionModel(
+	    (gru): GRUCell(7, 256)
+	    (linear1): Linear(in_features=256, out_features=256, bias=True)
+	    (linear2): Linear(in_features=256, out_features=256, bias=True)
+	    (linear3): Linear(in_features=256, out_features=3, bias=True)
+	  )
+	) 
+	training = True
+	tau = 0.0004
+	name = dfrntl
+	stats = <src.utils.logger.Stats object at 0x7fd44733ccd0> 
+		mean_dict = {}
+		sum_dict = {}
+	config = <src.utils.config.Config object at 0x7fd4579b8450> 
+		TRIAL_AT = 1000
+		SAVE_AT = 1
+		SEED = 0
+		REG_LAMBDA = 1e-06
+		LEARN_RATE = 0.0001
+		DISCOUNT_RATE = 0.99
+		ADVANTAGE_DECAY = 0.95
+		INPUT_LAYER = 512
+		ACTOR_HIDDEN = 256
+		CRITIC_HIDDEN = 1024
+		EPS_MAX = 1.0
+		EPS_MIN = 0.1
+		EPS_DECAY = 0.998
+		NUM_STEPS = 500
+		MAX_BUFFER_SIZE = 100000
+		REPLAY_BATCH_SIZE = 32
+		TARGET_UPDATE_RATE = 0.0004
+		dynamics_size = 3
+		state_size = (3,)
+		action_size = (1,)
+		env_name = Pendulum-v0
+		envmodel = dfrntl
+		model = None
+		nworkers = 0
+		epochs = 50
+		seq_len = 40
+		batch_size = 256
+		train_prop = 0.9
+		DYN = <src.utils.config.Config object at 0x7fd4579a2a10> 
+			FACTOR = 0.5
+			PATIENCE = 5
+			LEARN_RATE = 0.001
+			TRANSITION_HIDDEN = 256
+			BETA_DYN = 1
+			BETA_DOT = 1
+			BETA_DDOT = 1
+	device = cuda
+	state_size = (3,)
+	action_size = (1,)
+	discrete = False
+	dyn_index = 3
+	optimizer = Adam (
+	Parameter Group 0
+	    amsgrad: False
+	    betas: (0.9, 0.999)
+	    eps: 1e-08
+	    lr: 0.001
+	    weight_decay: 0
+	)
+	scheduler = <torch.optim.lr_scheduler.ReduceLROnPlateau object at 0x7fd447351510>,
+
+import os
+import torch
+import numpy as np
+from src.utils.misc import load_module
+from ...agents.base import PTNetwork, one_hot
+
+class TransitionModel(torch.nn.Module):
+	def __init__(self, state_size, action_size, config):
+		super().__init__()
+		self.gru = torch.nn.GRUCell(action_size[-1] + 2*state_size[-1], config.DYN.TRANSITION_HIDDEN)
+		self.linear1 = torch.nn.Linear(config.DYN.TRANSITION_HIDDEN, config.DYN.TRANSITION_HIDDEN)
+		self.linear2 = torch.nn.Linear(config.DYN.TRANSITION_HIDDEN, config.DYN.TRANSITION_HIDDEN)
+		self.linear3 = torch.nn.Linear(config.DYN.TRANSITION_HIDDEN, state_size[-1])
+		self.config = config
+
+	def forward(self, action, state, state_dot):
+		inputs = torch.cat([action, state, state_dot],-1)
+		self.hidden = self.gru(inputs, self.hidden)
+		linear1 = self.linear1(self.hidden).tanh() + self.hidden
+		linear2 = self.linear2(linear1).tanh() + linear1
+		state_ddot = self.linear3(linear2)
+		state_dot += state_ddot
+		next_state = state + state_dot
+		return next_state, state_dot, state_ddot
+
+	def reset(self, device, batch_size=None):
+		if batch_size is None: batch_size = self.hidden[0].shape[1] if hasattr(self, "hidden") else 1
+		self.hidden = torch.zeros(batch_size, self.config.DYN.TRANSITION_HIDDEN, device=device)
+
+class RewardModel(torch.nn.Module):
+	def __init__(self, state_size, action_size, config):
+		super().__init__()
+		self.linear = torch.nn.Linear(2*state_size[-1], 1)
+		self.cost = load_module(config.REWARD_MODEL)() if config.get("REWARD_MODEL") else None
+		self.dyn_spec = load_module(config.DYNAMICS_SPEC) if config.get("DYNAMICS_SPEC") else None
+
+	def forward(self, next_state, state_dot):
+		if self.cost and self.dyn_spec:
+			next_state, state_dot = [x.cpu().numpy() for x in [next_state, state_dot]]
+			ns_spec, s_spec = map(self.dyn_spec.observation_spec, [next_state, next_state-state_dot])
+			reward = -torch.FloatTensor(self.cost.get_cost(ns_spec, s_spec, mpc=True)).unsqueeze(-1)
+		else:
+			inputs = torch.cat([next_state, state_dot],-1)
+			reward = self.linear(inputs)
+		return reward
+
+class DifferentialEnv(PTNetwork):
+	def __init__(self, state_size, action_size, config, load="", gpu=True, name="dfrntl"):
+		super().__init__(config, gpu, name)
+		self.state_size = state_size
+		self.action_size = action_size
+		self.discrete = type(self.action_size) != tuple
+		self.dyn_index = config.get("dynamics_size", state_size[-1])
+		self.reward = RewardModel([self.dyn_index], action_size, config)
+		self.dynamics = TransitionModel([self.dyn_index], action_size, config)
+		self.optimizer = torch.optim.Adam(self.parameters(), lr=config.DYN.LEARN_RATE)
+		self.scheduler = torch.optim.lr_scheduler.ReduceLROnPlateau(self.optimizer, factor=config.DYN.FACTOR, patience=config.DYN.PATIENCE)
+		self.to(self.device)
+		if load: self.load_model(load)
+
+	def step(self, action, state=None, numpy=False, grad=False):
+		action, state = map(self.to_tensor, [action, state])
+		state = (self.state if state is None else state)[:,:self.dyn_index]
+		with torch.enable_grad() if grad else torch.no_grad():
+			state, action = map(self.to_tensor, [state, action])
+			if self.discrete: action = one_hot(action)
+			if self.state is None: self.state = state
+			self.state, self.state_dot, self.state_ddot = self.dynamics(action, state, self.state_dot)
+			reward = self.reward(self.state.detach(), self.state_dot.detach()).squeeze(-1)
+		return [x.cpu().numpy() if numpy else x for x in [self.state, reward]]
+
+	def reset(self, batch_size=None, state=None, **kwargs):
+		self.dynamics.reset(self.device, batch_size)
+		self.state = self.to_tensor(state)[:,:self.dyn_index] if state is not None else None
+		self.state_dot = torch.zeros_like(self.state) if state is not None else None
+
+	def rollout(self, actions, state, grad=False):
+		self.reset(batch_size=len(state), state=state)
+		actions = self.to_tensor(actions).transpose(0,1)
+		next_states = []
+		states_dot = []
+		states_ddot = []
+		rewards = []
+		for action in actions:
+			next_state, reward = self.step(action, grad=grad)
+			next_states.append(next_state)
+			states_dot.append(self.state_dot)
+			states_ddot.append(self.state_ddot)
+			rewards.append(reward)
+		next_states, states_dot, states_ddot, rewards = map(lambda x: torch.stack(x,1), [next_states, states_dot, states_ddot, rewards])
+		return (next_states, states_dot, states_ddot), rewards
+
+	def get_loss(self, states, actions, next_states, rewards, dones):
+		s, a, ns, r = map(self.to_tensor, (states, actions, next_states, rewards))
+		s, ns = [x[:,:,:self.dyn_index] for x in [s, ns]]
+		s_dot = (ns-s)
+		ns_dot = torch.cat([s_dot[:,1:,:], torch.zeros_like(s_dot[:,0:1,:])], -2)
+		s_ddot = ns_dot - s_dot
+		(next_states, states_dot, states_ddot), rewards = self.rollout(a, s[:,0], grad=True)
+		dyn_loss = (next_states - ns).pow(2).sum(-1).mean()
+		dot_loss = (states_dot - s_dot).pow(2).sum(-1).mean()
+		ddot_loss = (states_ddot - s_ddot).pow(2).sum(-1).mean()
+		rew_loss = (rewards - r).pow(2).mean()
+		self.stats.mean(dyn_loss=dyn_loss, dot_loss=dot_loss, ddot_loss=ddot_loss, rew_loss=rew_loss)
+		return self.config.DYN.BETA_DYN*dyn_loss + self.config.DYN.BETA_DOT*dot_loss + self.config.DYN.BETA_DDOT*ddot_loss + rew_loss
+
+	def optimize(self, states, actions, next_states, rewards, dones):
+		loss = self.get_loss(states, actions, next_states, rewards, dones)
+		self.optimizer.zero_grad()
+		loss.backward()
+		self.optimizer.step()
+		return loss
+
+	def schedule(self, test_loss):
+		self.scheduler.step(test_loss)
+
+	def get_stats(self):
+		return {**super().get_stats(), "lr": self.optimizer.param_groups[0]["lr"] if self.optimizer else None}
+
+	def save_model(self, dirname="pytorch", name="checkpoint", net=None):
+		filepath, _ = self.get_checkpoint_path(dirname, name, net)
+		os.makedirs(os.path.dirname(filepath), exist_ok=True)
+		torch.save(self.state_dict(), filepath)
+		
+	def load_model(self, dirname="pytorch", name="checkpoint", net=None):
+		filepath, _ = self.get_checkpoint_path(dirname, name, net)
+		if os.path.exists(filepath):
+			self.load_state_dict(torch.load(filepath, map_location=self.device))
+			print(f"Loaded DFRNTL model at {filepath}")
+		return self
+
+Step:       0, Reward:    58.399 [  83.834], Avg:    58.399 (1.000) <0-00:00:00> ({'dyn_loss':    27.9676, 'dot_loss':     1.9729, 'ddot_loss':     0.2119, 'rew_loss':    51.1377, 'lr':     0.0010})
+Step:       1, Reward:    40.089 [  50.318], Avg:    49.244 (1.000) <0-00:00:52> ({'dyn_loss':    10.0584, 'dot_loss':     0.4246, 'ddot_loss':     0.0584, 'rew_loss':    38.7537, 'lr':     0.0010})
+Step:       2, Reward:    27.588 [  34.175], Avg:    42.025 (1.000) <0-00:01:52> ({'dyn_loss':     3.6070, 'dot_loss':     0.5493, 'ddot_loss':     0.0507, 'rew_loss':    29.3090, 'lr':     0.0010})
+Step:       3, Reward:    20.093 [  23.432], Avg:    36.542 (1.000) <0-00:02:59> ({'dyn_loss':     1.7753, 'dot_loss':     0.5586, 'ddot_loss':     0.0475, 'rew_loss':    20.7164, 'lr':     0.0010})
+Step:       4, Reward:    14.859 [  17.015], Avg:    32.206 (1.000) <0-00:04:08> ({'dyn_loss':     1.3995, 'dot_loss':     0.5507, 'ddot_loss':     0.0450, 'rew_loss':    14.8042, 'lr':     0.0010})
+Step:       5, Reward:    10.778 [  12.570], Avg:    28.634 (1.000) <0-00:05:17> ({'dyn_loss':     1.1058, 'dot_loss':     0.5514, 'ddot_loss':     0.0435, 'rew_loss':    10.6904, 'lr':     0.0010})
+Step:       6, Reward:    11.378 [  10.026], Avg:    26.169 (1.000) <0-00:06:26> ({'dyn_loss':     1.0806, 'dot_loss':     0.5366, 'ddot_loss':     0.0422, 'rew_loss':     8.5016, 'lr':     0.0010})
+Step:       7, Reward:     8.998 [   8.720], Avg:    24.023 (1.000) <0-00:07:34> ({'dyn_loss':     0.8821, 'dot_loss':     0.5262, 'ddot_loss':     0.0406, 'rew_loss':     7.2989, 'lr':     0.0010})
+Step:       8, Reward:     7.256 [   8.007], Avg:    22.160 (1.000) <0-00:08:43> ({'dyn_loss':     0.7603, 'dot_loss':     0.5138, 'ddot_loss':     0.0384, 'rew_loss':     6.6198, 'lr':     0.0010})
+Step:       9, Reward:     7.943 [   7.665], Avg:    20.738 (1.000) <0-00:09:50> ({'dyn_loss':     0.7825, 'dot_loss':     0.5007, 'ddot_loss':     0.0366, 'rew_loss':     6.3728, 'lr':     0.0010})
+Step:      10, Reward:     6.924 [   7.379], Avg:    19.482 (1.000) <0-00:10:57> ({'dyn_loss':     0.7076, 'dot_loss':     0.4859, 'ddot_loss':     0.0349, 'rew_loss':     6.1047, 'lr':     0.0010})
+Step:      11, Reward:     7.437 [   7.223], Avg:    18.478 (1.000) <0-00:12:07> ({'dyn_loss':     0.6713, 'dot_loss':     0.4333, 'ddot_loss':     0.0331, 'rew_loss':     6.1066, 'lr':     0.0010})

@@ -7,11 +7,12 @@ from ...agents.base import PTNetwork, one_hot
 class TransitionModel(torch.nn.Module):
 	def __init__(self, state_size, action_size, config):
 		super().__init__()
+		self.config = config
 		self.gru = torch.nn.GRUCell(action_size[-1] + 2*state_size[-1], config.DYN.TRANSITION_HIDDEN)
 		self.linear1 = torch.nn.Linear(config.DYN.TRANSITION_HIDDEN, config.DYN.TRANSITION_HIDDEN)
 		self.linear2 = torch.nn.Linear(config.DYN.TRANSITION_HIDDEN, config.DYN.TRANSITION_HIDDEN)
 		self.linear3 = torch.nn.Linear(config.DYN.TRANSITION_HIDDEN, state_size[-1])
-		self.config = config
+		self.apply(lambda m: torch.nn.init.xavier_normal_(m.weight) if type(m) in [torch.nn.Conv2d, torch.nn.Linear] else None)
 
 	def forward(self, action, state, state_dot):
 		inputs = torch.cat([action, state, state_dot],-1)
@@ -30,18 +31,23 @@ class TransitionModel(torch.nn.Module):
 class RewardModel(torch.nn.Module):
 	def __init__(self, state_size, action_size, config):
 		super().__init__()
-		self.linear = torch.nn.Linear(2*state_size[-1], 1)
 		self.cost = load_module(config.REWARD_MODEL)() if config.get("REWARD_MODEL") else None
 		self.dyn_spec = load_module(config.DYNAMICS_SPEC) if config.get("DYNAMICS_SPEC") else None
+		self.linear1 = torch.nn.Linear(action_size[-1] + 2*state_size[-1], config.DYN.REWARD_HIDDEN)
+		self.linear2 = torch.nn.Linear(config.DYN.REWARD_HIDDEN, config.DYN.REWARD_HIDDEN)
+		self.linear3 = torch.nn.Linear(config.DYN.REWARD_HIDDEN, 1)
+		self.apply(lambda m: torch.nn.init.xavier_normal_(m.weight) if type(m) in [torch.nn.Conv2d, torch.nn.Linear] else None)
 
-	def forward(self, next_state, state_dot):
+	def forward(self, action, state, next_state):
 		if self.cost and self.dyn_spec:
-			next_state, state_dot = [x.cpu().numpy() for x in [next_state, state_dot]]
-			ns_spec, s_spec = map(self.dyn_spec.observation_spec, [next_state, next_state-state_dot])
-			reward = -torch.FloatTensor(self.cost.get_cost(ns_spec, s_spec, mpc=True)).unsqueeze(-1)
+			next_state, state = [x.cpu().numpy() for x in [next_state, state]]
+			ns_spec, s_spec = map(self.dyn_spec.observation_spec, [next_state, state])
+			reward = -torch.FloatTensor(self.cost.get_cost(ns_spec, s_spec, mpc=True))
 		else:
-			inputs = torch.cat([next_state, state_dot],-1)
-			reward = self.linear(inputs)
+			inputs = torch.cat([action, state, next_state],-1)
+			layer1 = self.linear1(inputs).tanh()
+			layer2 = self.linear2(layer1).tanh() + layer1
+			reward = self.linear3(layer2).squeeze(-1)
 		return reward
 
 class DifferentialEnv(PTNetwork):
@@ -53,7 +59,7 @@ class DifferentialEnv(PTNetwork):
 		self.dyn_index = config.get("dynamics_size", state_size[-1])
 		self.reward = RewardModel([self.dyn_index], action_size, config)
 		self.dynamics = TransitionModel([self.dyn_index], action_size, config)
-		self.optimizer = torch.optim.Adam(self.parameters(), lr=config.DYN.LEARN_RATE)
+		self.optimizer = torch.optim.Adam(self.parameters(), lr=config.DYN.LEARN_RATE, weight_decay=config.DYN.REG_LAMBDA)
 		self.scheduler = torch.optim.lr_scheduler.ReduceLROnPlateau(self.optimizer, factor=config.DYN.FACTOR, patience=config.DYN.PATIENCE)
 		self.to(self.device)
 		if load: self.load_model(load)
@@ -65,8 +71,9 @@ class DifferentialEnv(PTNetwork):
 			state, action = map(self.to_tensor, [state, action])
 			if self.discrete: action = one_hot(action)
 			if self.state is None: self.state = state
-			self.state, self.state_dot, self.state_ddot = self.dynamics(action, state, self.state_dot)
-			reward = self.reward(self.state.detach(), self.state_dot.detach()).squeeze(-1)
+			state_dot = self.state_dot
+			self.state, self.state_dot, self.state_ddot = self.dynamics(action, state, state_dot)
+			reward = self.reward(action, state, self.state.detach())
 		return [x.cpu().numpy() if numpy else x for x in [self.state, reward]]
 
 	def reset(self, batch_size=None, state=None, **kwargs):
@@ -95,11 +102,10 @@ class DifferentialEnv(PTNetwork):
 		s, ns = [x[:,:,:self.dyn_index] for x in [s, ns]]
 		s_dot = (ns-s)
 		ns_dot = torch.cat([torch.zeros_like(s_dot[:,0:1,:]), s_dot[:,:-1,:]], -2)
-		s_ddot = ns_dot - s_dot
 		(next_states, states_dot, states_ddot), rewards = self.rollout(a, s[:,0], grad=True)
 		dyn_loss = (next_states - ns).pow(2).sum(-1).mean()
 		dot_loss = (states_dot - s_dot).pow(2).sum(-1).mean()
-		ddot_loss = (states_ddot - s_ddot).pow(2).sum(-1).mean()
+		ddot_loss = (states_ddot - (ns_dot - s_dot)).pow(2).sum(-1).mean()
 		rew_loss = (rewards - r).pow(2).mean()
 		self.stats.mean(dyn_loss=dyn_loss, dot_loss=dot_loss, ddot_loss=ddot_loss, rew_loss=rew_loss)
 		return self.config.DYN.BETA_DYN*dyn_loss + self.config.DYN.BETA_DOT*dot_loss + self.config.DYN.BETA_DDOT*ddot_loss + rew_loss

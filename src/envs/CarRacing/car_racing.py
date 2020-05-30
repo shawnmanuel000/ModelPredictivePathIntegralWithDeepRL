@@ -28,6 +28,7 @@ class CarRacing(gym.Env, metaclass=EnvMeta):
 		root = os.path.dirname(os.path.abspath(__file__))
 		sim_file = os.path.abspath(os.path.join(root, "simulator", sys.platform, "CarRacing"))
 		self.channel = EngineConfigurationChannel()
+		logging_util.set_log_level(logging_util.ERROR)
 		unity_env = UnityEnvironment(file_name=sim_file, side_channels=[self.channel], worker_id=self.id + np.random.randint(10000, 20000))
 		self.scale_sim = lambda s: self.channel.set_configuration_parameters(width=50*int(1+9*s), height=50*int(1+9*s), quality_level=int(1+3*s), time_scale=int(1+9*(1-s)))
 		self.env = UnityToGymWrapper(unity_env)
