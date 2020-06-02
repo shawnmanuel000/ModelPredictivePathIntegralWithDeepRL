@@ -2,7 +2,7 @@ import torch
 import numpy as np
 import scipy as sp
 from scipy.stats import multivariate_normal
-from src.utils.rand import RandomAgent
+from src.utils.rand import RandomAgent, ReplayBuffer
 from ..agents.base import PTACNetwork, PTAgent, Conv, one_hot_from_indices
 
 class MPPIController(RandomAgent):
@@ -36,3 +36,7 @@ class MPPIController(RandomAgent):
 		self.control = np.roll(self.control, -1, axis=0)
 		self.control[-1] = 0
 		return action if len(action.shape)==len(state.shape) else np.repeat(action[None,:], state.shape[0], 0)
+
+	def train(self, state, action, next_state, reward, done):
+		pass
+

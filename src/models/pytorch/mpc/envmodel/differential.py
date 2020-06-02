@@ -11,16 +11,16 @@ class TransitionModel(torch.nn.Module):
 		self.gru = torch.nn.GRUCell(action_size[-1] + 2*state_size[-1], config.DYN.TRANSITION_HIDDEN)
 		self.linear1 = torch.nn.Linear(config.DYN.TRANSITION_HIDDEN, config.DYN.TRANSITION_HIDDEN)
 		self.linear2 = torch.nn.Linear(config.DYN.TRANSITION_HIDDEN, config.DYN.TRANSITION_HIDDEN)
-		self.linear3 = torch.nn.Linear(config.DYN.TRANSITION_HIDDEN, state_size[-1])
+		self.state_ddot = torch.nn.Linear(config.DYN.TRANSITION_HIDDEN, state_size[-1])
 		self.apply(lambda m: torch.nn.init.xavier_normal_(m.weight) if type(m) in [torch.nn.Conv2d, torch.nn.Linear] else None)
 
 	def forward(self, action, state, state_dot):
 		inputs = torch.cat([action, state, state_dot],-1)
 		self.hidden = self.gru(inputs, self.hidden)
-		linear1 = self.linear1(self.hidden).tanh() + self.hidden
-		linear2 = self.linear2(linear1).tanh() + linear1
-		state_ddot = self.linear3(linear2)
-		state_dot += state_ddot
+		linear1 = self.linear1(self.hidden).relu() + self.hidden
+		linear2 = self.linear2(linear1).relu() + linear1
+		state_ddot = self.state_ddot(linear2)
+		state_dot = state_dot + state_ddot
 		next_state = state + state_dot
 		return next_state, state_dot, state_ddot
 
@@ -38,11 +38,11 @@ class RewardModel(torch.nn.Module):
 		self.linear3 = torch.nn.Linear(config.DYN.REWARD_HIDDEN, 1)
 		self.apply(lambda m: torch.nn.init.xavier_normal_(m.weight) if type(m) in [torch.nn.Conv2d, torch.nn.Linear] else None)
 
-	def forward(self, action, state, next_state):
+	def forward(self, action, state, next_state, grad=False):
 		if self.cost and self.dyn_spec:
 			next_state, state = [x.cpu().numpy() for x in [next_state, state]]
 			ns_spec, s_spec = map(self.dyn_spec.observation_spec, [next_state, state])
-			reward = -torch.FloatTensor(self.cost.get_cost(ns_spec, s_spec, mpc=True))
+			reward = -torch.FloatTensor(self.cost.get_cost(ns_spec, s_spec))
 		else:
 			inputs = torch.cat([action, state, next_state],-1)
 			layer1 = self.linear1(inputs).tanh()
@@ -73,7 +73,7 @@ class DifferentialEnv(PTNetwork):
 			if self.state is None: self.state = state
 			state_dot = self.state_dot
 			self.state, self.state_dot, self.state_ddot = self.dynamics(action, state, state_dot)
-			reward = self.reward(action, state, self.state.detach())
+			reward = self.reward(action.detach(), state.detach(), self.state.detach(), grad=grad)
 		return [x.cpu().numpy() if numpy else x for x in [self.state, reward]]
 
 	def reset(self, batch_size=None, state=None, **kwargs):
@@ -101,11 +101,12 @@ class DifferentialEnv(PTNetwork):
 		s, a, ns, r = map(self.to_tensor, (states, actions, next_states, rewards))
 		s, ns = [x[:,:,:self.dyn_index] for x in [s, ns]]
 		s_dot = (ns-s)
+		# ns_dot = torch.cat([s_dot[:,1:,:], s_dot[:,-1:,:]], -2)
 		ns_dot = torch.cat([torch.zeros_like(s_dot[:,0:1,:]), s_dot[:,:-1,:]], -2)
 		(next_states, states_dot, states_ddot), rewards = self.rollout(a, s[:,0], grad=True)
 		dyn_loss = (next_states - ns).pow(2).sum(-1).mean()
 		dot_loss = (states_dot - s_dot).pow(2).sum(-1).mean()
-		ddot_loss = (states_ddot - (ns_dot - s_dot)).pow(2).sum(-1).mean()
+		ddot_loss = (states_ddot[:,:-1] - (ns_dot - s_dot)[:,:-1]).pow(2).sum(-1).mean()
 		rew_loss = (rewards - r).pow(2).mean()
 		self.stats.mean(dyn_loss=dyn_loss, dot_loss=dot_loss, ddot_loss=ddot_loss, rew_loss=rew_loss)
 		return self.config.DYN.BETA_DYN*dyn_loss + self.config.DYN.BETA_DOT*dot_loss + self.config.DYN.BETA_DDOT*ddot_loss + rew_loss
@@ -131,6 +132,9 @@ class DifferentialEnv(PTNetwork):
 	def load_model(self, dirname="pytorch", name="checkpoint", net=None):
 		filepath, _ = self.get_checkpoint_path(dirname, name, net)
 		if os.path.exists(filepath):
-			self.load_state_dict(torch.load(filepath, map_location=self.device))
-			print(f"Loaded DFRNTL model at {filepath}")
+			try:
+				self.load_state_dict(torch.load(filepath, map_location=self.device))
+				print(f"Loaded DFRNTL model at {filepath}")
+			except:
+				print(f"Error loading DFRNTL model at {filepath}")
 		return self

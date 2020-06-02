@@ -11,7 +11,7 @@ from src.models.pytorch.mpc import MPPIController, EnvModel, MDRNNEnv, RealEnv, 
 from src.utils.envs import get_space_size
 from src.utils.config import Config
 
-np.set_printoptions(precision=3, sign=' ', floatmode="fixed", suppress=True, linewidth=100)
+np.set_printoptions(precision=2, sign=' ', floatmode="fixed", suppress=True, linewidth=100)
 
 def test_car_sim():
 	env = CarRacing(max_time=500)
@@ -70,14 +70,17 @@ def visualize_envmodel():
 	for s in range(500):
 		action = agent.get_action(state)
 		trajectories = np.stack(agent.states, 1)
-		(path, states_dot), rewards = envmodel.network.rollout([agent.control], [state])
+		(path, states_dot, states_ddot), rewards = envmodel.network.rollout([agent.control], [state])
 		spec, path_spec = map(CarRacing.observation_spec, (trajectories, path.detach().cpu().numpy()))
 		animator.animate_path(spec["pos"], path_spec["pos"])
 		env_action = RandomAgent.to_env_action(env.action_space, action)
 		state, reward, done, _ = env.step(env_action)
 		envmodel.reset(batch_size=1, state=[state])
 		ns, r = envmodel.step([action], numpy=True)
-		print(f"Step: {s:5d}, Action: {action}, Reward: {reward:5.2f} ({r[0]:5.2f}), Pos: {state[:3]} ({ns[0][:3]})")
+		vstr = f"Vel: {state[3:6]} ({ns[0][3:6]})"
+		astr = f"Rot: {state[6:9]} ({ns[0][6:9]})"
+		# sstr = f"Stra: {state[9:10]} ({ns[0][9:10]})"
+		print(f"Step: {s:5d}, Action: {action}, Reward: {reward:5.2f} ({r[0]:5.2f}), Pos: {state[:3]} ({ns[0][:3]}), {vstr}, {astr}")
 		if done: break
 
 def test_envmodel():
@@ -148,7 +151,7 @@ def test_mppi():
 
 
 if __name__ == "__main__":
-	# visualize_envmodel()
-	test_envmodel()
+	visualize_envmodel()
+	# test_envmodel()
 	# test_car_sim()
 	# test_mppi()

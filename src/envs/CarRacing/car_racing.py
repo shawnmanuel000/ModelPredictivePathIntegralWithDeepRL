@@ -44,8 +44,8 @@ class CarRacing(gym.Env, metaclass=EnvMeta):
 		self.time = 0
 		self.scale_sim(0)
 		self.idle_timeout = idle_timeout if isinstance(idle_timeout, int) else np.Inf
-		self.state, self.spec = self.observation()
-		return self.state
+		state, self.spec = self.observation()
+		return state
 
 	def step(self, action):
 		self.time += 1
@@ -55,8 +55,8 @@ class CarRacing(gym.Env, metaclass=EnvMeta):
 		next_state, next_spec = self.observation(next_state)
 		terminal = -(1-self.time/self.max_time)*int(done)
 		reward = -self.cost_model.get_cost(next_spec, self.spec) + terminal
-		self.state, self.spec = next_state, next_spec
-		return self.state, reward, done, info
+		self.spec = next_spec
+		return next_state, reward, done, info
 
 	def render(self, mode=None, **kwargs):
 		self.scale_sim(1)
@@ -82,30 +82,35 @@ class CarRacing(gym.Env, metaclass=EnvMeta):
 		spec = self.dynamics_spec(state)
 		quat = pyq.Quaternion(spec["rotation"])
 		points = np.array([(x,z,y) for x,y,z in [quat.rotate(p) for p in self.cost_queries]])
-		costs = self.cost_model.get_point_cost(spec["pos"]+points, transform=False)
+		path = np.array(self.cost_model.track.get_path(spec["pos"]))
+		# costs = self.cost_model.get_point_cost(spec["pos"]+points, transform=False)
+		costs = np.min(np.sqrt(np.sum(np.power(points[:,None,:]-path[None,:,:],2),-1)),-1)/10
 		spec.update({"costs":costs})
 		return spec
 
-	def observation(self, state=None):
-		state = self.env.reset() if state is None else state
+	def observation(self, state_in=None):
+		state = self.env.reset() if state_in is None else state_in
 		spec = self.track_spec(state)
-		self.dynamics_keys = ["pos", "vel", "angvel", "steer_angle", "rpm", "idle", "costs"]
-		values = list(map(spec.get, self.dynamics_keys))
-		self.dynamics_lens = list(map(len, values))
+		dynamics_keys, _ = self.dynamics_keys()
+		values = list(map(spec.get, dynamics_keys))
+		dynamics_lens = list(map(len, values))
+		self.dynamics_size = sum(dynamics_lens[:4])
 		observation = np.concatenate(values, -1)
-		self.dynamics_size = sum(self.dynamics_lens[:4])
-		return observation, spec
+		obs_dot = observation - self.obs if state_in is not None else np.zeros_like(observation)
+		self.obs = observation
+		spec["dot"] = obs_dot
+		return np.concatenate([observation, obs_dot],-1), spec
+
+	@staticmethod
+	def dynamics_keys():
+		keys = ["pos", "vel", "angvel", "rotation", "steer_angle", "idle", "costs"]
+		lens = [3, 3, 3, 4, 1, 1, 25]
+		return keys, np.cumsum(lens)
 
 	@staticmethod
 	def observation_spec(observation):
-		spec = {}
-		spec["pos"] = observation[...,:3]
-		spec["vel"] = observation[...,3:6]
-		spec["angvel"] = observation[...,6:9]
-		spec["steer_angle"] = observation[...,9:10]
-		spec["rpm"] = observation[...,10:14]
-		spec["idle"] = observation[...,14:15]
-		spec["costs"] = observation[...,15:]
+		keys, splits = CarRacing.dynamics_keys()
+		spec = {k:v for k,v in zip([*keys, "dot"], np.split(observation,splits,-1))}
 		return spec
 
 	def close(self):

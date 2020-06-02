@@ -18,16 +18,16 @@ class CostModel():
 		self.src = '\t'.join([line for line in open(os.path.abspath(__file__), 'r')][19:29])
 		self.vtarget = 20
 
-	def get_cost(self, state, prevstate=None, mpc=True):
+	def get_cost(self, state, prevstate=None):
 		prevstate = state if prevstate is None else prevstate
 		prevpos = prevstate["pos"][...,[0,2,1]]
 		pos = state["pos"][...,[0,2,1]]
 		vy = state["vel"][...,-1]
 		cost = self.get_point_cost(pos, transform=True)
 		progress = self.track.get_progress(prevpos, pos)
-		reward = np.minimum(progress,0) + 2*progress + np.tanh(vy/self.vtarget)-np.power(self.vtarget-vy,2)/self.vtarget**2 - cost**2
-		# reward = np.where(progress<0,4,2)*progress + np.tanh(vy/self.vtarget) - np.power(self.vtarget-vy,2)/self.vtarget**2 - cost**2
-		return -reward if not mpc else -(progress - cost + np.tanh(vy/self.vtarget))
+		reward = np.minimum(progress,0) + 2*progress + np.tanh(vy/self.vtarget)-np.power(self.vtarget-vy,2)/self.vtarget**2 - cost
+		# reward = progress + np.tanh(vy/self.vtarget) - cost
+		return -reward
 
 	def get_point_cost(self, pos, transform=True):
 		point = np.array(pos)

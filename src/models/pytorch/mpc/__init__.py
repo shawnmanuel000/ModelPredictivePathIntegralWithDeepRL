@@ -25,9 +25,9 @@ dynamics_configs = {
 	"dfrntl": envmodel_config.clone(
 		TRANSITION_HIDDEN = 256,
 		REWARD_HIDDEN = 256,
-		BETA_DYN = 1,
-		BETA_DOT = 0.5,
-		BETA_DDOT = 0,
+		BETA_DYN = 0.1,
+		BETA_DOT = 1,
+		BETA_DDOT = 1,
 	)
 }
 
