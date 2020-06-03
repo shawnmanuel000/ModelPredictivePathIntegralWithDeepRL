@@ -70,8 +70,8 @@ class MPPIAgent(PTAgent):
 		if num_splits == 0:
 			arr = np.zeros([self.config.NUM_STEPS, *x.shape[1:]])
 			arr[-x.shape[0]:] = x
-			x = arr
 			num_splits = 1
+			x = arr
 		arr = x[-num_splits*self.config.NUM_STEPS:].reshape(num_splits, self.config.NUM_STEPS, *x.shape[1:])
 		return arr
 
@@ -79,7 +79,7 @@ class MPPIAgent(PTAgent):
 		self.time = getattr(self, "time", 0) + 1
 		if not hasattr(self, "buffers"): self.buffers = [[] for _ in done]
 		for buffer, s, a, ns, r, d in zip(self.buffers, state, action, next_state, reward, done):
-			buffer.append((s, a, ns, r, d))
+			buffer.append((s, a, s if d else ns, r, d))
 			if not d: continue
 			states, actions, next_states, rewards, dones = map(np.array, zip(*buffer))
 			states, actions, next_states, rewards, dones = [self.partition(x) for x in (states, actions, next_states, rewards, dones)]
@@ -88,8 +88,7 @@ class MPPIAgent(PTAgent):
 		if len(self.replay_buffer) > self.config.REPLAY_BATCH_SIZE and self.time % self.config.TRAIN_EVERY == 0:
 			pbar = tqdm.trange(self.config.DYN_EPOCHS*self.config.REPLAY_BATCH_SIZE//self.config.BATCH_SIZE)
 			for _ in pbar:
-				transform = lambda x: self.to_tensor(x).transpose(0,1)
-				states, actions, next_states, rewards, dones = self.replay_buffer.next_batch(self.config.BATCH_SIZE, dtype=transform)[0]
+				states, actions, next_states, rewards, dones = self.replay_buffer.sample(self.config.BATCH_SIZE, dtype=self.to_tensor)[0]
 				loss = self.network.optimize(states, actions, next_states, rewards, dones)
 				pbar.set_postfix_str(f"Loss: {loss:.4f}")
 			self.eps = max(self.eps * self.config.EPS_DECAY, self.config.EPS_MIN)

@@ -86,7 +86,7 @@ def visualize_envmodel():
 		if done: break
 
 def test_envmodel():
-	make_env, model, config = get_config("Pendulum-v0", "mppi")
+	make_env, model, config = get_config("CartPole-v0", "mppi")
 	config.MPC.update(NSAMPLES=500, HORIZON=50, LAMBDA=0.1, CONTROL_FREQ=1)
 	env = make_env()
 	state_size = get_space_size(env.observation_space)
@@ -101,6 +101,7 @@ def test_envmodel():
 		agent.network.envmodel.reset(batch_size=[1], state=[state])
 		ns, r = agent.network.envmodel.step(action, [state], numpy=True)
 		print(f"Step: {s:5d}, Action: {action}, Reward: {reward:5.2f} ({r[0,0]:5.2f}), State: {state} ({ns[0]})")
+		if done: break
 		env.render()
 
 class TestMPPIController(RandomAgent):

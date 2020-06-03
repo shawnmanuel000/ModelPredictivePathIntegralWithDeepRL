@@ -42,7 +42,7 @@ class RewardModel(torch.nn.Module):
 		self.apply(lambda m: torch.nn.init.xavier_normal_(m.weight) if type(m) in [torch.nn.Conv2d, torch.nn.Linear] else None)
 
 	def forward(self, action, state, next_state, grad=False):
-		if self.cost and self.dyn_spec:
+		if self.cost and self.dyn_spec and not grad:
 			next_state, state = [x.cpu().numpy() for x in [next_state, state]]
 			ns_spec, s_spec = map(self.dyn_spec.observation_spec, [next_state, state])
 			reward = -torch.FloatTensor(self.cost.get_cost(ns_spec, s_spec)).unsqueeze(-1)
@@ -76,7 +76,7 @@ class DifferentialEnv(PTNetwork):
 			state_dot = self.state_dot
 			self.state, self.state_dot, self.state_ddot = self.dynamics(action, state, state_dot)
 			reward = self.reward(action.detach(), state.detach(), self.state.detach(), grad=grad)
-		return [x.cpu().numpy() if numpy else x for x in [self.state, reward]]
+		return [x.cpu().numpy() if numpy else x for x in [self.state, reward.to(self.device)]]
 
 	def reset(self, batch_size=None, state=None, **kwargs):
 		self.dynamics.reset(self.device, batch_size)

@@ -45,7 +45,7 @@ net_config = Config(
 	EPS_MIN = 0.1,               	# The lower limit proportion of random to greedy actions to take
 	EPS_DECAY = 0.998,             	# The rate at which eps decays from EPS_MAX to EPS_MIN
 	NUM_STEPS = 500,				# The number of steps to collect experience in sequence for each GAE calculation
-	MAX_BUFFER_SIZE = 100000,    	# Sets the maximum length of the replay buffer
+	MAX_BUFFER_SIZE = 1000000,    	# Sets the maximum length of the replay buffer
 	REPLAY_BATCH_SIZE = 32,        	# How many experience tuples to sample from the buffer for each train step
 	TARGET_UPDATE_RATE = 0.0004,   	# How frequently we want to copy the local network to the target network (for double DQNs)
 )
@@ -61,17 +61,17 @@ model_configs = {
 		EPS_DECAY = 0.998,             	# The rate at which eps decays from EPS_MAX to EPS_MIN
 	),
 	"mppi": net_config.clone(
-		EPS_DECAY = 0.98,             	# The rate at which eps decays from EPS_MAX to EPS_MIN
+		EPS_DECAY = 0.99,             	# The rate at which eps decays from EPS_MAX to EPS_MIN
 		REPLAY_BATCH_SIZE = 5000,      	# How many experience tuples to sample from the buffer for each train step
-		BATCH_SIZE = 100,				# Number of samples to train on for each train step
-		NUM_STEPS = 20,					# The number of steps to collect experience in sequence for each GAE calculation
+		BATCH_SIZE = 250,				# Number of samples to train on for each train step
+		NUM_STEPS = 40,					# The number of steps to collect experience in sequence for each GAE calculation
 		DYN_EPOCHS = 10,				# Number of iterations to sample batches for training
 		TRAIN_EVERY = 1000,				# Number of iterations to sample batches for training
 		ENV_MODEL = "dfrntl",
 		MPC = Config(
 			NSAMPLES = 100, 
-			HORIZON = 20, 
-			LAMBDA = 0.5,
+			HORIZON = 40, 
+			LAMBDA = 0.1,
 			CONTROL_FREQ = 1
 		)
 	)
