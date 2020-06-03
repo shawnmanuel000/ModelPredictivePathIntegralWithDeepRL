@@ -113,7 +113,8 @@ class ReplayBuffer():
 		sample_indices = [i%len(self.buffer) for i in range(self.i_batch, self.i_batch+batch_size)]
 		samples = itemgetter(*sample_indices)(self.buffer)
 		self.i_batch = (self.i_batch+batch_size) % len(self.buffer)
-		return map(dtype, zip(*samples))
+		sample_arrays = samples if dtype is None else map(dtype, zip(*samples))
+		return sample_arrays, sample_indices, np.array([1])
 
 	def update_priorities(self, indices, errors, offset=0.1):
 		pass

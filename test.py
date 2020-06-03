@@ -62,7 +62,7 @@ def visualize_envmodel():
 	env = make_env()
 	state_size = get_space_size(env.observation_space)
 	action_size = get_space_size(env.action_space)
-	agent = MPPIAgent(state_size, action_size, config, load=config.env_name)
+	agent = model(state_size, action_size, config, load=config.env_name)
 	envmodel = EnvModel(state_size, action_size, config, load=config.env_name)
 	state = env.reset()
 	envmodel.reset(batch_size=[1], state=[state])
@@ -70,7 +70,7 @@ def visualize_envmodel():
 	env.render()
 	for s in range(500):
 		state = np.array([state])
-		action = agent.get_action(state)
+		action = agent.get_action(state, eps=0)
 		trajectories = agent.network.states[0]
 		(path, states_dot, states_ddot), rewards = envmodel.rollout(np.clip(agent.network.control,-1,1), state, numpy=True)
 		spec, path_spec = map(CarRacing.observation_spec, [trajectories[0], path])
@@ -82,23 +82,25 @@ def visualize_envmodel():
 		vstr = f"Vel: {state[3:6]} ({ns[0][3:6]})"
 		astr = f"Rot: {state[6:9]} ({ns[0][6:9]})"
 		# sstr = f"Stra: {state[9:10]} ({ns[0][9:10]})"
-		print(f"Step: {s:5d}, Action: {action}, Reward: {reward:5.2f} ({r[0]:5.2f}), Pos: {state[:3]} ({ns[0][:3]}), {vstr}, {astr}")
+		print(f"Step: {s:5d}, Action: {action}, Reward: {reward:5.2f} ({r[0,0]:5.2f}), Pos: {state[:3]} ({ns[0][:3]}), {vstr}, {astr}")
 		if done: break
 
 def test_envmodel():
-	config = envmodel_config.clone(env_name="Pendulum-v0", envmodel="dfrntl", MPC=Config(NSAMPLES=1000, HORIZON=50, LAMBDA=0.1))
-	env = get_env(config.env_name)
+	make_env, model, config = get_config("Pendulum-v0", "mppi")
+	config.MPC.update(NSAMPLES=500, HORIZON=50, LAMBDA=0.1, CONTROL_FREQ=1)
+	env = make_env()
 	state_size = get_space_size(env.observation_space)
 	action_size = get_space_size(env.action_space)
-	agent = MPPIController(state_size, action_size, EnvModel, config)
+	agent = model(state_size, action_size, config, load=config.env_name)
 	state = env.reset()
 	for s in range(400):
-		action = agent.get_action(state)
+		state = np.array([state])
+		action = agent.get_action(state, eps=0)
 		env_action = RandomAgent.to_env_action(env.action_space, action)
-		state, reward, done, _ = env.step(env_action)
-		agent.envmodel.reset(batch_size=1, state=[state])
-		ns, r = agent.envmodel.step([action], [state], numpy=True)
-		print(f"Step: {s:5d}, Action: {action}, Reward: {reward:5.2f} ({r[0]:5.2f}), State: {state} ({ns[0]})")
+		state, reward, done, _ = env.step(env_action[0])
+		agent.network.envmodel.reset(batch_size=[1], state=[state])
+		ns, r = agent.network.envmodel.step(action, [state], numpy=True)
+		print(f"Step: {s:5d}, Action: {action}, Reward: {reward:5.2f} ({r[0,0]:5.2f}), State: {state} ({ns[0]})")
 		env.render()
 
 class TestMPPIController(RandomAgent):

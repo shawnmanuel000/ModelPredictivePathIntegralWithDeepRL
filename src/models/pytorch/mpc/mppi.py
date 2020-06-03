@@ -1,4 +1,6 @@
+import tqdm
 import torch
+import random
 import numpy as np
 import scipy as sp
 from scipy.stats import multivariate_normal
@@ -25,8 +27,6 @@ class MPPIController(PTNetwork):
 		if len(batch) and self.control.shape[0] != batch[0]: self.init_control(batch[0])
 		x = torch.Tensor(state).view(*batch, 1,-1).repeat_interleave(self.nsamples, -2)
 		controls = np.clip(self.control[:,None,:,:] + self.noise, -1, 1)
-		# self.envmodel.reset(batch_size=(*batch, self.nsamples), state=x)
-		# self.states, rewards = zip(*[self.envmodel.step(controls[:,t], numpy=True) for t in range(self.horizon)])
 		self.states, rewards = self.envmodel.rollout(controls, x, numpy=True)
 		costs = -np.sum(rewards, -1) #+ self.lamda * np.copy(self.init_cost)
 		beta = np.min(costs, -1, keepdims=True)
@@ -60,26 +60,36 @@ class MPPIAgent(PTAgent):
 		super().__init__(state_size, action_size, config, MPPIController, gpu=gpu, load=load)
 
 	def get_action(self, state, eps=None, sample=True):
+		eps = self.eps if eps is None else eps
+		if random.random() < eps: return super().get_action(state)
 		action = self.network.get_action(np.array(state))
 		return np.clip(action, -1, 1)
 
+	def partition(self, x):
+		num_splits = x.shape[0]//self.config.NUM_STEPS
+		if num_splits == 0:
+			arr = np.zeros([self.config.NUM_STEPS, *x.shape[1:]])
+			arr[-x.shape[0]:] = x
+			x = arr
+			num_splits = 1
+		arr = x[-num_splits*self.config.NUM_STEPS:].reshape(num_splits, self.config.NUM_STEPS, *x.shape[1:])
+		return arr
+
 	def train(self, state, action, next_state, reward, done):
-		self.buffer.append((state, action, next_state, reward, done))
-		if len(self.buffer) >= self.config.NUM_STEPS:
-			states, actions, next_states, rewards, dones = map(np.array, zip(*self.buffer))
-			self.buffer.clear()
-			mask_idx = np.argmax(dones,0) + (1-np.max(dones,0))*dones.shape[0]
-			mask = np.arange(dones.shape[0])[:,None] > mask_idx[None,:]
-			states_mask = mask[...,None].repeat(states.shape[-1],-1) 
-			actions_mask = mask[...,None].repeat(actions.shape[-1],-1) 
-			states[states_mask] = 0
-			actions[actions_mask] = 0
-			next_states[states_mask] = 0
-			rewards[mask] = 0
-			dones[mask] = 0
-			states, actions, next_states, rewards, dones = [np.split(x,x.shape[1],1) for x in (states, actions, next_states, rewards, dones)]
+		self.time = getattr(self, "time", 0) + 1
+		if not hasattr(self, "buffers"): self.buffers = [[] for _ in done]
+		for buffer, s, a, ns, r, d in zip(self.buffers, state, action, next_state, reward, done):
+			buffer.append((s, a, ns, r, d))
+			if not d: continue
+			states, actions, next_states, rewards, dones = map(np.array, zip(*buffer))
+			states, actions, next_states, rewards, dones = [self.partition(x) for x in (states, actions, next_states, rewards, dones)]
+			buffer.clear()
 			self.replay_buffer.extend(list(zip(states, actions, next_states, rewards, dones)), shuffle=False)
-		if len(self.replay_buffer) > self.config.REPLAY_BATCH_SIZE:
-			transform = lambda x: self.to_tensor(np.concatenate(x,1)).transpose(0,1)
-			states, actions, next_states, rewards, dones = self.replay_buffer.sample(self.config.REPLAY_BATCH_SIZE, dtype=transform)[0]
-			self.network.optimize(states, actions, next_states, rewards, dones)
+		if len(self.replay_buffer) > self.config.REPLAY_BATCH_SIZE and self.time % self.config.TRAIN_EVERY == 0:
+			pbar = tqdm.trange(self.config.DYN_EPOCHS*self.config.REPLAY_BATCH_SIZE//self.config.BATCH_SIZE)
+			for _ in pbar:
+				transform = lambda x: self.to_tensor(x).transpose(0,1)
+				states, actions, next_states, rewards, dones = self.replay_buffer.next_batch(self.config.BATCH_SIZE, dtype=transform)[0]
+				loss = self.network.optimize(states, actions, next_states, rewards, dones)
+				pbar.set_postfix_str(f"Loss: {loss:.4f}")
+			self.eps = max(self.eps * self.config.EPS_DECAY, self.config.EPS_MIN)

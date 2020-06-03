@@ -64,7 +64,7 @@ class EnvModel():
 		self.network.reset(**kwargs)
 
 	def optimize(self, states, actions, next_states, rewards, dones):
-		self.network.optimize(states, actions, next_states, rewards, dones)
+		return self.network.optimize(states, actions, next_states, rewards, dones)
 
 	def get_stats(self):
 		return self.network.get_stats()
