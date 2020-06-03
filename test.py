@@ -7,7 +7,8 @@ from src.envs import get_env
 from src.models import RandomAgent, get_config
 from src.models.input import InputController
 from src.envs.CarRacing.car_racing import CarRacing
-from src.models.pytorch.mpc import MPPIController, EnvModel, MDRNNEnv, RealEnv, envmodel_config, set_dynamics_size
+from src.models.pytorch.mpc import EnvModel, MDRNNEnv, RealEnv, envmodel_config, set_dynamics_size
+from src.models.pytorch import MPPIAgent
 from src.utils.envs import get_space_size
 from src.utils.config import Config
 
@@ -61,22 +62,23 @@ def visualize_envmodel():
 	env = make_env()
 	state_size = get_space_size(env.observation_space)
 	action_size = get_space_size(env.action_space)
-	agent = MPPIController(state_size, action_size, EnvModel, config)
+	agent = MPPIAgent(state_size, action_size, config, load=config.env_name)
 	envmodel = EnvModel(state_size, action_size, config, load=config.env_name)
 	state = env.reset()
-	envmodel.reset(batch_size=1, state=[state])
+	envmodel.reset(batch_size=[1], state=[state])
 	animator = PathAnimator(env.unwrapped.cost_model.track)
 	env.render()
 	for s in range(500):
+		state = np.array([state])
 		action = agent.get_action(state)
-		trajectories = np.stack(agent.states, 1)
-		(path, states_dot, states_ddot), rewards = envmodel.network.rollout([agent.control], [state])
-		spec, path_spec = map(CarRacing.observation_spec, (trajectories, path.detach().cpu().numpy()))
+		trajectories = agent.network.states[0]
+		(path, states_dot, states_ddot), rewards = envmodel.rollout(np.clip(agent.network.control,-1,1), state, numpy=True)
+		spec, path_spec = map(CarRacing.observation_spec, [trajectories[0], path])
 		animator.animate_path(spec["pos"], path_spec["pos"])
 		env_action = RandomAgent.to_env_action(env.action_space, action)
-		state, reward, done, _ = env.step(env_action)
-		envmodel.reset(batch_size=1, state=[state])
-		ns, r = envmodel.step([action], numpy=True)
+		state, reward, done, _ = env.step(env_action[0])
+		envmodel.reset(batch_size=[1], state=[state])
+		ns, r = envmodel.step(action, numpy=True)
 		vstr = f"Vel: {state[3:6]} ({ns[0][3:6]})"
 		astr = f"Rot: {state[6:9]} ({ns[0][6:9]})"
 		# sstr = f"Stra: {state[9:10]} ({ns[0][9:10]})"

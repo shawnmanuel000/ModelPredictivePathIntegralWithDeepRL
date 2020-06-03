@@ -83,20 +83,6 @@ class ParallelAgent(RandomAgent):
 		stats = self.icm.get_stats() if self.icm is not None else {}
 		return {**super().get_stats(), **stats, **self.agent.get_stats()}
 
-class MPCAgent(ParallelAgent):
-	def __init__(self, state_size, action_size, controller, config, load="", gpu=True, **kwargs):
-		agent = lambda state_size, action_size, config, load, gpu: controller(state_size, action_size, EnvModel, config, gpu=gpu)
-		super().__init__(state_size, action_size, agent, config)
-
-	def train(self, state, action, next_state, reward, done):
-		pass
-
-	def save_model(self, dirname="pytorch", name="checkpoint", net=None):
-		pass
-
-	def load_model(self, dirname="pytorch", name="checkpoint", net=None):
-		return self
-
 class RayAgent(RandomAgent):
 	def __init__(self, state_size, action_size, model, config, gpu=True):
 		self.agent = model(state_size, action_size, config)

@@ -23,7 +23,7 @@ dark_cols = ["#777777", "#0000CD", "#FF0000", "#008000", "#FFA500"]
 root = "./logging/logs"
 
 indices = {
-	"CarRacing-v1": {"ppo": 23, "ddpg": 12, "sac": 33}
+	"CarRacing-v1": {"ppo": 30, "ddpg": 20, "sac": 41}
 }
 
 def cat_stats(steps, stats):
@@ -44,7 +44,7 @@ def read_log(path):
 	steps = []
 	rewards = []
 	rolling = []
-	averages = deque(maxlen=25)
+	averages = deque(maxlen=100)
 	fields_list = []
 	with open(path, "r") as f:
 		lines = [line for line in f if re.match(r"^Step:", line)]

@@ -1,0 +1,689 @@
+Model: <class 'src.models.pytorch.mpc.mppi.MPPIAgent'>, Env: CartPole-v0, Date: 02/06/2020 19:35:53
+CPU: 8 Core, 5.0GHz, 62.66 GB, Linux-5.3.0-53-generic-x86_64-with-debian-buster-sid
+GPU 0: GeForce RTX 2070, 7.98 GB (Driver: 440.64.00)
+Git URL: git@github.com:shawnmanuel000/ModelPredictivePathIntegralWithDeepRL.git
+Hash: 2574b7b850a9b1e770fb6d412cb2c6b3b3d310d7
+Branch: master
+
+config: 
+   TRIAL_AT = 1000
+   SAVE_AT = 1
+   SEED = 0
+   REG_LAMBDA = 1e-06
+   LEARN_RATE = 0.0001
+   DISCOUNT_RATE = 0.99
+   ADVANTAGE_DECAY = 0.95
+   INPUT_LAYER = 512
+   ACTOR_HIDDEN = 256
+   CRITIC_HIDDEN = 1024
+   EPS_MAX = 1.0
+   EPS_MIN = 0.1
+   EPS_DECAY = 0.998
+   NUM_STEPS = 20
+   MAX_BUFFER_SIZE = 100000
+   REPLAY_BATCH_SIZE = 256
+   TARGET_UPDATE_RATE = 0.0004
+   ENV_MODEL = dfrntl
+   MPC = 
+      NSAMPLES = 100
+      HORIZON = 20
+      LAMBDA = 0.5
+      CONTROL_FREQ = 1
+   dynamics_size = 4
+   state_size = (4,)
+   action_size = [2]
+   env_name = CartPole-v0
+   rank = 0
+   size = 1
+   split = 1
+   model = mppi
+   framework = pt
+   train_prop = 1.0
+   tcp_ports = []
+   tcp_rank = 0
+   num_envs = 4
+   nsteps = 100000
+   render = False
+   trial = False
+   icm = False
+   rs = False
+   DYN = 
+      REG_LAMBDA = 1e-06
+      FACTOR = 0.5
+      PATIENCE = 5
+      LEARN_RATE = 0.001
+      TRANSITION_HIDDEN = 256
+      REWARD_HIDDEN = 256
+      BETA_DYN = 0.1
+      BETA_DOT = 1
+      BETA_DDOT = 1,
+num_envs: 0,
+envs: <src.utils.envs.EnsembleEnv object at 0x7fbab787e090> 
+	num_envs = 4
+	env = <GymEnv<TimeLimit<CartPoleEnv<CartPole-v0>>>> 
+		env = <TimeLimit<CartPoleEnv<CartPole-v0>>> 
+			env = <CartPoleEnv<CartPole-v0>> 
+				gravity = 9.8
+				masscart = 1.0
+				masspole = 0.1
+				total_mass = 1.1
+				length = 0.5
+				polemass_length = 0.05
+				force_mag = 10.0
+				tau = 0.02
+				kinematics_integrator = euler
+				theta_threshold_radians = 0.20943951023931953
+				x_threshold = 2.4
+				action_space = Discrete(2) 
+					n = 2
+					shape = ()
+					dtype = int64
+					np_random = RandomState(MT19937)
+				observation_space = Box(4,) 
+					dtype = float32
+					shape = (4,)
+					low = [-4.800e+00 -3.403e+38 -4.189e-01 -3.403e+38]
+					high = [ 4.800e+00  3.403e+38  4.189e-01  3.403e+38]
+					bounded_below = [ True  True  True  True]
+					bounded_above = [ True  True  True  True]
+					np_random = RandomState(MT19937)
+				np_random = RandomState(MT19937)
+				viewer = None
+				state = None
+				steps_beyond_done = None
+				spec = EnvSpec(CartPole-v0) 
+					id = CartPole-v0
+					entry_point = gym.envs.classic_control:CartPoleEnv
+					reward_threshold = 195.0
+					nondeterministic = False
+					max_episode_steps = 200
+				verbose = 0
+			action_space = Discrete(2) 
+				n = 2
+				shape = ()
+				dtype = int64
+				np_random = RandomState(MT19937)
+			observation_space = Box(4,) 
+				dtype = float32
+				shape = (4,)
+				low = [-4.800e+00 -3.403e+38 -4.189e-01 -3.403e+38]
+				high = [ 4.800e+00  3.403e+38  4.189e-01  3.403e+38]
+				bounded_below = [ True  True  True  True]
+				bounded_above = [ True  True  True  True]
+				np_random = RandomState(MT19937)
+			reward_range = (-inf, inf)
+			metadata = {'render.modes': ['human', 'rgb_array'], 'video.frames_per_second': 50}
+		action_space = Discrete(2) 
+			n = 2
+			shape = ()
+			dtype = int64
+			np_random = RandomState(MT19937)
+		observation_space = Box(4,) 
+			dtype = float32
+			shape = (4,)
+			low = [-4.800e+00 -3.403e+38 -4.189e-01 -3.403e+38]
+			high = [ 4.800e+00  3.403e+38  4.189e-01  3.403e+38]
+			bounded_below = [ True  True  True  True]
+			bounded_above = [ True  True  True  True]
+			np_random = RandomState(MT19937)
+		reward_range = (-inf, inf)
+		metadata = {'render.modes': ['human', 'rgb_array'], 'video.frames_per_second': 50}
+		preprocess = <src.envs.wrappers.RawPreprocess object at 0x7fbab50ff690> 
+			observation_space = Box(4,) 
+				dtype = float32
+				shape = (4,)
+				low = [-4.800e+00 -3.403e+38 -4.189e-01 -3.403e+38]
+				high = [ 4.800e+00  3.403e+38  4.189e-01  3.403e+38]
+				bounded_below = [ True  True  True  True]
+				bounded_above = [ True  True  True  True]
+				np_random = RandomState(MT19937)
+	envs = [<GymEnv<TimeLimit<CartPoleEnv<CartPole-v0>>>>, <GymEnv<TimeLimit<CartPoleEnv<CartPole-v0>>>>, <GymEnv<TimeLimit<CartPoleEnv<CartPole-v0>>>>, <GymEnv<TimeLimit<CartPoleEnv<CartPole-v0>>>>]
+	test_envs = [<GymEnv<TimeLimit<CartPoleEnv<CartPole-v0>>>>, <GymEnv<TimeLimit<CartPoleEnv<CartPole-v0>>>>, <GymEnv<TimeLimit<CartPoleEnv<CartPole-v0>>>>, <GymEnv<TimeLimit<CartPoleEnv<CartPole-v0>>>>]
+	state_size = (4,)
+	action_size = [2]
+	action_space = Discrete(2) 
+		n = 2
+		shape = ()
+		dtype = int64
+		np_random = RandomState(MT19937)
+	max_steps = 200,
+agent: <src.models.wrappers.ParallelAgent object at 0x7fbab7994d10> 
+	icm = None
+	stack = <src.models.wrappers.RawState object at 0x7fbab50c17d0> 
+		state_size = (4,)
+	agent = <src.models.pytorch.mpc.mppi.MPPIAgent object at 0x7fbab50c1810> 
+		noise_process = <src.utils.rand.BrownianNoise object at 0x7fbab50c1850> 
+			size = [2]
+			dt = 0.2
+			action = [ 0.375 -0.813]
+			daction_dt = [-0.722  0.016]
+		discrete = True
+		action_size = [2]
+		state_size = (4,)
+		config = <src.utils.config.Config object at 0x7fbac82e4d90> 
+			TRIAL_AT = 1000
+			SAVE_AT = 1
+			SEED = 0
+			REG_LAMBDA = 1e-06
+			LEARN_RATE = 0.0001
+			DISCOUNT_RATE = 0.99
+			ADVANTAGE_DECAY = 0.95
+			INPUT_LAYER = 512
+			ACTOR_HIDDEN = 256
+			CRITIC_HIDDEN = 1024
+			EPS_MAX = 1.0
+			EPS_MIN = 0.1
+			EPS_DECAY = 0.998
+			NUM_STEPS = 20
+			MAX_BUFFER_SIZE = 100000
+			REPLAY_BATCH_SIZE = 256
+			TARGET_UPDATE_RATE = 0.0004
+			ENV_MODEL = dfrntl
+			MPC = <src.utils.config.Config object at 0x7fba4ec71090> 
+				NSAMPLES = 100
+				HORIZON = 20
+				LAMBDA = 0.5
+				CONTROL_FREQ = 1
+			dynamics_size = 4
+			state_size = (4,)
+			action_size = [2]
+			env_name = CartPole-v0
+			rank = 0
+			size = 1
+			split = 1
+			model = mppi
+			framework = pt
+			train_prop = 1.0
+			tcp_ports = []
+			tcp_rank = 0
+			num_envs = 4
+			nsteps = 100000
+			render = False
+			trial = False
+			icm = False
+			rs = False
+			DYN = <src.utils.config.Config object at 0x7fbac82d3050> 
+				REG_LAMBDA = 1e-06
+				FACTOR = 0.5
+				PATIENCE = 5
+				LEARN_RATE = 0.001
+				TRANSITION_HIDDEN = 256
+				REWARD_HIDDEN = 256
+				BETA_DYN = 0.1
+				BETA_DOT = 1
+				BETA_DDOT = 1
+		stats = <src.utils.logger.Stats object at 0x7fbab50c1890> 
+			mean_dict = {}
+			sum_dict = {}
+		eps = 1.0
+		network = MPPIController() 
+			training = True
+			tau = 0.0004
+			name = mppi
+			stats = <src.utils.logger.Stats object at 0x7fbab50c1910> 
+				mean_dict = {}
+				sum_dict = {}
+			config = <src.utils.config.Config object at 0x7fbac82e4d90> 
+				TRIAL_AT = 1000
+				SAVE_AT = 1
+				SEED = 0
+				REG_LAMBDA = 1e-06
+				LEARN_RATE = 0.0001
+				DISCOUNT_RATE = 0.99
+				ADVANTAGE_DECAY = 0.95
+				INPUT_LAYER = 512
+				ACTOR_HIDDEN = 256
+				CRITIC_HIDDEN = 1024
+				EPS_MAX = 1.0
+				EPS_MIN = 0.1
+				EPS_DECAY = 0.998
+				NUM_STEPS = 20
+				MAX_BUFFER_SIZE = 100000
+				REPLAY_BATCH_SIZE = 256
+				TARGET_UPDATE_RATE = 0.0004
+				ENV_MODEL = dfrntl
+				MPC = <src.utils.config.Config object at 0x7fba4ec71090> 
+					NSAMPLES = 100
+					HORIZON = 20
+					LAMBDA = 0.5
+					CONTROL_FREQ = 1
+				dynamics_size = 4
+				state_size = (4,)
+				action_size = [2]
+				env_name = CartPole-v0
+				rank = 0
+				size = 1
+				split = 1
+				model = mppi
+				framework = pt
+				train_prop = 1.0
+				tcp_ports = []
+				tcp_rank = 0
+				num_envs = 4
+				nsteps = 100000
+				render = False
+				trial = False
+				icm = False
+				rs = False
+				DYN = <src.utils.config.Config object at 0x7fbac82d3050> 
+					REG_LAMBDA = 1e-06
+					FACTOR = 0.5
+					PATIENCE = 5
+					LEARN_RATE = 0.001
+					TRANSITION_HIDDEN = 256
+					REWARD_HIDDEN = 256
+					BETA_DYN = 0.1
+					BETA_DOT = 1
+					BETA_DDOT = 1
+			device = cuda
+			envmodel = <src.models.pytorch.mpc.EnvModel object at 0x7fbab50c1950> 
+				network = DifferentialEnv(
+					  (reward): RewardModel(
+					    (linear1): Linear(in_features=10, out_features=256, bias=True)
+					    (linear2): Linear(in_features=256, out_features=256, bias=True)
+					    (linear3): Linear(in_features=256, out_features=1, bias=True)
+					  )
+					  (dynamics): TransitionModel(
+					    (gru): GRUCell(10, 256)
+					    (linear1): Linear(in_features=256, out_features=256, bias=True)
+					    (linear2): Linear(in_features=256, out_features=256, bias=True)
+					    (state_ddot): Linear(in_features=256, out_features=4, bias=True)
+					  )
+					) 
+					training = True
+					tau = 0.0004
+					name = dfrntl
+					stats = <src.utils.logger.Stats object at 0x7fbab50c19d0> 
+						mean_dict = {}
+						sum_dict = {}
+					config = <src.utils.config.Config object at 0x7fbac82e4d90> 
+						TRIAL_AT = 1000
+						SAVE_AT = 1
+						SEED = 0
+						REG_LAMBDA = 1e-06
+						LEARN_RATE = 0.0001
+						DISCOUNT_RATE = 0.99
+						ADVANTAGE_DECAY = 0.95
+						INPUT_LAYER = 512
+						ACTOR_HIDDEN = 256
+						CRITIC_HIDDEN = 1024
+						EPS_MAX = 1.0
+						EPS_MIN = 0.1
+						EPS_DECAY = 0.998
+						NUM_STEPS = 20
+						MAX_BUFFER_SIZE = 100000
+						REPLAY_BATCH_SIZE = 256
+						TARGET_UPDATE_RATE = 0.0004
+						ENV_MODEL = dfrntl
+						MPC = <src.utils.config.Config object at 0x7fba4ec71090> 
+							NSAMPLES = 100
+							HORIZON = 20
+							LAMBDA = 0.5
+							CONTROL_FREQ = 1
+						dynamics_size = 4
+						state_size = (4,)
+						action_size = [2]
+						env_name = CartPole-v0
+						rank = 0
+						size = 1
+						split = 1
+						model = mppi
+						framework = pt
+						train_prop = 1.0
+						tcp_ports = []
+						tcp_rank = 0
+						num_envs = 4
+						nsteps = 100000
+						render = False
+						trial = False
+						icm = False
+						rs = False
+						DYN = <src.utils.config.Config object at 0x7fbac82d3050> 
+							REG_LAMBDA = 1e-06
+							FACTOR = 0.5
+							PATIENCE = 5
+							LEARN_RATE = 0.001
+							TRANSITION_HIDDEN = 256
+							REWARD_HIDDEN = 256
+							BETA_DYN = 0.1
+							BETA_DOT = 1
+							BETA_DDOT = 1
+					device = cuda
+					state_size = (4,)
+					action_size = [2]
+					discrete = True
+					dyn_index = 4
+					optimizer = Adam (
+					Parameter Group 0
+					    amsgrad: False
+					    betas: (0.9, 0.999)
+					    eps: 1e-08
+					    lr: 0.001
+					    weight_decay: 1e-06
+					)
+					scheduler = <torch.optim.lr_scheduler.ReduceLROnPlateau object at 0x7fbab50c1f90>
+				state_size = (4,)
+				action_size = [2]
+			mu = [ 0.000  0.000]
+			cov = [[ 0.500  0.000]
+			 [ 0.000  0.500]]
+			icov = [[ 2.000  0.000]
+			 [ 0.000  2.000]]
+			lamda = 0.5
+			horizon = 20
+			nsamples = 100
+			action_size = [2]
+			control = [[[ 0.420  0.248]
+			  [ 0.652 -0.747]
+			  [ 0.306  0.989]
+			  [-0.491 -0.409]
+			  [ 0.243 -0.420]
+			  [-0.948  0.445]
+			  [ 0.087  0.809]
+			  [ 0.360 -0.315]
+			  [-0.498 -0.932]
+			  [ 0.314 -0.354]
+			  [-0.407 -0.817]
+			  [ 0.578  0.369]
+			  [ 0.897 -0.662]
+			  [ 0.364  0.358]
+			  [ 0.603  0.929]
+			  [-0.332 -0.998]
+			  [-0.498  0.558]
+			  [ 0.536  0.563]
+			  [ 0.546  0.388]
+			  [ 0.474 -0.115]]]
+			noise = [[[[ 0.791  0.421]
+			   [-0.458 -0.287]
+			   [ 0.564 -1.028]
+			   ...
+			   [-0.065  0.809]
+			   [-0.274  0.467]
+			   [ 1.558 -0.550]]
+			
+			  [[ 0.073  0.337]
+			   [ 0.419  0.107]
+			   [-0.498 -0.288]
+			   ...
+			   [ 0.035  0.201]
+			   [ 0.169  0.878]
+			   [-0.229 -0.533]]
+			
+			  [[ 0.186 -0.282]
+			   [-0.261 -0.239]
+			   [ 0.133 -0.149]
+			   ...
+			   [ 0.924 -0.231]
+			   [-0.246 -0.181]
+			   [-0.553  0.322]]
+			
+			  ...
+			
+			  [[-1.221  0.794]
+			   [-1.069 -0.955]
+			   [-0.535 -0.419]
+			   ...
+			   [-0.366  0.086]
+			   [ 0.944 -0.515]
+			   [-0.860  0.810]]
+			
+			  [[ 0.267  0.360]
+			   [-0.089 -0.417]
+			   [ 0.331  0.495]
+			   ...
+			   [-0.239  0.436]
+			   [ 1.010  0.106]
+			   [-0.517 -0.245]]
+			
+			  [[ 1.079 -0.337]
+			   [-1.234 -0.401]
+			   [-0.364 -1.547]
+			   ...
+			   [ 0.304 -0.421]
+			   [ 0.229  1.194]
+			   [-0.308  0.047]]]]
+			init_cost = [[  4.776   3.891  -1.209  10.506   4.443   0.845  -1.466  -1.156   7.117   0.118  -5.378  -9.901  11.457   4.175  -6.388   4.789 -16.473   1.834  -5.142   3.530  -2.686   0.463   3.133   1.183   3.240  -0.599   1.545   3.452   4.441  -5.173   4.426   5.341   3.371  -8.914  -6.556   9.155  -2.300   3.270  -2.405  -4.718   4.104   3.473   7.371  -7.327  -3.474   1.780   0.996  -4.185  -5.651   7.426   7.245 -10.533   0.491   0.153  -1.862   5.927   6.137  -3.921  -3.665  -6.355   7.286  -5.147   1.243  -2.783   0.164   0.649  -6.222   4.569   4.967 -13.985   2.815   2.433 -11.324   1.332  -0.774   0.948  -6.233  -0.111   2.503   3.404  -6.612   2.609   4.225  -7.369   2.696  -1.321  -7.796   2.551   8.011  -4.660  -1.350  -4.545   6.273   2.393   1.863   4.877  -0.127  -6.074  -1.226  -3.317]]
+		replay_buffer = <src.utils.rand.ReplayBuffer object at 0x7fba20738a10> 
+			buffer = deque([], maxlen=100000)
+		buffer = []
+	noise_process = <src.utils.rand.BrownianNoise object at 0x7fbab5059050> 
+		size = [2]
+		dt = 0.2
+		action = [ 0.357 -1.000]
+		daction_dt = [ 0.449  0.744]
+	discrete = True
+	action_size = [2]
+	state_size = (4,)
+	config = <src.utils.config.Config object at 0x7fbac82e4d90> 
+		TRIAL_AT = 1000
+		SAVE_AT = 1
+		SEED = 0
+		REG_LAMBDA = 1e-06
+		LEARN_RATE = 0.0001
+		DISCOUNT_RATE = 0.99
+		ADVANTAGE_DECAY = 0.95
+		INPUT_LAYER = 512
+		ACTOR_HIDDEN = 256
+		CRITIC_HIDDEN = 1024
+		EPS_MAX = 1.0
+		EPS_MIN = 0.1
+		EPS_DECAY = 0.998
+		NUM_STEPS = 20
+		MAX_BUFFER_SIZE = 100000
+		REPLAY_BATCH_SIZE = 256
+		TARGET_UPDATE_RATE = 0.0004
+		ENV_MODEL = dfrntl
+		MPC = <src.utils.config.Config object at 0x7fba4ec71090> 
+			NSAMPLES = 100
+			HORIZON = 20
+			LAMBDA = 0.5
+			CONTROL_FREQ = 1
+		dynamics_size = 4
+		state_size = (4,)
+		action_size = [2]
+		env_name = CartPole-v0
+		rank = 0
+		size = 1
+		split = 1
+		model = mppi
+		framework = pt
+		train_prop = 1.0
+		tcp_ports = []
+		tcp_rank = 0
+		num_envs = 4
+		nsteps = 100000
+		render = False
+		trial = False
+		icm = False
+		rs = False
+		DYN = <src.utils.config.Config object at 0x7fbac82d3050> 
+			REG_LAMBDA = 1e-06
+			FACTOR = 0.5
+			PATIENCE = 5
+			LEARN_RATE = 0.001
+			TRANSITION_HIDDEN = 256
+			REWARD_HIDDEN = 256
+			BETA_DYN = 0.1
+			BETA_DOT = 1
+			BETA_DDOT = 1
+	stats = <src.utils.logger.Stats object at 0x7fbab50596d0> 
+		mean_dict = {}
+		sum_dict = {},
+conn: None,
+
+import torch
+import numpy as np
+import scipy as sp
+from scipy.stats import multivariate_normal
+from src.utils.rand import RandomAgent, ReplayBuffer
+from ..agents.base import PTNetwork, PTAgent, Conv, one_hot_from_indices
+from . import EnvModel
+
+class MPPIController(PTNetwork):
+	def __init__(self, state_size, action_size, config, load="", gpu=True, name="mppi"):
+		super().__init__(config, gpu=gpu, name=name)
+		self.envmodel = EnvModel(state_size, action_size, config, load=load, gpu=gpu)
+		self.mu = np.zeros(action_size)
+		self.cov = np.diag(np.ones(action_size))*0.5
+		self.icov = np.linalg.inv(self.cov)
+		self.lamda = config.MPC.LAMBDA
+		self.horizon = config.MPC.HORIZON
+		self.nsamples = config.MPC.NSAMPLES
+		self.config = config
+		self.action_size = action_size
+		self.init_control()
+
+	def get_action(self, state, eps=None, sample=True):
+		batch = state.shape[:-1]
+		if len(batch) and self.control.shape[0] != batch[0]: self.init_control(batch[0])
+		x = torch.Tensor(state).view(*batch, 1,-1).repeat_interleave(self.nsamples, -2)
+		controls = np.clip(self.control[:,None,:,:] + self.noise, -1, 1)
+		# self.envmodel.reset(batch_size=(*batch, self.nsamples), state=x)
+		# self.states, rewards = zip(*[self.envmodel.step(controls[:,t], numpy=True) for t in range(self.horizon)])
+		self.states, rewards = self.envmodel.rollout(controls, x, numpy=True)
+		costs = -np.sum(rewards, -1) #+ self.lamda * np.copy(self.init_cost)
+		beta = np.min(costs, -1, keepdims=True)
+		costs_norm = -(costs - beta)/self.lamda
+		weights = sp.special.softmax(costs_norm)
+		self.control += np.sum(weights[:,:,None,None]*self.noise, len(batch))
+		action = self.control[...,0,:]
+		self.control = np.roll(self.control, -1, axis=-2)
+		self.control[...,-1,:] = 0
+		return action
+
+	def init_control(self, batch_size=1):
+		self.control = np.random.uniform(-1, 1, size=[batch_size, self.horizon, *self.action_size])
+		self.noise = np.random.multivariate_normal(self.mu, self.cov, size=[batch_size, self.nsamples, self.horizon])
+		self.init_cost = np.sum(self.control[:,None,:,None,:] @ self.icov[None,None,None,:,:] @ self.noise[:,:,:,:,None], axis=(2,3,4))
+
+	def optimize(self, states, actions, next_states, rewards, dones):
+		return self.envmodel.optimize(states, actions, next_states, rewards, dones)
+
+	def save_model(self, dirname="pytorch", name="checkpoint", net=None):
+		return self.envmodel.save_model(dirname, name, net)
+		
+	def load_model(self, dirname="pytorch", name="checkpoint", net=None):
+		return self.envmodel.load_model(dirname, name, net)
+
+class MPPIAgent(PTAgent):
+	def __init__(self, state_size, action_size, config, gpu=True, load=None):
+		super().__init__(state_size, action_size, config, MPPIController, gpu=gpu, load=load)
+
+	def get_action(self, state, eps=None, sample=True):
+		action = self.network.get_action(np.array(state))
+		return np.clip(action, -1, 1)
+
+	def train(self, state, action, next_state, reward, done):
+		self.buffer.append((state, action, next_state, reward, done))
+		if len(self.buffer) >= self.config.NUM_STEPS:
+			states, actions, next_states, rewards, dones = map(np.array, zip(*self.buffer))
+			self.buffer.clear()
+			mask_idx = np.argmax(dones,0) + (1-np.max(dones,0))*dones.shape[0]
+			mask = np.arange(dones.shape[0])[:,None] > mask_idx[None,:]
+			states_mask = mask[...,None].repeat(states.shape[-1],-1) 
+			actions_mask = mask[...,None].repeat(actions.shape[-1],-1) 
+			states[states_mask] = 0
+			actions[actions_mask] = 0
+			next_states[states_mask] = 0
+			rewards[mask] = 0
+			dones[mask] = 0
+			states, actions, next_states, rewards, dones = [np.split(x,x.shape[1],1) for x in (states, actions, next_states, rewards, dones)]
+			self.replay_buffer.extend(list(zip(states, actions, next_states, rewards, dones)), shuffle=False)
+		if len(self.replay_buffer) > self.config.REPLAY_BATCH_SIZE:
+			transform = lambda x: self.to_tensor(np.concatenate(x,1)).transpose(0,1)
+			states, actions, next_states, rewards, dones = self.replay_buffer.sample(self.config.REPLAY_BATCH_SIZE, dtype=transform)[0]
+			self.network.optimize(states, actions, next_states, rewards, dones)
+
+
+Step:       0, Reward:    22.500 [   6.225], Avg:    22.500 (1.000) <0-00:00:00> ({'r_t':     1.0000, 'eps':     1.0000, 'eps_e':     1.0000})
+Step:    1000, Reward:    13.750 [   5.356], Avg:    18.125 (1.000) <0-00:00:14> ({'r_t':  1000.0000, 'eps':     1.0000, 'eps_e':     1.0000})
+Step:    2000, Reward:     9.250 [   0.433], Avg:    15.167 (1.000) <0-00:00:49> ({'r_t':  1000.0000, 'eps':     1.0000, 'eps_e':     1.0000})
+Step:    3000, Reward:     9.500 [   0.500], Avg:    13.750 (1.000) <0-00:01:33> ({'r_t':  1000.0000, 'eps':     1.0000, 'eps_e':     1.0000})
+Step:    4000, Reward:     9.500 [   0.866], Avg:    12.900 (1.000) <0-00:02:16> ({'r_t':  1000.0000, 'eps':     1.0000, 'eps_e':     1.0000})
+Step:    5000, Reward:     9.500 [   0.500], Avg:    12.333 (1.000) <0-00:03:01> ({'r_t':  1000.0000, 'eps':     1.0000, 'eps_e':     1.0000})
+Step:    6000, Reward:     9.000 [   0.707], Avg:    11.857 (1.000) <0-00:03:45> ({'r_t':  1000.0000, 'eps':     1.0000, 'eps_e':     1.0000})
+Step:    7000, Reward:     9.500 [   0.500], Avg:    11.562 (1.000) <0-00:04:30> ({'r_t':  1000.0000, 'eps':     1.0000, 'eps_e':     1.0000})
+Step:    8000, Reward:     9.750 [   0.433], Avg:    11.361 (1.000) <0-00:05:16> ({'r_t':  1000.0000, 'eps':     1.0000, 'eps_e':     1.0000})
+Step:    9000, Reward:    10.000 [   0.707], Avg:    11.225 (1.000) <0-00:06:01> ({'r_t':  1000.0000, 'eps':     1.0000, 'eps_e':     1.0000})
+Step:   10000, Reward:     9.250 [   0.433], Avg:    11.045 (1.000) <0-00:06:46> ({'r_t':  1000.0000, 'eps':     1.0000, 'eps_e':     1.0000})
+Step:   11000, Reward:     9.750 [   0.433], Avg:    10.938 (1.000) <0-00:07:30> ({'r_t':  1000.0000, 'eps':     1.0000, 'eps_e':     1.0000})
+Step:   12000, Reward:     9.500 [   0.500], Avg:    10.827 (1.000) <0-00:08:15> ({'r_t':  1000.0000, 'eps':     1.0000, 'eps_e':     1.0000})
+Step:   13000, Reward:    10.250 [   1.090], Avg:    10.786 (1.000) <0-00:09:00> ({'r_t':  1000.0000, 'eps':     1.0000, 'eps_e':     1.0000})
+Step:   14000, Reward:    13.000 [   4.301], Avg:    10.933 (1.000) <0-00:09:44> ({'r_t':  1000.0000, 'eps':     1.0000, 'eps_e':     1.0000})
+Step:   15000, Reward:     9.250 [   0.433], Avg:    10.828 (1.000) <0-00:10:28> ({'r_t':  1000.0000, 'eps':     1.0000, 'eps_e':     1.0000})
+Step:   16000, Reward:     8.500 [   0.500], Avg:    10.691 (1.000) <0-00:11:12> ({'r_t':  1000.0000, 'eps':     1.0000, 'eps_e':     1.0000})
+Step:   17000, Reward:     9.750 [   0.829], Avg:    10.639 (1.000) <0-00:11:58> ({'r_t':  1000.0000, 'eps':     1.0000, 'eps_e':     1.0000})
+Step:   18000, Reward:     9.000 [   0.000], Avg:    10.553 (1.000) <0-00:12:44> ({'r_t':  1000.0000, 'eps':     1.0000, 'eps_e':     1.0000})
+Step:   19000, Reward:     9.250 [   0.433], Avg:    10.488 (1.000) <0-00:13:32> ({'r_t':  1000.0000, 'eps':     1.0000, 'eps_e':     1.0000})
+Step:   20000, Reward:    10.000 [   0.000], Avg:    10.464 (1.000) <0-00:14:17> ({'r_t':  1000.0000, 'eps':     1.0000, 'eps_e':     1.0000})
+Step:   21000, Reward:     9.250 [   0.829], Avg:    10.409 (1.000) <0-00:15:02> ({'r_t':  1000.0000, 'eps':     1.0000, 'eps_e':     1.0000})
+Step:   22000, Reward:     9.500 [   0.500], Avg:    10.370 (1.000) <0-00:15:46> ({'r_t':  1000.0000, 'eps':     1.0000, 'eps_e':     1.0000})
+Step:   23000, Reward:     9.000 [   0.707], Avg:    10.312 (1.000) <0-00:16:30> ({'r_t':  1000.0000, 'eps':     1.0000, 'eps_e':     1.0000})
+Step:   24000, Reward:     9.750 [   0.829], Avg:    10.290 (1.000) <0-00:17:14> ({'r_t':  1000.0000, 'eps':     1.0000, 'eps_e':     1.0000})
+Step:   25000, Reward:     9.500 [   0.500], Avg:    10.260 (1.000) <0-00:17:59> ({'r_t':  1000.0000, 'eps':     1.0000, 'eps_e':     1.0000})
+Step:   26000, Reward:     9.250 [   0.433], Avg:    10.222 (1.000) <0-00:18:43> ({'r_t':  1000.0000, 'eps':     1.0000, 'eps_e':     1.0000})
+Step:   27000, Reward:     9.000 [   0.707], Avg:    10.179 (1.000) <0-00:19:27> ({'r_t':  1000.0000, 'eps':     1.0000, 'eps_e':     1.0000})
+Step:   28000, Reward:     8.750 [   0.433], Avg:    10.129 (1.000) <0-00:20:12> ({'r_t':  1000.0000, 'eps':     1.0000, 'eps_e':     1.0000})
+Step:   29000, Reward:     9.750 [   0.433], Avg:    10.117 (1.000) <0-00:20:56> ({'r_t':  1000.0000, 'eps':     1.0000, 'eps_e':     1.0000})
+Step:   30000, Reward:     9.500 [   0.500], Avg:    10.097 (1.000) <0-00:21:41> ({'r_t':  1000.0000, 'eps':     1.0000, 'eps_e':     1.0000})
+Step:   31000, Reward:     9.250 [   0.829], Avg:    10.070 (1.000) <0-00:22:26> ({'r_t':  1000.0000, 'eps':     1.0000, 'eps_e':     1.0000})
+Step:   32000, Reward:     9.750 [   0.433], Avg:    10.061 (1.000) <0-00:23:11> ({'r_t':  1000.0000, 'eps':     1.0000, 'eps_e':     1.0000})
+Step:   33000, Reward:     8.750 [   0.433], Avg:    10.022 (1.000) <0-00:23:55> ({'r_t':  1000.0000, 'eps':     1.0000, 'eps_e':     1.0000})
+Step:   34000, Reward:     9.000 [   1.000], Avg:     9.993 (1.000) <0-00:24:40> ({'r_t':  1000.0000, 'eps':     1.0000, 'eps_e':     1.0000})
+Step:   35000, Reward:    10.000 [   0.707], Avg:     9.993 (1.000) <0-00:25:24> ({'r_t':  1000.0000, 'eps':     1.0000, 'eps_e':     1.0000})
+Step:   36000, Reward:     9.250 [   0.829], Avg:     9.973 (1.000) <0-00:26:08> ({'r_t':  1000.0000, 'eps':     1.0000, 'eps_e':     1.0000})
+Step:   37000, Reward:     9.250 [   0.829], Avg:     9.954 (1.000) <0-00:26:52> ({'r_t':  1000.0000, 'eps':     1.0000, 'eps_e':     1.0000})
+Step:   38000, Reward:     8.750 [   0.433], Avg:     9.923 (1.000) <0-00:27:37> ({'r_t':  1000.0000, 'eps':     1.0000, 'eps_e':     1.0000})
+Step:   39000, Reward:     9.250 [   0.433], Avg:     9.906 (1.000) <0-00:28:21> ({'r_t':  1000.0000, 'eps':     1.0000, 'eps_e':     1.0000})
+Step:   40000, Reward:     9.500 [   1.118], Avg:     9.896 (1.000) <0-00:29:05> ({'r_t':  1000.0000, 'eps':     1.0000, 'eps_e':     1.0000})
+Step:   41000, Reward:     9.750 [   0.433], Avg:     9.893 (1.000) <0-00:29:48> ({'r_t':  1000.0000, 'eps':     1.0000, 'eps_e':     1.0000})
+Step:   42000, Reward:    10.000 [   0.000], Avg:     9.895 (1.000) <0-00:30:33> ({'r_t':  1000.0000, 'eps':     1.0000, 'eps_e':     1.0000})
+Step:   43000, Reward:     9.500 [   0.500], Avg:     9.886 (1.000) <0-00:31:18> ({'r_t':  1000.0000, 'eps':     1.0000, 'eps_e':     1.0000})
+Step:   44000, Reward:    10.000 [   0.707], Avg:     9.889 (1.000) <0-00:32:02> ({'r_t':  1000.0000, 'eps':     1.0000, 'eps_e':     1.0000})
+Step:   45000, Reward:     9.250 [   0.829], Avg:     9.875 (1.000) <0-00:32:47> ({'r_t':  1000.0000, 'eps':     1.0000, 'eps_e':     1.0000})
+Step:   46000, Reward:     9.750 [   0.829], Avg:     9.872 (1.000) <0-00:33:32> ({'r_t':  1000.0000, 'eps':     1.0000, 'eps_e':     1.0000})
+Step:   47000, Reward:     9.500 [   0.500], Avg:     9.865 (1.000) <0-00:34:17> ({'r_t':  1000.0000, 'eps':     1.0000, 'eps_e':     1.0000})
+Step:   48000, Reward:    10.250 [   1.479], Avg:     9.872 (1.000) <0-00:35:01> ({'r_t':  1000.0000, 'eps':     1.0000, 'eps_e':     1.0000})
+Step:   49000, Reward:    12.000 [   4.301], Avg:     9.915 (1.000) <0-00:35:45> ({'r_t':  1000.0000, 'eps':     1.0000, 'eps_e':     1.0000})
+Step:   50000, Reward:    13.750 [   5.974], Avg:     9.990 (1.000) <0-00:36:29> ({'r_t':  1000.0000, 'eps':     1.0000, 'eps_e':     1.0000})
+Step:   51000, Reward:     9.750 [   0.829], Avg:     9.986 (1.000) <0-00:37:14> ({'r_t':  1000.0000, 'eps':     1.0000, 'eps_e':     1.0000})
+Step:   52000, Reward:     9.500 [   1.118], Avg:     9.976 (1.000) <0-00:37:58> ({'r_t':  1000.0000, 'eps':     1.0000, 'eps_e':     1.0000})
+Step:   53000, Reward:    10.250 [   0.829], Avg:     9.981 (1.000) <0-00:38:42> ({'r_t':  1000.0000, 'eps':     1.0000, 'eps_e':     1.0000})
+Step:   54000, Reward:     9.750 [   0.433], Avg:     9.977 (1.000) <0-00:39:27> ({'r_t':  1000.0000, 'eps':     1.0000, 'eps_e':     1.0000})
+Step:   55000, Reward:     9.250 [   0.433], Avg:     9.964 (1.000) <0-00:40:11> ({'r_t':  1000.0000, 'eps':     1.0000, 'eps_e':     1.0000})
+Step:   56000, Reward:     9.500 [   1.118], Avg:     9.956 (1.000) <0-00:40:55> ({'r_t':  1000.0000, 'eps':     1.0000, 'eps_e':     1.0000})
+Step:   57000, Reward:     9.750 [   0.829], Avg:     9.953 (1.000) <0-00:41:39> ({'r_t':  1000.0000, 'eps':     1.0000, 'eps_e':     1.0000})
+Step:   58000, Reward:     9.500 [   0.500], Avg:     9.945 (1.000) <0-00:42:24> ({'r_t':  1000.0000, 'eps':     1.0000, 'eps_e':     1.0000})
+Step:   59000, Reward:     9.250 [   0.433], Avg:     9.933 (1.000) <0-00:43:08> ({'r_t':  1000.0000, 'eps':     1.0000, 'eps_e':     1.0000})
+Step:   60000, Reward:     9.250 [   0.829], Avg:     9.922 (1.000) <0-00:43:53> ({'r_t':  1000.0000, 'eps':     1.0000, 'eps_e':     1.0000})
+Step:   61000, Reward:     9.250 [   0.433], Avg:     9.911 (1.000) <0-00:44:37> ({'r_t':  1000.0000, 'eps':     1.0000, 'eps_e':     1.0000})
+Step:   62000, Reward:     9.250 [   0.829], Avg:     9.901 (1.000) <0-00:45:21> ({'r_t':  1000.0000, 'eps':     1.0000, 'eps_e':     1.0000})
+Step:   63000, Reward:     9.250 [   0.829], Avg:     9.891 (1.000) <0-00:46:05> ({'r_t':  1000.0000, 'eps':     1.0000, 'eps_e':     1.0000})
+Step:   64000, Reward:    10.000 [   0.707], Avg:     9.892 (1.000) <0-00:46:50> ({'r_t':  1000.0000, 'eps':     1.0000, 'eps_e':     1.0000})
+Step:   65000, Reward:     9.000 [   0.707], Avg:     9.879 (1.000) <0-00:47:34> ({'r_t':  1000.0000, 'eps':     1.0000, 'eps_e':     1.0000})
+Step:   66000, Reward:     9.250 [   0.433], Avg:     9.869 (1.000) <0-00:48:19> ({'r_t':  1000.0000, 'eps':     1.0000, 'eps_e':     1.0000})
+Step:   67000, Reward:     9.250 [   0.829], Avg:     9.860 (1.000) <0-00:49:04> ({'r_t':  1000.0000, 'eps':     1.0000, 'eps_e':     1.0000})
+Step:   68000, Reward:     9.000 [   0.707], Avg:     9.848 (1.000) <0-00:49:48> ({'r_t':  1000.0000, 'eps':     1.0000, 'eps_e':     1.0000})
+Step:   69000, Reward:     9.000 [   0.000], Avg:     9.836 (1.000) <0-00:50:33> ({'r_t':  1000.0000, 'eps':     1.0000, 'eps_e':     1.0000})
+Step:   70000, Reward:     8.750 [   0.829], Avg:     9.820 (1.000) <0-00:51:17> ({'r_t':  1000.0000, 'eps':     1.0000, 'eps_e':     1.0000})
+Step:   71000, Reward:     9.750 [   0.433], Avg:     9.819 (1.000) <0-00:52:02> ({'r_t':  1000.0000, 'eps':     1.0000, 'eps_e':     1.0000})
+Step:   72000, Reward:     9.500 [   0.500], Avg:     9.815 (1.000) <0-00:52:47> ({'r_t':  1000.0000, 'eps':     1.0000, 'eps_e':     1.0000})
+Step:   73000, Reward:     9.750 [   0.433], Avg:     9.814 (1.000) <0-00:53:31> ({'r_t':  1000.0000, 'eps':     1.0000, 'eps_e':     1.0000})
+Step:   74000, Reward:     9.750 [   0.433], Avg:     9.813 (1.000) <0-00:54:16> ({'r_t':  1000.0000, 'eps':     1.0000, 'eps_e':     1.0000})
+Step:   75000, Reward:     9.000 [   0.000], Avg:     9.803 (1.000) <0-00:55:00> ({'r_t':  1000.0000, 'eps':     1.0000, 'eps_e':     1.0000})
+Step:   76000, Reward:     9.750 [   0.829], Avg:     9.802 (1.000) <0-00:55:44> ({'r_t':  1000.0000, 'eps':     1.0000, 'eps_e':     1.0000})
+Step:   77000, Reward:     9.250 [   0.433], Avg:     9.795 (1.000) <0-00:56:28> ({'r_t':  1000.0000, 'eps':     1.0000, 'eps_e':     1.0000})
+Step:   78000, Reward:     8.500 [   0.500], Avg:     9.778 (1.000) <0-00:57:13> ({'r_t':  1000.0000, 'eps':     1.0000, 'eps_e':     1.0000})
+Step:   79000, Reward:     9.750 [   0.433], Avg:     9.778 (1.000) <0-00:57:56> ({'r_t':  1000.0000, 'eps':     1.0000, 'eps_e':     1.0000})
+Step:   80000, Reward:    10.000 [   0.707], Avg:     9.781 (1.000) <0-00:58:40> ({'r_t':  1000.0000, 'eps':     1.0000, 'eps_e':     1.0000})
+Step:   81000, Reward:     9.750 [   0.433], Avg:     9.780 (1.000) <0-00:59:25> ({'r_t':  1000.0000, 'eps':     1.0000, 'eps_e':     1.0000})
+Step:   82000, Reward:     9.250 [   0.829], Avg:     9.774 (1.000) <0-01:00:09> ({'r_t':  1000.0000, 'eps':     1.0000, 'eps_e':     1.0000})
+Step:   83000, Reward:     9.750 [   0.433], Avg:     9.774 (1.000) <0-01:00:53> ({'r_t':  1000.0000, 'eps':     1.0000, 'eps_e':     1.0000})
+Step:   84000, Reward:     9.750 [   0.829], Avg:     9.774 (1.000) <0-01:01:38> ({'r_t':  1000.0000, 'eps':     1.0000, 'eps_e':     1.0000})
+Step:   85000, Reward:     9.500 [   0.866], Avg:     9.770 (1.000) <0-01:02:22> ({'r_t':  1000.0000, 'eps':     1.0000, 'eps_e':     1.0000})
+Step:   86000, Reward:     9.500 [   0.866], Avg:     9.767 (1.000) <0-01:03:07> ({'r_t':  1000.0000, 'eps':     1.0000, 'eps_e':     1.0000})
+Step:   87000, Reward:    10.000 [   0.707], Avg:     9.770 (1.000) <0-01:03:51> ({'r_t':  1000.0000, 'eps':     1.0000, 'eps_e':     1.0000})
+Step:   88000, Reward:     9.500 [   0.500], Avg:     9.767 (1.000) <0-01:04:35> ({'r_t':  1000.0000, 'eps':     1.0000, 'eps_e':     1.0000})
+Step:   89000, Reward:     9.750 [   0.433], Avg:     9.767 (1.000) <0-01:05:20> ({'r_t':  1000.0000, 'eps':     1.0000, 'eps_e':     1.0000})
+Step:   90000, Reward:     9.000 [   0.707], Avg:     9.758 (1.000) <0-01:06:05> ({'r_t':  1000.0000, 'eps':     1.0000, 'eps_e':     1.0000})
+Step:   91000, Reward:     9.500 [   1.118], Avg:     9.755 (1.000) <0-01:06:49> ({'r_t':  1000.0000, 'eps':     1.0000, 'eps_e':     1.0000})

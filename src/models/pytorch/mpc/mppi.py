@@ -3,40 +3,83 @@ import numpy as np
 import scipy as sp
 from scipy.stats import multivariate_normal
 from src.utils.rand import RandomAgent, ReplayBuffer
-from ..agents.base import PTACNetwork, PTAgent, Conv, one_hot_from_indices
+from ..agents.base import PTNetwork, PTAgent, Conv, one_hot_from_indices
+from . import EnvModel
 
-class MPPIController(RandomAgent):
-	def __init__(self, state_size, action_size, envmodel, config, gpu=True):
-		self.envmodel = envmodel(state_size, action_size, config, load=config.env_name)
+class MPPIController(PTNetwork):
+	def __init__(self, state_size, action_size, config, load="", gpu=True, name="mppi"):
+		super().__init__(config, gpu=gpu, name=name)
+		self.envmodel = EnvModel(state_size, action_size, config, load=load, gpu=gpu)
 		self.mu = np.zeros(action_size)
 		self.cov = np.diag(np.ones(action_size))*0.5
 		self.icov = np.linalg.inv(self.cov)
 		self.lamda = config.MPC.LAMBDA
 		self.horizon = config.MPC.HORIZON
 		self.nsamples = config.MPC.NSAMPLES
-		self.control = np.random.uniform(-1, 1, [self.horizon, *action_size])
-		self.noise = np.random.multivariate_normal(self.mu, self.cov, size=(self.nsamples, self.horizon))
-		self.init_cost = np.sum(self.control[None,:,None,:] @ self.icov[None,None,:,:] @ self.noise[:,:,:,None], axis=(1,2,3))
 		self.config = config
-		self.step = 0
+		self.action_size = action_size
+		self.init_control()
 
 	def get_action(self, state, eps=None, sample=True):
-		self.step += 1
-		if self.step%self.config.MPC.get("CONTROL_FREQ",1) == 0:
-			x = torch.Tensor(state).view(1,-1).repeat(self.nsamples, 1)
-			controls = np.clip(self.control[None,:,:] + self.noise, -1, 1)
-			self.envmodel.reset(batch_size=self.nsamples, state=x)
-			self.states, rewards = zip(*[self.envmodel.step(controls[:,t], numpy=True) for t in range(self.horizon)])
-			costs = -np.sum(rewards, 0) #+ self.lamda * np.copy(self.init_cost)
-			beta = np.min(costs)
-			costs_norm = -(costs - beta)/self.lamda
-			weights = sp.special.softmax(costs_norm)
-			self.control += np.sum(weights[:,None,None]*self.noise, 0)
-		action = np.tanh(self.control[0])
-		self.control = np.roll(self.control, -1, axis=0)
-		self.control[-1] = 0
-		return action if len(action.shape)==len(state.shape) else np.repeat(action[None,:], state.shape[0], 0)
+		batch = state.shape[:-1]
+		if len(batch) and self.control.shape[0] != batch[0]: self.init_control(batch[0])
+		x = torch.Tensor(state).view(*batch, 1,-1).repeat_interleave(self.nsamples, -2)
+		controls = np.clip(self.control[:,None,:,:] + self.noise, -1, 1)
+		# self.envmodel.reset(batch_size=(*batch, self.nsamples), state=x)
+		# self.states, rewards = zip(*[self.envmodel.step(controls[:,t], numpy=True) for t in range(self.horizon)])
+		self.states, rewards = self.envmodel.rollout(controls, x, numpy=True)
+		costs = -np.sum(rewards, -1) #+ self.lamda * np.copy(self.init_cost)
+		beta = np.min(costs, -1, keepdims=True)
+		costs_norm = -(costs - beta)/self.lamda
+		weights = sp.special.softmax(costs_norm)
+		self.control += np.sum(weights[:,:,None,None]*self.noise, len(batch))
+		action = self.control[...,0,:]
+		self.control = np.roll(self.control, -1, axis=-2)
+		self.control[...,-1,:] = 0
+		return action
+
+	def init_control(self, batch_size=1):
+		self.control = np.random.uniform(-1, 1, size=[batch_size, self.horizon, *self.action_size])
+		self.noise = np.random.multivariate_normal(self.mu, self.cov, size=[batch_size, self.nsamples, self.horizon])
+		self.init_cost = np.sum(self.control[:,None,:,None,:] @ self.icov[None,None,None,:,:] @ self.noise[:,:,:,:,None], axis=(2,3,4))
+
+	def optimize(self, states, actions, next_states, rewards, dones):
+		return self.envmodel.optimize(states, actions, next_states, rewards, dones)
+
+	def save_model(self, dirname="pytorch", name="checkpoint", net=None):
+		return self.envmodel.save_model(dirname, name, net)
+		
+	def load_model(self, dirname="pytorch", name="checkpoint", net=None):
+		return self.envmodel.load_model(dirname, name, net)
+
+	def get_stats(self):
+		return {**super().get_stats(), **self.envmodel.get_stats()}
+
+class MPPIAgent(PTAgent):
+	def __init__(self, state_size, action_size, config, gpu=True, load=None):
+		super().__init__(state_size, action_size, config, MPPIController, gpu=gpu, load=load)
+
+	def get_action(self, state, eps=None, sample=True):
+		action = self.network.get_action(np.array(state))
+		return np.clip(action, -1, 1)
 
 	def train(self, state, action, next_state, reward, done):
-		pass
-
+		self.buffer.append((state, action, next_state, reward, done))
+		if len(self.buffer) >= self.config.NUM_STEPS:
+			states, actions, next_states, rewards, dones = map(np.array, zip(*self.buffer))
+			self.buffer.clear()
+			mask_idx = np.argmax(dones,0) + (1-np.max(dones,0))*dones.shape[0]
+			mask = np.arange(dones.shape[0])[:,None] > mask_idx[None,:]
+			states_mask = mask[...,None].repeat(states.shape[-1],-1) 
+			actions_mask = mask[...,None].repeat(actions.shape[-1],-1) 
+			states[states_mask] = 0
+			actions[actions_mask] = 0
+			next_states[states_mask] = 0
+			rewards[mask] = 0
+			dones[mask] = 0
+			states, actions, next_states, rewards, dones = [np.split(x,x.shape[1],1) for x in (states, actions, next_states, rewards, dones)]
+			self.replay_buffer.extend(list(zip(states, actions, next_states, rewards, dones)), shuffle=False)
+		if len(self.replay_buffer) > self.config.REPLAY_BATCH_SIZE:
+			transform = lambda x: self.to_tensor(np.concatenate(x,1)).transpose(0,1)
+			states, actions, next_states, rewards, dones = self.replay_buffer.sample(self.config.REPLAY_BATCH_SIZE, dtype=transform)[0]
+			self.network.optimize(states, actions, next_states, rewards, dones)

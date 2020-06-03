@@ -2,7 +2,6 @@ from src.utils.config import Config
 from src.utils.envs import get_space_size
 from src.utils.misc import load_module
 from .envmodel import MDRNNEnv, DifferentialEnv, RealEnv
-from .mppi import MPPIController
 
 all_envmodels = {
 	"real":RealEnv,
@@ -57,5 +56,21 @@ class EnvModel():
 		next_state, reward = self.network.step(action, state, **kwargs)
 		return next_state, reward
 
+	def rollout(self, actions, state=None, **kwargs):
+		next_states, rewards = self.network.rollout(actions, state, **kwargs)
+		return next_states, rewards
+
 	def reset(self, **kwargs):
 		self.network.reset(**kwargs)
+
+	def optimize(self, states, actions, next_states, rewards, dones):
+		self.network.optimize(states, actions, next_states, rewards, dones)
+
+	def get_stats(self):
+		return self.network.get_stats()
+
+	def save_model(self, dirname="pytorch", name="checkpoint", net=None):
+		return self.network.save_model(dirname, name, net)
+		
+	def load_model(self, dirname="pytorch", name="checkpoint", net=None):
+		return self.network.load_model(dirname, name, net)

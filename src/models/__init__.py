@@ -5,7 +5,7 @@ from src.utils.config import Config
 from src.envs import get_env, all_envs, env_grps
 from src.envs.CarRacing.car_racing import CostModel, CarRacing
 from .rllib import rPPOAgent, rSACAgent, rDDPGAgent, rDDQNAgent
-from .pytorch import PPOAgent, SACAgent, DDQNAgent, DDPGAgent, MPOAgent, MPPIController
+from .pytorch import PPOAgent, SACAgent, DDQNAgent, DDPGAgent, MPOAgent, MPPIAgent, MPPIController
 from .pytorch.mpc import all_envmodels, set_dynamics_size
 
 all_models = {
@@ -16,7 +16,7 @@ all_models = {
 		"ddqn":DDQNAgent, 
 		"rand":RandomAgent,
 		"mpo":MPOAgent,
-		"mppi":MPPIController
+		"mppi":MPPIAgent
 	},
 }
 
@@ -61,9 +61,11 @@ model_configs = {
 		EPS_DECAY = 0.998,             	# The rate at which eps decays from EPS_MAX to EPS_MIN
 	),
 	"mppi": net_config.clone(
+		REPLAY_BATCH_SIZE = 256,       	# How many experience tuples to sample from the buffer for each train step
+		NUM_STEPS = 20,					# The number of steps to collect experience in sequence for each GAE calculation
 		ENV_MODEL = "dfrntl",
 		MPC = Config(
-			NSAMPLES = 2500, 
+			NSAMPLES = 100, 
 			HORIZON = 20, 
 			LAMBDA = 0.5,
 			CONTROL_FREQ = 1
