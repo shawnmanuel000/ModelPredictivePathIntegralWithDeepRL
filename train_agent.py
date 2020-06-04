@@ -33,7 +33,7 @@ class GymTrainer():
 		if self.config.trial: return print(f"Reward: {self.total_rewards[-1]}")
 		if len(self.total_rewards) % self.config.SAVE_AT==0: agent.save_model(self.checkpoint)
 		if self.total_rewards[-1] >= max(self.total_rewards): agent.save_model(self.checkpoint, "best")
-		if self.logger: self.logger.log(f"Step: {step:7d}, Reward: {self.total_rewards[-1]:9.3f} [{np.std(rollouts):8.3f}], Avg: {np.mean(self.total_rewards, axis=0):9.3f} ({eps:.3f})", {**stats, **{f"{k}_e":v for k,v in agent.get_stats().items()}})
+		if self.logger: self.logger.log(f"Step: {step:7d}, Reward: {self.total_rewards[-1]:9.3f} [{np.std(rollouts):8.3f}], Avg: {np.mean(self.total_rewards, axis=0):9.3f} ({stats.get('eps',eps):.3f})", {**stats, **{f"{k}_e":v for k,v in agent.get_stats().items()}})
 
 	def train(self):
 		states = self.envs.reset(train=True)
@@ -41,7 +41,7 @@ class GymTrainer():
 			env_actions, actions, states = self.agent.get_env_action(self.envs.env, states)
 			next_states, rewards, dones, _ = self.envs.step(env_actions, train=True)
 			self.agent.train(states, actions, next_states, rewards, dones)
-			if s%self.config.TRIAL_AT==0 and self.conn is None: self.trial(self.agent, s, self.agent.eps, self.agent.get_stats())
+			if s%self.config.TRIAL_AT==0 and self.conn is None: self.trial(self.agent, s, self.config.EPS_MIN, self.agent.get_stats())
 			if s%self.envs.max_steps==0 and self.conn is not None: self.conn.broadcast([{"STEP": s, "PATH": self.agent.save_model(f"{s+1}_{SEED}", net="temp"), "DIR": f"{s+1}_{SEED}", "NET": "temp", "STATS": self.agent.get_stats()}])
 			states = next_states
 

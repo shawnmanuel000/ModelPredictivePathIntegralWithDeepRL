@@ -13,7 +13,7 @@ from src.models.pytorch import EnvModel
 from src.models import all_envmodels, all_models, get_config
 
 class Trainer():
-	def __init__(self, make_env, config):
+	def __init__(self, config):
 		self.dataset_train = RolloutSequenceDataset(config, train=True)
 		self.dataset_test = RolloutSequenceDataset(config, train=False)
 		self.train_loader = torch.utils.data.DataLoader(self.dataset_train, batch_size=config.batch_size, shuffle=True, num_workers=config.nworkers)
@@ -25,7 +25,7 @@ class Trainer():
 		with tqdm.tqdm(total=len(self.dataset_train)) as pbar:
 			pbar.set_description_str(f"Train Ep: {ep}, ")
 			for i,(states, actions, next_states, rewards, dones) in enumerate(self.train_loader):
-				loss = envmodel.network.optimize(states, actions, next_states, rewards, dones).item()
+				loss = envmodel.network.optimize(states, actions, next_states, rewards, dones)
 				if i%update == 0:
 					pbar.set_postfix_str(f"Loss: {loss:.4f}")
 					pbar.update(states.shape[0]*update)
@@ -42,7 +42,7 @@ class Trainer():
 		return np.mean(batch_losses)
 
 def train(make_env, config):
-	trainer = Trainer(make_env, config)
+	trainer = Trainer(config)
 	envmodel = EnvModel(config.state_size, config.action_size, config, load="", gpu=True)
 	checkpoint = f"{config.env_name}"
 	logger = Logger(trainer, envmodel.network, config)

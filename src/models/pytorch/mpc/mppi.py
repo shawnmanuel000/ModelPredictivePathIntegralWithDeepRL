@@ -5,6 +5,7 @@ import numpy as np
 import scipy as sp
 from scipy.stats import multivariate_normal
 from src.utils.rand import RandomAgent, ReplayBuffer
+from src.utils.misc import load_module
 from ..agents.base import PTNetwork, PTAgent, Conv, one_hot_from_indices
 from . import EnvModel
 
@@ -24,10 +25,11 @@ class MPPIController(PTNetwork):
 
 	def get_action(self, state, eps=None, sample=True):
 		batch = state.shape[:-1]
+		horizon = max(int((1-eps)*self.horizon),1) if eps else self.horizon
 		if len(batch) and self.control.shape[0] != batch[0]: self.init_control(batch[0])
 		x = torch.Tensor(state).view(*batch, 1,-1).repeat_interleave(self.nsamples, -2)
 		controls = np.clip(self.control[:,None,:,:] + self.noise, -1, 1)
-		self.states, rewards = self.envmodel.rollout(controls, x, numpy=True)
+		self.states, rewards = self.envmodel.rollout(controls[...,:horizon,:], x, numpy=True)
 		costs = -np.sum(rewards, -1) #+ self.lamda * np.copy(self.init_cost)
 		beta = np.min(costs, -1, keepdims=True)
 		costs_norm = -(costs - beta)/self.lamda
@@ -58,14 +60,18 @@ class MPPIController(PTNetwork):
 class MPPIAgent(PTAgent):
 	def __init__(self, state_size, action_size, config, gpu=True, load=None):
 		super().__init__(state_size, action_size, config, MPPIController, gpu=gpu, load=load)
+		self.dataset = load_module("src.data.loaders:OnlineDataset")
 
 	def get_action(self, state, eps=None, sample=True):
 		eps = self.eps if eps is None else eps
-		if random.random() < eps: return super().get_action(state)
-		action = self.network.get_action(np.array(state))
-		return np.clip(action, -1, 1)
+		action_random = super().get_action(state, eps)
+		action_greedy = self.network.get_action(np.array(state), eps)
+		action = np.clip((1-eps)*action_greedy + eps*action_random, -1, 1)
+		return action
 
 	def partition(self, x):
+		if self.config.NUM_STEPS is None:
+			return x[None,...]
 		num_splits = x.shape[0]//self.config.NUM_STEPS
 		if num_splits == 0:
 			arr = np.zeros([self.config.NUM_STEPS, *x.shape[1:]])
@@ -86,9 +92,13 @@ class MPPIAgent(PTAgent):
 			buffer.clear()
 			self.replay_buffer.extend(list(zip(states, actions, next_states, rewards, dones)), shuffle=False)
 		if len(self.replay_buffer) > self.config.REPLAY_BATCH_SIZE and self.time % self.config.TRAIN_EVERY == 0:
-			pbar = tqdm.trange(self.config.DYN_EPOCHS*self.config.REPLAY_BATCH_SIZE//self.config.BATCH_SIZE)
-			for _ in pbar:
-				states, actions, next_states, rewards, dones = self.replay_buffer.sample(self.config.BATCH_SIZE, dtype=self.to_tensor)[0]
-				loss = self.network.optimize(states, actions, next_states, rewards, dones)
-				pbar.set_postfix_str(f"Loss: {loss:.4f}")
+			losses = []
+			samples = list(self.replay_buffer.sample(self.config.REPLAY_BATCH_SIZE, dtype=None)[0])
+			dataset = self.dataset(self.config, samples, seq_len=self.config.MPC.HORIZON)
+			loader = torch.utils.data.DataLoader(dataset, batch_size=self.config.BATCH_SIZE, shuffle=True)
+			pbar = tqdm.tqdm(loader)
+			for states, actions, next_states, rewards, dones in pbar:
+				losses.append(self.network.optimize(states, actions, next_states, rewards, dones))
+				pbar.set_postfix_str(f"Loss: {losses[-1]:.4f}")
+			self.network.envmodel.network.schedule(np.mean(losses))
 			self.eps = max(self.eps * self.config.EPS_DECAY, self.config.EPS_MIN)

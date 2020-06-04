@@ -86,8 +86,8 @@ def visualize_envmodel():
 		if done: break
 
 def test_envmodel():
-	make_env, model, config = get_config("CartPole-v0", "mppi")
-	config.MPC.update(NSAMPLES=500, HORIZON=50, LAMBDA=0.1, CONTROL_FREQ=1)
+	make_env, model, config = get_config("Pendulum-v0", "mppi")
+	config.MPC.update(NSAMPLES=500, HORIZON=50, LAMBDA=0.5, CONTROL_FREQ=1, COV=0.5)
 	env = make_env()
 	state_size = get_space_size(env.observation_space)
 	action_size = get_space_size(env.action_space)
@@ -156,7 +156,7 @@ def test_mppi():
 
 
 if __name__ == "__main__":
-	visualize_envmodel()
-	# test_envmodel()
+	# visualize_envmodel()
+	test_envmodel()
 	# test_car_sim()
 	# test_mppi()

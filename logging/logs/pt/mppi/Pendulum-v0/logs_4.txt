@@ -1,0 +1,677 @@
+Model: <class 'src.models.pytorch.mpc.mppi.MPPIAgent'>, Env: Pendulum-v0, Date: 04/06/2020 12:39:46
+CPU: 8 Core, 5.0GHz, 62.66 GB, Linux-5.3.0-53-generic-x86_64-with-debian-buster-sid
+GPU 0: GeForce RTX 2070, 7.98 GB (Driver: 440.64.00)
+Git URL: git@github.com:shawnmanuel000/ModelPredictivePathIntegralWithDeepRL.git
+Hash: 6b45e60fd9407cf6551acce4378c896d71efc5c8
+Branch: master
+
+config: 
+   TRIAL_AT = 1000
+   SAVE_AT = 1
+   SEED = 0
+   REG_LAMBDA = 1e-06
+   LEARN_RATE = 0.0001
+   DISCOUNT_RATE = 0.99
+   ADVANTAGE_DECAY = 0.95
+   INPUT_LAYER = 512
+   ACTOR_HIDDEN = 256
+   CRITIC_HIDDEN = 1024
+   EPS_MAX = 1.0
+   EPS_MIN = 0.1
+   EPS_DECAY = 0.98
+   NUM_STEPS = 40
+   MAX_BUFFER_SIZE = 1000000
+   REPLAY_BATCH_SIZE = 5000
+   TARGET_UPDATE_RATE = 0.0004
+   BATCH_SIZE = 250
+   DYN_EPOCHS = 100
+   TRAIN_EVERY = 1000
+   ENV_MODEL = dfrntl
+   MPC = 
+      NSAMPLES = 100
+      HORIZON = 40
+      LAMBDA = 0.1
+      COV = 0.5
+   dynamics_size = 3
+   state_size = (3,)
+   action_size = (1,)
+   env_name = Pendulum-v0
+   rank = 0
+   size = 17
+   split = 17
+   model = mppi
+   framework = pt
+   train_prop = 1.0
+   tcp_ports = [9000, 9001, 9002, 9003, 9004, 9005, 9006, 9007, 9008, 9009, 9010, 9011, 9012, 9013, 9014, 9015, 9016]
+   tcp_rank = 0
+   num_envs = 1
+   nsteps = 200000
+   render = False
+   trial = False
+   icm = False
+   rs = False
+   DYN = 
+      REG_LAMBDA = 1e-06
+      FACTOR = 0.5
+      PATIENCE = 5
+      LEARN_RATE = 0.001
+      TRANSITION_HIDDEN = 512
+      REWARD_HIDDEN = 256
+      BETA_DYN = 1
+      BETA_DOT = 0
+      BETA_DDOT = 0,
+num_envs: 16,
+envs: <src.utils.envs.EnvManager object at 0x7f749cdf4c10> 
+	env = <GymEnv<TimeLimit<PendulumEnv<Pendulum-v0>>>> 
+		env = <TimeLimit<PendulumEnv<Pendulum-v0>>> 
+			env = <PendulumEnv<Pendulum-v0>> 
+				max_speed = 8
+				max_torque = 2.0
+				dt = 0.05
+				g = 10.0
+				m = 1.0
+				l = 1.0
+				viewer = None
+				action_space = Box(1,) 
+					dtype = float32
+					shape = (1,)
+					low = [-2.000]
+					high = [ 2.000]
+					bounded_below = [ True]
+					bounded_above = [ True]
+					np_random = RandomState(MT19937)
+				observation_space = Box(3,) 
+					dtype = float32
+					shape = (3,)
+					low = [-1.000 -1.000 -8.000]
+					high = [ 1.000  1.000  8.000]
+					bounded_below = [ True  True  True]
+					bounded_above = [ True  True  True]
+					np_random = RandomState(MT19937)
+				np_random = RandomState(MT19937)
+				spec = EnvSpec(Pendulum-v0) 
+					id = Pendulum-v0
+					entry_point = gym.envs.classic_control:PendulumEnv
+					reward_threshold = None
+					nondeterministic = False
+					max_episode_steps = 200
+				verbose = 0
+			action_space = Box(1,) 
+				dtype = float32
+				shape = (1,)
+				low = [-2.000]
+				high = [ 2.000]
+				bounded_below = [ True]
+				bounded_above = [ True]
+				np_random = RandomState(MT19937)
+			observation_space = Box(3,) 
+				dtype = float32
+				shape = (3,)
+				low = [-1.000 -1.000 -8.000]
+				high = [ 1.000  1.000  8.000]
+				bounded_below = [ True  True  True]
+				bounded_above = [ True  True  True]
+				np_random = RandomState(MT19937)
+			reward_range = (-inf, inf)
+			metadata = {'render.modes': ['human', 'rgb_array'], 'video.frames_per_second': 30}
+		action_space = Box(1,) 
+			dtype = float32
+			shape = (1,)
+			low = [-2.000]
+			high = [ 2.000]
+			bounded_below = [ True]
+			bounded_above = [ True]
+			np_random = RandomState(MT19937)
+		observation_space = Box(3,) 
+			dtype = float32
+			shape = (3,)
+			low = [-1.000 -1.000 -8.000]
+			high = [ 1.000  1.000  8.000]
+			bounded_below = [ True  True  True]
+			bounded_above = [ True  True  True]
+			np_random = RandomState(MT19937)
+		reward_range = (-inf, inf)
+		metadata = {'render.modes': ['human', 'rgb_array'], 'video.frames_per_second': 30}
+		preprocess = <src.envs.wrappers.RawPreprocess object at 0x7f749ca6db10> 
+			observation_space = Box(3,) 
+				dtype = float32
+				shape = (3,)
+				low = [-1.000 -1.000 -8.000]
+				high = [ 1.000  1.000  8.000]
+				bounded_below = [ True  True  True]
+				bounded_above = [ True  True  True]
+				np_random = RandomState(MT19937)
+	state_size = (3,)
+	action_size = (1,)
+	action_space = Box(1,) 
+		dtype = float32
+		shape = (1,)
+		low = [-2.000]
+		high = [ 2.000]
+		bounded_below = [ True]
+		bounded_above = [ True]
+		np_random = RandomState(MT19937)
+	server_ports = <list len=16>
+	conn = <src.utils.multiprocess.TCPClient object at 0x7f749ca6dfd0> 
+		num_clients = 16
+		client_ranks = <list len=16>
+		client_ports = <list len=16>
+		client_sockets = {9001: <socket.socket fd=35, family=AddressFamily.AF_INET, type=SocketKind.SOCK_STREAM, proto=0, laddr=('127.0.0.1', 42358), raddr=('127.0.0.1', 9001)>, 9002: <socket.socket fd=91, family=AddressFamily.AF_INET, type=SocketKind.SOCK_STREAM, proto=0, laddr=('127.0.0.1', 57920), raddr=('127.0.0.1', 9002)>, 9003: <socket.socket fd=93, family=AddressFamily.AF_INET, type=SocketKind.SOCK_STREAM, proto=0, laddr=('127.0.0.1', 43120), raddr=('127.0.0.1', 9003)>, 9004: <socket.socket fd=95, family=AddressFamily.AF_INET, type=SocketKind.SOCK_STREAM, proto=0, laddr=('127.0.0.1', 60092), raddr=('127.0.0.1', 9004)>, 9005: <socket.socket fd=96, family=AddressFamily.AF_INET, type=SocketKind.SOCK_STREAM, proto=0, laddr=('127.0.0.1', 42436), raddr=('127.0.0.1', 9005)>, 9006: <socket.socket fd=115, family=AddressFamily.AF_INET, type=SocketKind.SOCK_STREAM, proto=0, laddr=('127.0.0.1', 47050), raddr=('127.0.0.1', 9006)>, 9007: <socket.socket fd=117, family=AddressFamily.AF_INET, type=SocketKind.SOCK_STREAM, proto=0, laddr=('127.0.0.1', 47252), raddr=('127.0.0.1', 9007)>, 9008: <socket.socket fd=120, family=AddressFamily.AF_INET, type=SocketKind.SOCK_STREAM, proto=0, laddr=('127.0.0.1', 37572), raddr=('127.0.0.1', 9008)>, 9009: <socket.socket fd=181, family=AddressFamily.AF_INET, type=SocketKind.SOCK_STREAM, proto=0, laddr=('127.0.0.1', 58518), raddr=('127.0.0.1', 9009)>, 9010: <socket.socket fd=198, family=AddressFamily.AF_INET, type=SocketKind.SOCK_STREAM, proto=0, laddr=('127.0.0.1', 37454), raddr=('127.0.0.1', 9010)>, 9011: <socket.socket fd=199, family=AddressFamily.AF_INET, type=SocketKind.SOCK_STREAM, proto=0, laddr=('127.0.0.1', 41868), raddr=('127.0.0.1', 9011)>, 9012: <socket.socket fd=200, family=AddressFamily.AF_INET, type=SocketKind.SOCK_STREAM, proto=0, laddr=('127.0.0.1', 44824), raddr=('127.0.0.1', 9012)>, 9013: <socket.socket fd=201, family=AddressFamily.AF_INET, type=SocketKind.SOCK_STREAM, proto=0, laddr=('127.0.0.1', 40090), raddr=('127.0.0.1', 9013)>, 9014: <socket.socket fd=202, family=AddressFamily.AF_INET, type=SocketKind.SOCK_STREAM, proto=0, laddr=('127.0.0.1', 54562), raddr=('127.0.0.1', 9014)>, 9015: <socket.socket fd=203, family=AddressFamily.AF_INET, type=SocketKind.SOCK_STREAM, proto=0, laddr=('127.0.0.1', 52774), raddr=('127.0.0.1', 9015)>, 9016: <socket.socket fd=204, family=AddressFamily.AF_INET, type=SocketKind.SOCK_STREAM, proto=0, laddr=('127.0.0.1', 39412), raddr=('127.0.0.1', 9016)>}
+	num_envs = 16
+	max_steps = 200,
+agent: <src.models.wrappers.ParallelAgent object at 0x7f74a9af9ed0> 
+	icm = None
+	stack = <src.models.wrappers.RawState object at 0x7f749ca70090> 
+		state_size = (3,)
+	agent = <src.models.pytorch.mpc.mppi.MPPIAgent object at 0x7f749ca70690> 
+		noise_process = <src.utils.rand.BrownianNoise object at 0x7f749ca85c90> 
+			size = (1,)
+			dt = 0.2
+			action = [ 0.121]
+			daction_dt = [ 1.109]
+		discrete = False
+		action_size = (1,)
+		state_size = (3,)
+		config = <src.utils.config.Config object at 0x7f749cf1ca10> 
+			TRIAL_AT = 1000
+			SAVE_AT = 1
+			SEED = 0
+			REG_LAMBDA = 1e-06
+			LEARN_RATE = 0.0001
+			DISCOUNT_RATE = 0.99
+			ADVANTAGE_DECAY = 0.95
+			INPUT_LAYER = 512
+			ACTOR_HIDDEN = 256
+			CRITIC_HIDDEN = 1024
+			EPS_MAX = 1.0
+			EPS_MIN = 0.1
+			EPS_DECAY = 0.98
+			NUM_STEPS = 40
+			MAX_BUFFER_SIZE = 1000000
+			REPLAY_BATCH_SIZE = 5000
+			TARGET_UPDATE_RATE = 0.0004
+			BATCH_SIZE = 250
+			DYN_EPOCHS = 100
+			TRAIN_EVERY = 1000
+			ENV_MODEL = dfrntl
+			MPC = <src.utils.config.Config object at 0x7f753c7f4a90> 
+				NSAMPLES = 100
+				HORIZON = 40
+				LAMBDA = 0.1
+				COV = 0.5
+			dynamics_size = 3
+			state_size = (3,)
+			action_size = (1,)
+			env_name = Pendulum-v0
+			rank = 0
+			size = 17
+			split = 17
+			model = mppi
+			framework = pt
+			train_prop = 1.0
+			tcp_ports = <list len=17>
+			tcp_rank = 0
+			num_envs = 1
+			nsteps = 200000
+			render = False
+			trial = False
+			icm = False
+			rs = False
+			DYN = <src.utils.config.Config object at 0x7f749cf09210> 
+				REG_LAMBDA = 1e-06
+				FACTOR = 0.5
+				PATIENCE = 5
+				LEARN_RATE = 0.001
+				TRANSITION_HIDDEN = 512
+				REWARD_HIDDEN = 256
+				BETA_DYN = 1
+				BETA_DOT = 0
+				BETA_DDOT = 0
+		stats = <src.utils.logger.Stats object at 0x7f749ca1c550> 
+			mean_dict = {}
+			sum_dict = {}
+		eps = 1.0
+		network = MPPIController() 
+			training = True
+			tau = 0.0004
+			name = mppi
+			stats = <src.utils.logger.Stats object at 0x7f749ca1c5d0> 
+				mean_dict = {}
+				sum_dict = {}
+			config = <src.utils.config.Config object at 0x7f749cf1ca10> 
+				TRIAL_AT = 1000
+				SAVE_AT = 1
+				SEED = 0
+				REG_LAMBDA = 1e-06
+				LEARN_RATE = 0.0001
+				DISCOUNT_RATE = 0.99
+				ADVANTAGE_DECAY = 0.95
+				INPUT_LAYER = 512
+				ACTOR_HIDDEN = 256
+				CRITIC_HIDDEN = 1024
+				EPS_MAX = 1.0
+				EPS_MIN = 0.1
+				EPS_DECAY = 0.98
+				NUM_STEPS = 40
+				MAX_BUFFER_SIZE = 1000000
+				REPLAY_BATCH_SIZE = 5000
+				TARGET_UPDATE_RATE = 0.0004
+				BATCH_SIZE = 250
+				DYN_EPOCHS = 100
+				TRAIN_EVERY = 1000
+				ENV_MODEL = dfrntl
+				MPC = <src.utils.config.Config object at 0x7f753c7f4a90> 
+					NSAMPLES = 100
+					HORIZON = 40
+					LAMBDA = 0.1
+					COV = 0.5
+				dynamics_size = 3
+				state_size = (3,)
+				action_size = (1,)
+				env_name = Pendulum-v0
+				rank = 0
+				size = 17
+				split = 17
+				model = mppi
+				framework = pt
+				train_prop = 1.0
+				tcp_ports = <list len=17>
+				tcp_rank = 0
+				num_envs = 1
+				nsteps = 200000
+				render = False
+				trial = False
+				icm = False
+				rs = False
+				DYN = <src.utils.config.Config object at 0x7f749cf09210> 
+					REG_LAMBDA = 1e-06
+					FACTOR = 0.5
+					PATIENCE = 5
+					LEARN_RATE = 0.001
+					TRANSITION_HIDDEN = 512
+					REWARD_HIDDEN = 256
+					BETA_DYN = 1
+					BETA_DOT = 0
+					BETA_DDOT = 0
+			device = cuda
+			envmodel = <src.models.pytorch.mpc.EnvModel object at 0x7f749ca1c610> 
+				network = DifferentialEnv(
+					  (reward): RewardModel(
+					    (linear1): Linear(in_features=7, out_features=256, bias=True)
+					    (linear2): Linear(in_features=256, out_features=256, bias=True)
+					    (linear3): Linear(in_features=256, out_features=1, bias=True)
+					  )
+					  (dynamics): TransitionModel(
+					    (gru): GRUCell(7, 512)
+					    (linear1): Linear(in_features=512, out_features=512, bias=True)
+					    (linear2): Linear(in_features=512, out_features=512, bias=True)
+					    (state_ddot): Linear(in_features=512, out_features=3, bias=True)
+					  )
+					) 
+					training = True
+					tau = 0.0004
+					name = dfrntl
+					stats = <src.utils.logger.Stats object at 0x7f749ca1c690> 
+						mean_dict = {}
+						sum_dict = {}
+					config = <src.utils.config.Config object at 0x7f749cf1ca10> 
+						TRIAL_AT = 1000
+						SAVE_AT = 1
+						SEED = 0
+						REG_LAMBDA = 1e-06
+						LEARN_RATE = 0.0001
+						DISCOUNT_RATE = 0.99
+						ADVANTAGE_DECAY = 0.95
+						INPUT_LAYER = 512
+						ACTOR_HIDDEN = 256
+						CRITIC_HIDDEN = 1024
+						EPS_MAX = 1.0
+						EPS_MIN = 0.1
+						EPS_DECAY = 0.98
+						NUM_STEPS = 40
+						MAX_BUFFER_SIZE = 1000000
+						REPLAY_BATCH_SIZE = 5000
+						TARGET_UPDATE_RATE = 0.0004
+						BATCH_SIZE = 250
+						DYN_EPOCHS = 100
+						TRAIN_EVERY = 1000
+						ENV_MODEL = dfrntl
+						MPC = <src.utils.config.Config object at 0x7f753c7f4a90> 
+							NSAMPLES = 100
+							HORIZON = 40
+							LAMBDA = 0.1
+							COV = 0.5
+						dynamics_size = 3
+						state_size = (3,)
+						action_size = (1,)
+						env_name = Pendulum-v0
+						rank = 0
+						size = 17
+						split = 17
+						model = mppi
+						framework = pt
+						train_prop = 1.0
+						tcp_ports = <list len=17>
+						tcp_rank = 0
+						num_envs = 1
+						nsteps = 200000
+						render = False
+						trial = False
+						icm = False
+						rs = False
+						DYN = <src.utils.config.Config object at 0x7f749cf09210> 
+							REG_LAMBDA = 1e-06
+							FACTOR = 0.5
+							PATIENCE = 5
+							LEARN_RATE = 0.001
+							TRANSITION_HIDDEN = 512
+							REWARD_HIDDEN = 256
+							BETA_DYN = 1
+							BETA_DOT = 0
+							BETA_DDOT = 0
+					device = cuda
+					state_size = (3,)
+					action_size = (1,)
+					discrete = False
+					dyn_index = 3
+					optimizer = Adam (
+					Parameter Group 0
+					    amsgrad: False
+					    betas: (0.9, 0.999)
+					    eps: 1e-08
+					    lr: 0.001
+					    weight_decay: 1e-06
+					)
+					scheduler = <torch.optim.lr_scheduler.ReduceLROnPlateau object at 0x7f749ca1cc50>
+				state_size = (3,)
+				action_size = (1,)
+			mu = [ 0.000]
+			cov = [[ 0.500]]
+			icov = [[ 2.000]]
+			lamda = 0.1
+			horizon = 40
+			nsamples = 100
+			action_size = (1,)
+			control = [[[ 0.520]
+			  [ 0.738]
+			  [ 0.610]
+			  [ 0.416]
+			  [-0.515]
+			  [-0.684]
+			  [ 0.514]
+			  [-0.423]
+			  [ 0.083]
+			  [ 0.504]
+			  [ 0.904]
+			  [ 0.726]
+			  [ 0.740]
+			  [-0.833]
+			  [ 0.316]
+			  [ 0.524]
+			  [ 0.283]
+			  [-0.718]
+			  [-0.033]
+			  [ 0.098]
+			  [ 0.259]
+			  [ 0.652]
+			  [-0.996]
+			  [ 0.453]
+			  [ 0.601]
+			  [ 0.585]
+			  [-0.260]
+			  [-0.830]
+			  [-0.525]
+			  [ 0.726]
+			  [ 0.369]
+			  [-0.784]
+			  [ 0.236]
+			  [ 0.712]
+			  [-0.549]
+			  [ 0.061]
+			  [-0.732]
+			  [ 0.538]
+			  [-0.785]
+			  [-0.470]]]
+			noise = [[[[ 0.175]
+			   [-0.518]
+			   [ 0.428]
+			   ...
+			   [-0.269]
+			   [ 1.066]
+			   [-0.603]]
+			
+			  [[ 0.329]
+			   [-0.874]
+			   [-0.281]
+			   ...
+			   [-0.759]
+			   [ 0.850]
+			   [-0.754]]
+			
+			  [[-0.121]
+			   [ 0.367]
+			   [-0.880]
+			   ...
+			   [-0.324]
+			   [ 0.589]
+			   [-0.303]]
+			
+			  ...
+			
+			  [[-0.340]
+			   [ 0.952]
+			   [ 0.885]
+			   ...
+			   [ 0.267]
+			   [ 0.639]
+			   [-0.114]]
+			
+			  [[ 0.713]
+			   [-1.660]
+			   [-0.012]
+			   ...
+			   [ 0.011]
+			   [-0.140]
+			   [ 0.048]]
+			
+			  [[-1.246]
+			   [ 0.180]
+			   [ 0.123]
+			   ...
+			   [-0.190]
+			   [-0.806]
+			   [-0.463]]]]
+			init_cost = [[ -8.299  -3.804   0.618  12.290  -1.879  -4.723   0.219   6.738   4.968   5.560   1.400  -6.418   1.400  -5.699   1.770   2.328  -3.614  -3.494  18.759   5.486   4.688  -1.490  -5.060   7.996   6.982   7.776  -1.715  -1.738  -5.425   0.358   6.745 -10.593  -1.056  -3.932  -5.810   3.363   1.033   1.208   2.968  -6.156   6.011  -5.952   6.600   3.604   8.775  -6.658   1.254   2.484   5.275   3.032  -1.638  -2.923  -3.819   0.790  -1.886   0.210   5.078  -3.873   4.250   0.097  -2.573  -1.986  -7.836   1.139   9.965   4.105  -4.179  -5.843  -1.169  -2.367  -6.327  -6.625   4.949   5.997   9.982   1.540   0.502   3.481  -0.437  -7.064   0.840  -0.368   0.764   4.193   0.048  -8.458   3.295  13.358   6.213  -5.137  -4.520  -2.679  -1.593   2.779   1.914  -1.039   5.015  -6.684   1.282  -4.772]]
+		replay_buffer = <src.utils.rand.ReplayBuffer object at 0x7f749ca1cf50> 
+			buffer = deque([], maxlen=1000000)
+		buffer = []
+	noise_process = <src.utils.rand.BrownianNoise object at 0x7f749ca1ccd0> 
+		size = (1,)
+		dt = 0.2
+		action = [-0.691]
+		daction_dt = [ 1.348]
+	discrete = False
+	action_size = (1,)
+	state_size = (3,)
+	config = <src.utils.config.Config object at 0x7f749cf1ca10> 
+		TRIAL_AT = 1000
+		SAVE_AT = 1
+		SEED = 0
+		REG_LAMBDA = 1e-06
+		LEARN_RATE = 0.0001
+		DISCOUNT_RATE = 0.99
+		ADVANTAGE_DECAY = 0.95
+		INPUT_LAYER = 512
+		ACTOR_HIDDEN = 256
+		CRITIC_HIDDEN = 1024
+		EPS_MAX = 1.0
+		EPS_MIN = 0.1
+		EPS_DECAY = 0.98
+		NUM_STEPS = 40
+		MAX_BUFFER_SIZE = 1000000
+		REPLAY_BATCH_SIZE = 5000
+		TARGET_UPDATE_RATE = 0.0004
+		BATCH_SIZE = 250
+		DYN_EPOCHS = 100
+		TRAIN_EVERY = 1000
+		ENV_MODEL = dfrntl
+		MPC = <src.utils.config.Config object at 0x7f753c7f4a90> 
+			NSAMPLES = 100
+			HORIZON = 40
+			LAMBDA = 0.1
+			COV = 0.5
+		dynamics_size = 3
+		state_size = (3,)
+		action_size = (1,)
+		env_name = Pendulum-v0
+		rank = 0
+		size = 17
+		split = 17
+		model = mppi
+		framework = pt
+		train_prop = 1.0
+		tcp_ports = <list len=17>
+		tcp_rank = 0
+		num_envs = 1
+		nsteps = 200000
+		render = False
+		trial = False
+		icm = False
+		rs = False
+		DYN = <src.utils.config.Config object at 0x7f749cf09210> 
+			REG_LAMBDA = 1e-06
+			FACTOR = 0.5
+			PATIENCE = 5
+			LEARN_RATE = 0.001
+			TRANSITION_HIDDEN = 512
+			REWARD_HIDDEN = 256
+			BETA_DYN = 1
+			BETA_DOT = 0
+			BETA_DDOT = 0
+	stats = <src.utils.logger.Stats object at 0x7f749ca314d0> 
+		mean_dict = {}
+		sum_dict = {},
+conn: None,
+
+import tqdm
+import torch
+import random
+import numpy as np
+import scipy as sp
+from scipy.stats import multivariate_normal
+from src.utils.rand import RandomAgent, ReplayBuffer
+from ..agents.base import PTNetwork, PTAgent, Conv, one_hot_from_indices
+from . import EnvModel
+
+class MPPIController(PTNetwork):
+	def __init__(self, state_size, action_size, config, load="", gpu=True, name="mppi"):
+		super().__init__(config, gpu=gpu, name=name)
+		self.envmodel = EnvModel(state_size, action_size, config, load=load, gpu=gpu)
+		self.mu = np.zeros(action_size)
+		self.cov = np.diag(np.ones(action_size))*config.MPC.COV
+		self.icov = np.linalg.inv(self.cov)
+		self.lamda = config.MPC.LAMBDA
+		self.horizon = config.MPC.HORIZON
+		self.nsamples = config.MPC.NSAMPLES
+		self.config = config
+		self.action_size = action_size
+		self.init_control()
+
+	def get_action(self, state, eps=None, sample=True):
+		batch = state.shape[:-1]
+		horizon = max(int((1-eps)*self.horizon),1) if eps else self.horizon
+		if len(batch) and self.control.shape[0] != batch[0]: self.init_control(batch[0])
+		x = torch.Tensor(state).view(*batch, 1,-1).repeat_interleave(self.nsamples, -2)
+		controls = np.clip(self.control[:,None,:,:] + self.noise, -1, 1)
+		self.states, rewards = self.envmodel.rollout(controls[...,:horizon,:], x, numpy=True)
+		costs = -np.sum(rewards, -1) #+ self.lamda * np.copy(self.init_cost)
+		beta = np.min(costs, -1, keepdims=True)
+		costs_norm = -(costs - beta)/self.lamda
+		weights = sp.special.softmax(costs_norm)
+		self.control += np.sum(weights[:,:,None,None]*self.noise, len(batch))
+		action = self.control[...,0,:]
+		self.control = np.roll(self.control, -1, axis=-2)
+		self.control[...,-1,:] = 0
+		return action
+
+	def init_control(self, batch_size=1):
+		self.control = np.random.uniform(-1, 1, size=[batch_size, self.horizon, *self.action_size])
+		self.noise = np.random.multivariate_normal(self.mu, self.cov, size=[batch_size, self.nsamples, self.horizon])
+		self.init_cost = np.sum(self.control[:,None,:,None,:] @ self.icov[None,None,None,:,:] @ self.noise[:,:,:,:,None], axis=(2,3,4))
+
+	def optimize(self, states, actions, next_states, rewards, dones):
+		return self.envmodel.optimize(states, actions, next_states, rewards, dones)
+
+	def save_model(self, dirname="pytorch", name="checkpoint", net=None):
+		return self.envmodel.save_model(dirname, name, net)
+		
+	def load_model(self, dirname="pytorch", name="checkpoint", net=None):
+		return self.envmodel.load_model(dirname, name, net)
+
+	def get_stats(self):
+		return {**super().get_stats(), **self.envmodel.get_stats()}
+
+class MPPIAgent(PTAgent):
+	def __init__(self, state_size, action_size, config, gpu=True, load=None):
+		super().__init__(state_size, action_size, config, MPPIController, gpu=gpu, load=load)
+
+	def get_action(self, state, eps=None, sample=True):
+		eps = self.eps if eps is None else eps
+		action_random = super().get_action(state, eps)
+		action_greedy = self.network.get_action(np.array(state), eps)
+		action = np.clip((1-eps)*action_greedy + eps*action_random, -1, 1)
+		return action
+
+	def partition(self, x):
+		num_splits = x.shape[0]//self.config.NUM_STEPS
+		if num_splits == 0:
+			arr = np.zeros([self.config.NUM_STEPS, *x.shape[1:]])
+			arr[-x.shape[0]:] = x
+			num_splits = 1
+			x = arr
+		arr = x[:num_splits*self.config.NUM_STEPS].reshape(num_splits, self.config.NUM_STEPS, *x.shape[1:])
+		return arr
+
+	def train(self, state, action, next_state, reward, done):
+		self.time = getattr(self, "time", 0) + 1
+		if not hasattr(self, "buffers"): self.buffers = [[] for _ in done]
+		for buffer, s, a, ns, r, d in zip(self.buffers, state, action, next_state, reward, done):
+			buffer.append((s, a, s if d else ns, r, d))
+			if not d: continue
+			states, actions, next_states, rewards, dones = map(np.array, zip(*buffer))
+			states, actions, next_states, rewards, dones = [self.partition(x) for x in (states, actions, next_states, rewards, dones)]
+			buffer.clear()
+			self.replay_buffer.extend(list(zip(states, actions, next_states, rewards, dones)), shuffle=False)
+		if len(self.replay_buffer) > self.config.REPLAY_BATCH_SIZE and self.time % self.config.TRAIN_EVERY == 0:
+			losses = []
+			pbar = tqdm.trange(self.config.DYN_EPOCHS*self.config.REPLAY_BATCH_SIZE//self.config.BATCH_SIZE)
+			for _ in pbar:
+				states, actions, next_states, rewards, dones = self.replay_buffer.sample(self.config.BATCH_SIZE, dtype=self.to_tensor)[0]
+				losses.append(self.network.optimize(states, actions, next_states, rewards, dones))
+				pbar.set_postfix_str(f"Loss: {losses[-1]:.4f}")
+			self.network.envmodel.network.schedule(np.mean(losses))
+			self.eps = max(self.eps * self.config.EPS_DECAY, self.config.EPS_MIN)
+
+
+Step:       0, Reward: -1214.363 [ 115.243], Avg: -1214.363 (1.000) <0-00:00:00> ({'r_t':    -1.8824, 'eps':     1.0000, 'lr':     0.0010, 'eps_e':     1.0000, 'lr_e':     0.0010})
+Step:    1000, Reward: -1208.677 [ 111.033], Avg: -1211.520 (1.000) <0-00:00:03> ({'r_t': -6064.0876, 'eps':     1.0000, 'lr':     0.0010, 'eps_e':     1.0000, 'lr_e':     0.0010})
+Step:    2000, Reward: -1244.131 [ 178.269], Avg: -1222.391 (1.000) <0-00:00:07> ({'r_t': -6269.6881, 'eps':     1.0000, 'lr':     0.0010, 'eps_e':     1.0000, 'lr_e':     0.0010})
+Step:    3000, Reward: -1289.324 [ 127.295], Avg: -1239.124 (1.000) <0-00:00:11> ({'r_t': -6178.3639, 'eps':     1.0000, 'lr':     0.0010, 'eps_e':     1.0000, 'lr_e':     0.0010})
+Step:    4000, Reward: -1264.086 [ 100.951], Avg: -1244.116 (1.000) <0-00:00:14> ({'r_t': -6204.3187, 'eps':     1.0000, 'lr':     0.0010, 'eps_e':     1.0000, 'lr_e':     0.0010})
+Step:    5000, Reward: -1185.482 [ 108.814], Avg: -1234.344 (1.000) <0-00:00:18> ({'r_t': -6204.9873, 'eps':     1.0000, 'lr':     0.0010, 'eps_e':     1.0000, 'lr_e':     0.0010})
+Step:    6000, Reward: -1269.098 [ 165.399], Avg: -1239.309 (1.000) <0-00:00:21> ({'r_t': -5975.4000, 'eps':     1.0000, 'lr':     0.0010, 'eps_e':     1.0000, 'lr_e':     0.0010})
+Step:    7000, Reward: -1198.182 [ 179.227], Avg: -1234.168 (1.000) <0-00:00:25> ({'r_t': -6260.8244, 'eps':     1.0000, 'lr':     0.0010, 'eps_e':     1.0000, 'lr_e':     0.0010})
+Step:    8000, Reward: -1241.615 [ 126.254], Avg: -1234.995 (1.000) <0-00:00:28> ({'r_t': -6359.6003, 'eps':     1.0000, 'lr':     0.0010, 'eps_e':     1.0000, 'lr_e':     0.0010})
+Step:    9000, Reward: -1258.593 [ 153.278], Avg: -1237.355 (1.000) <0-00:00:31> ({'r_t': -6069.3061, 'eps':     1.0000, 'lr':     0.0010, 'eps_e':     1.0000, 'lr_e':     0.0010})
+Step:   10000, Reward: -1267.274 [ 152.909], Avg: -1240.075 (1.000) <0-00:00:35> ({'r_t': -6055.0386, 'eps':     1.0000, 'lr':     0.0010, 'eps_e':     1.0000, 'lr_e':     0.0010})
+Step:   11000, Reward: -1244.461 [ 136.611], Avg: -1240.441 (1.000) <0-00:00:39> ({'r_t': -6314.7948, 'eps':     1.0000, 'lr':     0.0010, 'eps_e':     1.0000, 'lr_e':     0.0010})
+Step:   12000, Reward: -1248.356 [ 157.386], Avg: -1241.049 (1.000) <0-00:00:42> ({'r_t': -6157.0101, 'eps':     1.0000, 'lr':     0.0010, 'eps_e':     1.0000, 'lr_e':     0.0010})
+Step:   13000, Reward: -1230.238 [ 172.412], Avg: -1240.277 (0.980) <0-00:02:35> ({'r_t': -6154.8218, 'eps':     0.9800, 'dyn_loss':   382.1867, 'dot_loss':     7.6351, 'ddot_loss':     2.4198, 'rew_loss':    14.9232, 'lr':     0.0010, 'eps_e':     0.9800, 'lr_e':     0.0010})
+Step:   14000, Reward: -1228.130 [ 139.983], Avg: -1239.467 (0.960) <0-00:04:33> ({'r_t': -6282.2292, 'eps':     0.9604, 'dyn_loss':    17.4575, 'dot_loss':     0.8770, 'ddot_loss':     0.5416, 'rew_loss':    13.2123, 'lr':     0.0010, 'eps_e':     0.9604, 'lr_e':     0.0010})
+Step:   15000, Reward: -1191.812 [ 140.117], Avg: -1236.489 (0.941) <0-00:06:30> ({'r_t': -6187.4897, 'eps':     0.9412, 'dyn_loss':    13.2862, 'dot_loss':     0.5670, 'ddot_loss':     0.3127, 'rew_loss':    12.3584, 'lr':     0.0010, 'eps_e':     0.9412, 'lr_e':     0.0010})
+Step:   16000, Reward: -1273.152 [ 210.472], Avg: -1238.646 (0.922) <0-00:08:29> ({'r_t': -6169.8454, 'eps':     0.9224, 'dyn_loss':     5.0525, 'dot_loss':     0.4247, 'ddot_loss':     0.3157, 'rew_loss':     6.9851, 'lr':     0.0010, 'eps_e':     0.9224, 'lr_e':     0.0010})
+Step:   17000, Reward: -1273.839 [ 156.642], Avg: -1240.601 (0.904) <0-00:10:26> ({'r_t': -6261.1553, 'eps':     0.9039, 'dyn_loss':     2.0045, 'dot_loss':     0.2687, 'ddot_loss':     0.2341, 'rew_loss':     3.4237, 'lr':     0.0010, 'eps_e':     0.9039, 'lr_e':     0.0010})
+Step:   18000, Reward: -1268.129 [ 159.424], Avg: -1242.050 (0.886) <0-00:12:23> ({'r_t': -6035.3583, 'eps':     0.8858, 'dyn_loss':     1.2187, 'dot_loss':     0.1661, 'ddot_loss':     0.1619, 'rew_loss':     2.3572, 'lr':     0.0010, 'eps_e':     0.8858, 'lr_e':     0.0010})
+Step:   19000, Reward: -1197.249 [ 111.550], Avg: -1239.810 (0.868) <0-00:14:28> ({'r_t': -6191.8138, 'eps':     0.8681, 'dyn_loss':     0.9297, 'dot_loss':     0.1143, 'ddot_loss':     0.1195, 'rew_loss':     1.8626, 'lr':     0.0010, 'eps_e':     0.8681, 'lr_e':     0.0010})
+Step:   20000, Reward: -1219.101 [ 130.229], Avg: -1238.823 (0.851) <0-00:16:32> ({'r_t': -6098.3587, 'eps':     0.8508, 'dyn_loss':     0.7267, 'dot_loss':     0.0775, 'ddot_loss':     0.0859, 'rew_loss':     1.5509, 'lr':     0.0010, 'eps_e':     0.8508, 'lr_e':     0.0010})
+Step:   21000, Reward: -1239.308 [ 153.288], Avg: -1238.845 (0.834) <0-00:18:31> ({'r_t': -6089.2958, 'eps':     0.8337, 'dyn_loss':     0.5559, 'dot_loss':     0.0515, 'ddot_loss':     0.0608, 'rew_loss':     1.2824, 'lr':     0.0010, 'eps_e':     0.8337, 'lr_e':     0.0010})

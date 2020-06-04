@@ -13,7 +13,7 @@ envmodel_config = Config(
 	REG_LAMBDA = 1e-6,             	# Penalty multiplier to apply for the size of the network weights
 	FACTOR = 0.5,
 	PATIENCE = 5,
-	LEARN_RATE = 0.001,
+	LEARN_RATE = 0.0001,
 )
 
 dynamics_configs = {
@@ -22,11 +22,11 @@ dynamics_configs = {
 		NGAUSS = 1,
 	),
 	"dfrntl": envmodel_config.clone(
-		TRANSITION_HIDDEN = 256,
+		TRANSITION_HIDDEN = 512,
 		REWARD_HIDDEN = 256,
-		BETA_DYN = 0.1,
-		BETA_DOT = 1,
-		BETA_DDOT = 1,
+		BETA_DYN = 1,
+		BETA_DOT = 0,
+		BETA_DDOT = 0,
 	)
 }
 

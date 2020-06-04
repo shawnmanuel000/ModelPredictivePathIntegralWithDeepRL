@@ -10,7 +10,9 @@ class TransitionModel(torch.nn.Module):
 		self.config = config
 		self.gru = torch.nn.GRUCell(action_size[-1] + 2*state_size[-1], config.DYN.TRANSITION_HIDDEN)
 		self.linear1 = torch.nn.Linear(config.DYN.TRANSITION_HIDDEN, config.DYN.TRANSITION_HIDDEN)
+		self.drop1 = torch.nn.Dropout(p=0.5)
 		self.linear2 = torch.nn.Linear(config.DYN.TRANSITION_HIDDEN, config.DYN.TRANSITION_HIDDEN)
+		self.drop2 = torch.nn.Dropout(p=0.5)
 		self.state_ddot = torch.nn.Linear(config.DYN.TRANSITION_HIDDEN, state_size[-1])
 		self.apply(lambda m: torch.nn.init.xavier_normal_(m.weight) if type(m) in [torch.nn.Conv2d, torch.nn.Linear] else None)
 
@@ -20,14 +22,17 @@ class TransitionModel(torch.nn.Module):
 		inputs = torch.cat([action, state, state_dot],-1)
 		hidden = self.gru(inputs, hidden)
 		linear1 = self.linear1(hidden).relu() + hidden
+		linear1 = self.drop1(linear1)
 		linear2 = self.linear2(linear1).relu() + linear1
+		linear2 = self.drop2(linear2)
 		state_ddot = self.state_ddot(linear2)
 		state_dot = state_dot + state_ddot
 		next_state = state + state_dot
 		next_state, state_dot, state_ddot, self.hidden = map(lambda x: x.view(*input_dim,-1), [next_state, state_dot, state_ddot, hidden])
 		return next_state, state_dot, state_ddot
 
-	def reset(self, device, batch_size=None):
+	def reset(self, device, batch_size=None, train=False):
+		self.train() if train else self.eval()
 		if batch_size is None: batch_size = self.hidden[0].shape[1:2] if hasattr(self, "hidden") else [1]
 		self.hidden = torch.zeros(*batch_size, self.config.DYN.TRANSITION_HIDDEN, device=device)
 
@@ -37,8 +42,11 @@ class RewardModel(torch.nn.Module):
 		self.cost = load_module(config.REWARD_MODEL)() if config.get("REWARD_MODEL") else None
 		self.dyn_spec = load_module(config.DYNAMICS_SPEC) if config.get("DYNAMICS_SPEC") else None
 		self.linear1 = torch.nn.Linear(action_size[-1] + 2*state_size[-1], config.DYN.REWARD_HIDDEN)
+		self.drop1 = torch.nn.Dropout(p=0.5)
 		self.linear2 = torch.nn.Linear(config.DYN.REWARD_HIDDEN, config.DYN.REWARD_HIDDEN)
-		self.linear3 = torch.nn.Linear(config.DYN.REWARD_HIDDEN, 1)
+		self.drop2 = torch.nn.Dropout(p=0.5)
+		self.linear3 = torch.nn.Linear(config.DYN.REWARD_HIDDEN, config.DYN.REWARD_HIDDEN)
+		self.linear4 = torch.nn.Linear(config.DYN.REWARD_HIDDEN, 1)
 		self.apply(lambda m: torch.nn.init.xavier_normal_(m.weight) if type(m) in [torch.nn.Conv2d, torch.nn.Linear] else None)
 
 	def forward(self, action, state, next_state, grad=False):
@@ -49,9 +57,12 @@ class RewardModel(torch.nn.Module):
 			reward = -torch.FloatTensor(self.cost.get_cost(ns_spec, s_spec)).unsqueeze(-1)
 		else:
 			inputs = torch.cat([action, state, next_state],-1)
-			layer1 = self.linear1(inputs).tanh()
+			layer1 = self.linear1(inputs).relu()
+			layer1 = self.drop1(layer1)
 			layer2 = self.linear2(layer1).tanh() + layer1
-			reward = self.linear3(layer2)
+			layer2 = self.drop2(layer2)
+			layer3 = self.linear3(layer2).tanh() + layer1
+			reward = self.linear4(layer3)
 		return reward
 
 class DifferentialEnv(PTNetwork):
@@ -79,13 +90,14 @@ class DifferentialEnv(PTNetwork):
 			reward = self.reward(action.detach(), state.detach(), self.state.detach(), grad=grad)
 		return [x.cpu().numpy() if numpy else x for x in [self.state, reward.to(self.device)]]
 
-	def reset(self, batch_size=None, state=None, **kwargs):
-		self.dynamics.reset(self.device, batch_size)
+	def reset(self, batch_size=None, state=None, train=False, **kwargs):
+		self.train() if train else self.eval()
+		self.dynamics.reset(self.device, batch_size, train=train)
 		self.state = self.to_tensor(state)[...,:self.dyn_index] if state is not None else None
 		self.state_dot = torch.zeros_like(self.state) if state is not None else None
 
 	def rollout(self, actions, state, timedim=-2, numpy=False, grad=False):
-		self.reset(batch_size=state.shape[:-len(self.state_size)], state=state)
+		self.reset(batch_size=state.shape[:-len(self.state_size)], state=state, train=grad)
 		actions = self.to_tensor(actions)
 		next_states = []
 		states_dot = []
@@ -106,11 +118,9 @@ class DifferentialEnv(PTNetwork):
 		s, ns = [x[...,:self.dyn_index] for x in [s, ns]]
 		ns_dot = (ns-s)
 		s_dot = torch.cat([ns_dot[:,0:1,:], ns_dot[:,:-1,:]], -2)
-		# ns_dot = torch.cat([s_dot[:,1:,:], s_dot[:,-1:,:]], -2)
-		# ps_dot = torch.cat([s_dot[:,0:1,:], s_dot[:,:-1,:]], -2)
 		(next_states, states_dot, states_ddot), rewards = self.rollout(a, s[...,0,:], grad=True)
 		dyn_loss = (next_states - ns).pow(2).sum(-1).mean()
-		dot_loss = (states_dot - s_dot).pow(2).sum(-1).mean()
+		dot_loss = (states_dot - ns_dot).pow(2).sum(-1).mean()
 		ddot_loss = (states_ddot - (ns_dot - s_dot)).pow(2).sum(-1).mean()
 		rew_loss = (rewards - r).pow(2).mean()
 		self.stats.mean(dyn_loss=dyn_loss, dot_loss=dot_loss, ddot_loss=ddot_loss, rew_loss=rew_loss)
@@ -121,7 +131,7 @@ class DifferentialEnv(PTNetwork):
 		self.optimizer.zero_grad()
 		loss.backward()
 		self.optimizer.step()
-		return loss
+		return loss.item()
 
 	def schedule(self, test_loss):
 		self.scheduler.step(test_loss)

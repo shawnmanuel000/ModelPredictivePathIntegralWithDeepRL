@@ -44,6 +44,34 @@ class RolloutDataset(torch.utils.data.Dataset):
 	def _data_per_sequence(self, data_length):
 		pass
 
+class OnlineDataset(torch.utils.data.Dataset): 
+	def __init__(self, config, buffer, seq_len, train=True): 
+		self.buffer = buffer
+		self.cum_size = [0]
+		self.seq_len = seq_len
+		for states, actions, next_states, rewards, dones in self.buffer:
+			self.cum_size += [self.cum_size[-1] + self._data_per_sequence(rewards.shape[0])]
+
+	def __len__(self):
+		return self.cum_size[-1]
+
+	def __getitem__(self, i):
+		file_index = bisect(self.cum_size, i) - 1
+		seq_index = i - self.cum_size[file_index]
+		data = self.buffer[file_index]
+		return self._get_data(data, seq_index)
+
+	def _get_data(self, data, seq_index):
+		states_data = data[0][seq_index:seq_index + self.seq_len + 1]
+		states, next_states = states_data[:-1], states_data[1:]
+		actions = data[1][seq_index+1:seq_index + self.seq_len + 1].astype(np.float32)
+		rewards = data[3][seq_index+1:seq_index + self.seq_len + 1].astype(np.float32)
+		dones = data[4][seq_index+1:seq_index + self.seq_len + 1].astype(np.float32)
+		return states, actions, next_states, rewards, dones
+
+	def _data_per_sequence(self, data_length):
+		return data_length - self.seq_len
+
 class RolloutSequenceDataset(RolloutDataset): 
 	""" Encapsulates rollouts.
 
