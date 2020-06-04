@@ -72,7 +72,7 @@ model_configs = {
 			NSAMPLES = 100, 
 			HORIZON = 40, 
 			LAMBDA = 0.1,
-			CONTROL_FREQ = 1
+			COV = 0.5,
 		)
 	)
 }

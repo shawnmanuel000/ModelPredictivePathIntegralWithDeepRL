@@ -13,7 +13,7 @@ class MPPIController(PTNetwork):
 		super().__init__(config, gpu=gpu, name=name)
 		self.envmodel = EnvModel(state_size, action_size, config, load=load, gpu=gpu)
 		self.mu = np.zeros(action_size)
-		self.cov = np.diag(np.ones(action_size))*0.5
+		self.cov = np.diag(np.ones(action_size))*config.MPC.COV
 		self.icov = np.linalg.inv(self.cov)
 		self.lamda = config.MPC.LAMBDA
 		self.horizon = config.MPC.HORIZON
@@ -72,7 +72,7 @@ class MPPIAgent(PTAgent):
 			arr[-x.shape[0]:] = x
 			num_splits = 1
 			x = arr
-		arr = x[-num_splits*self.config.NUM_STEPS:].reshape(num_splits, self.config.NUM_STEPS, *x.shape[1:])
+		arr = x[:num_splits*self.config.NUM_STEPS].reshape(num_splits, self.config.NUM_STEPS, *x.shape[1:])
 		return arr
 
 	def train(self, state, action, next_state, reward, done):
