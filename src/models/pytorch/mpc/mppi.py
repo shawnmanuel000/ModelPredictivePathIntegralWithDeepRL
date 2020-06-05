@@ -101,5 +101,6 @@ class MPPIAgent(PTAgent):
 				losses.append(self.network.optimize(states, actions, next_states, rewards, dones))
 				pbar.set_postfix_str(f"Loss: {losses[-1]:.4f}")
 			self.network.envmodel.network.schedule(np.mean(losses))
-			self.eps = max(self.eps * self.config.EPS_DECAY, self.config.EPS_MIN)
+			# self.eps = max(self.eps * self.config.EPS_DECAY, self.config.EPS_MIN)
+		self.eps = max(1-(self.time%self.config.TRAIN_EVERY)/self.config.TRAIN_EVERY, self.config.EPS_MIN)
 		self.stats.mean(len=len(self.replay_buffer))

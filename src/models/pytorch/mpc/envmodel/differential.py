@@ -50,8 +50,7 @@ class RewardModel(torch.nn.Module):
 		self.apply(lambda m: torch.nn.init.xavier_normal_(m.weight) if type(m) in [torch.nn.Conv2d, torch.nn.Linear] else None)
 
 	def forward(self, action, state, next_state, grad=False):
-		if self.cost and self.dyn_spec:
-			if grad: return torch.zeros(action.shape[:-1]).unsqueeze(-1)
+		if self.cost and self.dyn_spec and not grad:
 			next_state, state = [x.cpu().numpy() for x in [next_state, state]]
 			ns_spec, s_spec = map(self.dyn_spec.observation_spec, [next_state, state])
 			reward = -torch.FloatTensor(self.cost.get_cost(ns_spec, s_spec)).unsqueeze(-1)
@@ -118,7 +117,8 @@ class DifferentialEnv(PTNetwork):
 		s, ns = [x[...,:self.dyn_index] for x in [s, ns]]
 		ns_dot = (ns-s)
 		s_dot = torch.cat([ns_dot[:,0:1,:], ns_dot[:,:-1,:]], -2)
-		(next_states, states_dot, states_ddot), rewards = self.rollout(a, s[...,0,:], grad=True)
+		next_states, states_dot, states_ddot = self.rollout(a, s[...,0,:], grad=True)[0]
+		rewards = self.reward(a, s, ns, grad=True)
 		dyn_loss = (next_states - ns).pow(2).sum(-1).mean()
 		dot_loss = (states_dot - ns_dot).pow(2).sum(-1).mean()
 		ddot_loss = (states_ddot - (ns_dot - s_dot)).pow(2).sum(-1).mean()
