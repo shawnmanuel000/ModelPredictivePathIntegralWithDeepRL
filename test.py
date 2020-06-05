@@ -156,7 +156,7 @@ def test_mppi():
 
 
 if __name__ == "__main__":
-	# visualize_envmodel()
-	test_envmodel()
+	visualize_envmodel()
+	# test_envmodel()
 	# test_car_sim()
 	# test_mppi()

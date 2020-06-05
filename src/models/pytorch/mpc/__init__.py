@@ -11,7 +11,7 @@ all_envmodels = {
 
 envmodel_config = Config(
 	REG_LAMBDA = 1e-6,             	# Penalty multiplier to apply for the size of the network weights
-	FACTOR = 0.5,
+	FACTOR = 0.8,
 	PATIENCE = 5,
 	LEARN_RATE = 0.0001,
 )

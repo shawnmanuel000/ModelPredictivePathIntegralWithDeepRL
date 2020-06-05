@@ -90,7 +90,7 @@ class Logger():
 		self.trn_src = [line for line in open(f"train.py")]
 
 	def dict_to_string(self, item):
-		if self.get_module(item,0) != self.get_module(self, 0): return f"<list len={len(item)}>" if isinstance(item, (list, np.ndarray)) and len(item)>10 else str(item)
+		if self.get_module(item,0) != self.get_module(self, 0): return f"<list len={len(item)}>" if isinstance(item, list) and len(item)>10 else str(item)
 		string = "".join([f"\n{k} = {self.dict_to_string(v)}" for k,v in item.__dict__.items() if not k.startswith("_")])
 		return f"{item} {string}".replace('\n','\n\t')
 
