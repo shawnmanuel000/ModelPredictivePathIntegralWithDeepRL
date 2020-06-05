@@ -48,7 +48,7 @@ class OnlineDataset(torch.utils.data.Dataset):
 	def __init__(self, config, buffer, seq_len, train=True): 
 		self.buffer = buffer
 		self.cum_size = [0]
-		self.seq_len = seq_len
+		self.seq_len = min(seq_len, np.min([len(x[3]) for x in buffer]))
 		for states, actions, next_states, rewards, dones in self.buffer:
 			self.cum_size += [self.cum_size[-1] + self._data_per_sequence(rewards.shape[0])]
 

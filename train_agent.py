@@ -23,12 +23,12 @@ class GymTrainer():
 		self.total_rewards = []
 		
 	def start(self):
-		if self.config.trial: self.trial(agent=self.agent.load_model(self.checkpoint))
+		if self.config.trial: self.trial(agent=self.agent.load_model(self.checkpoint, "best"))
 		elif self.config.rank==self.config.split: self.evaluate()
 		elif self.config.rank==0: self.train()
 	
 	def trial(self, agent, step=0, eps=0.1, stats={}, time_sleep=0.0):
-		rollouts = rollout(self.envs, agent, eps=eps, render=self.config.render, time_sleep=time_sleep, print_action=self.config.trial)
+		rollouts = rollout(self.envs, agent, eps=eps, render=self.config.render, time_sleep=time_sleep, print_action=False)
 		self.total_rewards.append(np.mean(rollouts, axis=-1))
 		if self.config.trial: return print(f"Reward: {self.total_rewards[-1]}")
 		if len(self.total_rewards) % self.config.SAVE_AT==0: agent.save_model(self.checkpoint)

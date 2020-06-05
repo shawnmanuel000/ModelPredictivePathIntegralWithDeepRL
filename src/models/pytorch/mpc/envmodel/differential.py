@@ -18,9 +18,9 @@ class TransitionModel(torch.nn.Module):
 
 	def forward(self, action, state, state_dot):
 		input_dim = action.shape[:-1]
-		action, state, state_dot, hidden = map(lambda x: x.view(np.prod(input_dim),-1), [action, state, state_dot, self.hidden])
+		hidden = self.hidden.view(np.prod(input_dim),-1)
 		inputs = torch.cat([action, state, state_dot],-1)
-		hidden = self.gru(inputs, hidden)
+		hidden = self.gru(inputs.view(np.prod(input_dim),-1), hidden).view(*input_dim,-1)
 		linear1 = self.linear1(hidden).relu() + hidden
 		linear1 = self.drop1(linear1)
 		linear2 = self.linear2(linear1).relu() + linear1
@@ -28,7 +28,7 @@ class TransitionModel(torch.nn.Module):
 		state_ddot = self.state_ddot(linear2)
 		state_dot = state_dot + state_ddot
 		next_state = state + state_dot
-		next_state, state_dot, state_ddot, self.hidden = map(lambda x: x.view(*input_dim,-1), [next_state, state_dot, state_ddot, hidden])
+		self.hidden = hidden
 		return next_state, state_dot, state_ddot
 
 	def reset(self, device, batch_size=None, train=False):
