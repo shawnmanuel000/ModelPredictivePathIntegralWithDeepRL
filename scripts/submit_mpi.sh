@@ -3,7 +3,7 @@
 env_name=$1
 model=$2
 script=scripts/train_mpi.sh
-models=([0]="sac" [1]="ddpg" [2]="ppo" [3]="rand")
+models=([0]="sac" [1]="ddpg" [2]="ppo" [3]="mppi" [4]="rand")
 
 if [ -z "$env_name" ]
 then
