@@ -1,0 +1,677 @@
+Model: <class 'src.models.pytorch.agents.ppo.PPOAgent'>, Env: LunarLanderContinuous-v2, Date: 07/06/2020 00:58:59
+CPU: 20 Core, 0.0GHz, 377.59 GB, Linux-4.14.175-llgrid-10ms-x86_64-with-debian-buster-sid
+GPU 0: Tesla V100-PCIE-32GB, 32.51 GB (Driver: 440.33.01)
+GPU 1: Tesla V100-PCIE-32GB, 32.51 GB (Driver: 440.33.01)
+Git URL: https://github.com/shawnmanuel000/ModelPredictivePathIntegralWithDeepRL.git
+Hash: a87cc07c1e7349ce4ee6e7dc2370e05e7e4f1f07
+Branch: master
+
+config: 
+   TRIAL_AT = 1000
+   SAVE_AT = 1
+   SEED = 0
+   REG_LAMBDA = 1e-06
+   LEARN_RATE = 0.0001
+   DISCOUNT_RATE = 0.99
+   ADVANTAGE_DECAY = 0.95
+   INPUT_LAYER = 512
+   ACTOR_HIDDEN = 256
+   CRITIC_HIDDEN = 1024
+   EPS_MAX = 1.0
+   EPS_MIN = 0.1
+   EPS_DECAY = 0.998
+   NUM_STEPS = 500
+   MAX_BUFFER_SIZE = 1000000
+   REPLAY_BATCH_SIZE = 32
+   TARGET_UPDATE_RATE = 0.0004
+   BATCH_SIZE = 32
+   PPO_EPOCHS = 2
+   ENTROPY_WEIGHT = 0.01
+   CLIP_PARAM = 0.05
+   dynamics_size = 8
+   state_size = (8,)
+   action_size = (2,)
+   env_name = LunarLanderContinuous-v2
+   rank = 0
+   size = 17
+   split = 17
+   model = ppo
+   framework = pt
+   train_prop = 1.0
+   tcp_ports = []
+   tcp_rank = 0
+   num_envs = 1
+   nsteps = 500000
+   render = False
+   trial = False
+   icm = False
+   rs = False,
+num_envs: 16,
+envs: <src.utils.envs.EnvManager object at 0x7fed870a9ef0> 
+	env = <GymEnv<TimeLimit<LunarLanderContinuous<LunarLanderContinuous-v2>>>> 
+		env = <TimeLimit<LunarLanderContinuous<LunarLanderContinuous-v2>>> 
+			env = <LunarLanderContinuous<LunarLanderContinuous-v2>> 
+				np_random = RandomState(MT19937)
+				viewer = None
+				world = b2World(autoClearForces=True,
+				        bodies=[b2Body(active=True,
+				                      angle=0.0,
+				                      angularDamping=0.0,
+				                      angularVelocity=0.0,
+				                      awake=True,
+				                      bullet=False,
+				                      contacts=[],
+				                      fixedRotation=False,...  )],
+				        bodyCount=4,
+				        contactCount=0,
+				        contactFilter=None,
+				        contactListener=ContactDetector(),
+				        contactManager=b2ContactManager(allocator=<Swig Object of type 'b2BlockAllocator *' at 0x7fed87190900>,
+				                                        broadPhase=proxyCount=14,),
+				                                        contactCount=0,
+				                                        contactFilter=b2ContactFilter(),
+				                                        contactList=None,
+				                                        contactListener=b2ContactListener(),
+				                                        ),
+				        contacts=[],
+				        continuousPhysics=True,
+				        destructionListener=None,
+				        gravity=b2Vec2(0,-10),
+				        jointCount=2,
+				        joints=[b2RevoluteJoint(active=True,
+				                               anchorA=b2Vec2(10.0465,13.3842),
+				                               anchorB=b2Vec2(10.0465,13.3842),
+				                               angle=0.5402793288230896,
+				                               bodyA=b2Body(active=True,...  )],
+				        locked=False,
+				        proxyCount=14,
+				        renderer=None,
+				        subStepping=False,
+				        warmStarting=True,
+				        )
+				moon = b2Body(active=True,
+				       angle=0.0,
+				       angularDamping=0.0,
+				       angularVelocity=0.0,
+				       awake=True,
+				       bullet=False,
+				       contacts=[],
+				       fixedRotation=False,
+				       fixtures=[b2Fixture(body=b2Body(active=True,
+				                                      angle=0.0,
+				                                      angularDamping=0.0,
+				                                      angularVelocity=0.0,
+				                                      awake=True,...  )],
+				       inertia=0.0,
+				       joints=[],
+				       linearDamping=0.0,
+				       linearVelocity=b2Vec2(0,0),
+				       localCenter=b2Vec2(0,0),
+				       mass=0.0,
+				       massData=I=0.0,center=b2Vec2(0,0),mass=0.0,),
+				       position=b2Vec2(0,0),
+				       sleepingAllowed=True,
+				       transform=R=<Box2D.Box2D.b2Rot; proxy of <Swig Object of type 'b2Rot *' at 0x7fed87190e40> >,angle=0.0,position=b2Vec2(0,0),),
+				       type=0,
+				       userData=None,
+				       worldCenter=b2Vec2(0,0),
+				       )
+				lander = b2Body(active=True,
+				       angle=-0.005384407937526703,
+				       angularDamping=0.0,
+				       angularVelocity=-0.26685792207717896,
+				       awake=True,
+				       bullet=False,
+				       contacts=[],
+				       fixedRotation=False,
+				       fixtures=[b2Fixture(body=b2Body(active=True,
+				                                      angle=-0.005384407937526703,
+				                                      angularDamping=0.0,
+				                                      angularVelocity=-0.26685792207717896,...  )],
+				       inertia=0.8333148956298828,
+				       joints=[b2JointEdge(joint=b2RevoluteJoint(active=True,
+				                                                anchorA=b2Vec2(10.0465,13.3842),
+				                                                anchorB=b2Vec2(10.0465,13.3842),...  )],
+				       linearDamping=0.0,
+				       linearVelocity=b2Vec2(2.35621,2.23893),
+				       localCenter=b2Vec2(0,0.101307),
+				       mass=4.816666603088379,
+				       massData=I=0.8333148956298828,center=b2Vec2(0,0.101307),mass=4.816666603088379,),
+				       position=b2Vec2(10.0465,13.3842),
+				       sleepingAllowed=True,
+				       transform=R=<Box2D.Box2D.b2Rot; proxy of <Swig Object of type 'b2Rot *' at 0x7fed87190e10> >,angle=-0.005384407471865416,position=b2Vec2(10.0465,13.3842),),
+				       type=2,
+				       userData=None,
+				       worldCenter=b2Vec2(10.0471,13.4856),
+				       )
+				particles = []
+				prev_reward = None
+				observation_space = Box(8,) 
+					dtype = float32
+					shape = (8,)
+					low = [-inf -inf -inf -inf -inf -inf -inf -inf]
+					high = [ inf  inf  inf  inf  inf  inf  inf  inf]
+					bounded_below = [False False False False False False False False]
+					bounded_above = [False False False False False False False False]
+					np_random = RandomState(MT19937)
+				action_space = Box(2,) 
+					dtype = float32
+					shape = (2,)
+					low = [-1.000 -1.000]
+					high = [ 1.000  1.000]
+					bounded_below = [ True  True]
+					bounded_above = [ True  True]
+					np_random = RandomState(MT19937)
+				game_over = False
+				prev_shaping = -198.086897767638
+				helipad_x1 = 8.0
+				helipad_x2 = 12.0
+				helipad_y = 3.3333333333333335
+				sky_polys = [[(0.0, 3.6970605869488113), (2.0, 4.074743391976753), (2.0, 13.333333333333334), (0.0, 13.333333333333334)], [(2.0, 4.074743391976753), (4.0, 3.754309069559127), (4.0, 13.333333333333334), (2.0, 13.333333333333334)], [(4.0, 3.754309069559127), (6.0, 4.091765066229819), (6.0, 13.333333333333334), (4.0, 13.333333333333334)], [(6.0, 4.091765066229819), (8.0, 3.3000000000000003), (8.0, 13.333333333333334), (6.0, 13.333333333333334)], [(8.0, 3.3000000000000003), (10.0, 3.3000000000000003), (10.0, 13.333333333333334), (8.0, 13.333333333333334)], [(10.0, 3.3000000000000003), (12.0, 3.3000000000000003), (12.0, 13.333333333333334), (10.0, 13.333333333333334)], [(12.0, 3.3000000000000003), (14.0, 2.830353520856721), (14.0, 13.333333333333334), (12.0, 13.333333333333334)], [(14.0, 2.830353520856721), (16.0, 3.643200650770651), (16.0, 13.333333333333334), (14.0, 13.333333333333334)], [(16.0, 3.643200650770651), (18.0, 3.9526317686713055), (18.0, 13.333333333333334), (16.0, 13.333333333333334)], [(18.0, 3.9526317686713055), (20.0, 4.836360509016463), (20.0, 13.333333333333334), (18.0, 13.333333333333334)]]
+				legs = [b2Body(active=True,
+				       angle=0.48489493131637573,
+				       angularDamping=0.0,
+				       angularVelocity=-0.2668555676937103,
+				       awake=True,
+				       bullet=False,
+				       contacts=[],
+				       fixedRotation=False,
+				       fixtures=[b2Fixture(body=b2Body(active=True,
+				                                      angle=0.48489493131637573,
+				                                      angularDamping=0.0,
+				                                      angularVelocity=-0.2668555676937103,...  )],
+				       inertia=0.0017909470479935408,
+				       joints=[b2JointEdge(joint=b2RevoluteJoint(active=True,
+				                                                anchorA=b2Vec2(10.0465,13.3842),
+				                                                anchorB=b2Vec2(10.0465,13.3842),...  )],
+				       linearDamping=0.0,
+				       linearVelocity=b2Vec2(2.16037,2.06925),
+				       localCenter=b2Vec2(0,0),
+				       mass=0.07111112028360367,
+				       massData=I=0.0017909470479935408,center=b2Vec2(0,0),mass=0.07111112028360367,),
+				       position=b2Vec2(10.916,13.1642),
+				       sleepingAllowed=True,
+				       transform=R=<Box2D.Box2D.b2Rot; proxy of <Swig Object of type 'b2Rot *' at 0x7fed87190f30> >,angle=0.48489493131637573,position=b2Vec2(10.916,13.1642),),
+				       type=2,
+				       userData=None,
+				       worldCenter=b2Vec2(10.916,13.1642),
+				       ), b2Body(active=True,
+				       angle=-0.49914100766181946,
+				       angularDamping=0.0,
+				       angularVelocity=-0.2668488919734955,
+				       awake=True,
+				       bullet=False,
+				       contacts=[],
+				       fixedRotation=False,
+				       fixtures=[b2Fixture(body=b2Body(active=True,
+				                                      angle=-0.49914100766181946,
+				                                      angularDamping=0.0,
+				                                      angularVelocity=-0.2668488919734955,...  )],
+				       inertia=0.0017909470479935408,
+				       joints=[b2JointEdge(joint=b2RevoluteJoint(active=True,
+				                                                anchorA=b2Vec2(10.0465,13.3842),
+				                                                anchorB=b2Vec2(10.0465,13.3842),...  )],
+				       linearDamping=0.0,
+				       linearVelocity=b2Vec2(2.16037,2.40861),
+				       localCenter=b2Vec2(0,0),
+				       mass=0.07111112028360367,
+				       massData=I=0.0017909470479935408,center=b2Vec2(0,0),mass=0.07111112028360367,),
+				       position=b2Vec2(9.17399,13.1766),
+				       sleepingAllowed=True,
+				       transform=R=<Box2D.Box2D.b2Rot; proxy of <Swig Object of type 'b2Rot *' at 0x7fed87190f00> >,angle=-0.49914100766181946,position=b2Vec2(9.17399,13.1766),),
+				       type=2,
+				       userData=None,
+				       worldCenter=b2Vec2(9.17399,13.1766),
+				       )]
+				drawlist = [b2Body(active=True,
+				       angle=-0.005384407937526703,
+				       angularDamping=0.0,
+				       angularVelocity=-0.26685792207717896,
+				       awake=True,
+				       bullet=False,
+				       contacts=[],
+				       fixedRotation=False,
+				       fixtures=[b2Fixture(body=b2Body(active=True,
+				                                      angle=-0.005384407937526703,
+				                                      angularDamping=0.0,
+				                                      angularVelocity=-0.26685792207717896,...  )],
+				       inertia=0.8333148956298828,
+				       joints=[b2JointEdge(joint=b2RevoluteJoint(active=True,
+				                                                anchorA=b2Vec2(10.0465,13.3842),
+				                                                anchorB=b2Vec2(10.0465,13.3842),...  )],
+				       linearDamping=0.0,
+				       linearVelocity=b2Vec2(2.35621,2.23893),
+				       localCenter=b2Vec2(0,0.101307),
+				       mass=4.816666603088379,
+				       massData=I=0.8333148956298828,center=b2Vec2(0,0.101307),mass=4.816666603088379,),
+				       position=b2Vec2(10.0465,13.3842),
+				       sleepingAllowed=True,
+				       transform=R=<Box2D.Box2D.b2Rot; proxy of <Swig Object of type 'b2Rot *' at 0x7fed87190e40> >,angle=-0.005384407471865416,position=b2Vec2(10.0465,13.3842),),
+				       type=2,
+				       userData=None,
+				       worldCenter=b2Vec2(10.0471,13.4856),
+				       ), b2Body(active=True,
+				       angle=0.48489493131637573,
+				       angularDamping=0.0,
+				       angularVelocity=-0.2668555676937103,
+				       awake=True,
+				       bullet=False,
+				       contacts=[],
+				       fixedRotation=False,
+				       fixtures=[b2Fixture(body=b2Body(active=True,
+				                                      angle=0.48489493131637573,
+				                                      angularDamping=0.0,
+				                                      angularVelocity=-0.2668555676937103,...  )],
+				       inertia=0.0017909470479935408,
+				       joints=[b2JointEdge(joint=b2RevoluteJoint(active=True,
+				                                                anchorA=b2Vec2(10.0465,13.3842),
+				                                                anchorB=b2Vec2(10.0465,13.3842),...  )],
+				       linearDamping=0.0,
+				       linearVelocity=b2Vec2(2.16037,2.06925),
+				       localCenter=b2Vec2(0,0),
+				       mass=0.07111112028360367,
+				       massData=I=0.0017909470479935408,center=b2Vec2(0,0),mass=0.07111112028360367,),
+				       position=b2Vec2(10.916,13.1642),
+				       sleepingAllowed=True,
+				       transform=R=<Box2D.Box2D.b2Rot; proxy of <Swig Object of type 'b2Rot *' at 0x7fed87190ea0> >,angle=0.48489493131637573,position=b2Vec2(10.916,13.1642),),
+				       type=2,
+				       userData=None,
+				       worldCenter=b2Vec2(10.916,13.1642),
+				       ), b2Body(active=True,
+				       angle=-0.49914100766181946,
+				       angularDamping=0.0,
+				       angularVelocity=-0.2668488919734955,
+				       awake=True,
+				       bullet=False,
+				       contacts=[],
+				       fixedRotation=False,
+				       fixtures=[b2Fixture(body=b2Body(active=True,
+				                                      angle=-0.49914100766181946,
+				                                      angularDamping=0.0,
+				                                      angularVelocity=-0.2668488919734955,...  )],
+				       inertia=0.0017909470479935408,
+				       joints=[b2JointEdge(joint=b2RevoluteJoint(active=True,
+				                                                anchorA=b2Vec2(10.0465,13.3842),
+				                                                anchorB=b2Vec2(10.0465,13.3842),...  )],
+				       linearDamping=0.0,
+				       linearVelocity=b2Vec2(2.16037,2.40861),
+				       localCenter=b2Vec2(0,0),
+				       mass=0.07111112028360367,
+				       massData=I=0.0017909470479935408,center=b2Vec2(0,0),mass=0.07111112028360367,),
+				       position=b2Vec2(9.17399,13.1766),
+				       sleepingAllowed=True,
+				       transform=R=<Box2D.Box2D.b2Rot; proxy of <Swig Object of type 'b2Rot *' at 0x7fed87190c00> >,angle=-0.49914100766181946,position=b2Vec2(9.17399,13.1766),),
+				       type=2,
+				       userData=None,
+				       worldCenter=b2Vec2(9.17399,13.1766),
+				       )]
+				spec = EnvSpec(LunarLanderContinuous-v2) 
+					id = LunarLanderContinuous-v2
+					entry_point = gym.envs.box2d:LunarLanderContinuous
+					reward_threshold = 200
+					nondeterministic = False
+					max_episode_steps = 1000
+				verbose = 0
+			action_space = Box(2,) 
+				dtype = float32
+				shape = (2,)
+				low = [-1.000 -1.000]
+				high = [ 1.000  1.000]
+				bounded_below = [ True  True]
+				bounded_above = [ True  True]
+				np_random = RandomState(MT19937)
+			observation_space = Box(8,) 
+				dtype = float32
+				shape = (8,)
+				low = [-inf -inf -inf -inf -inf -inf -inf -inf]
+				high = [ inf  inf  inf  inf  inf  inf  inf  inf]
+				bounded_below = [False False False False False False False False]
+				bounded_above = [False False False False False False False False]
+				np_random = RandomState(MT19937)
+			reward_range = (-inf, inf)
+			metadata = {'render.modes': ['human', 'rgb_array'], 'video.frames_per_second': 50}
+		action_space = Box(2,) 
+			dtype = float32
+			shape = (2,)
+			low = [-1.000 -1.000]
+			high = [ 1.000  1.000]
+			bounded_below = [ True  True]
+			bounded_above = [ True  True]
+			np_random = RandomState(MT19937)
+		observation_space = Box(8,) 
+			dtype = float32
+			shape = (8,)
+			low = [-inf -inf -inf -inf -inf -inf -inf -inf]
+			high = [ inf  inf  inf  inf  inf  inf  inf  inf]
+			bounded_below = [False False False False False False False False]
+			bounded_above = [False False False False False False False False]
+			np_random = RandomState(MT19937)
+		reward_range = (-inf, inf)
+		metadata = {'render.modes': ['human', 'rgb_array'], 'video.frames_per_second': 50}
+		preprocess = <src.envs.wrappers.RawPreprocess object at 0x7fed870a94e0> 
+			observation_space = Box(8,) 
+				dtype = float32
+				shape = (8,)
+				low = [-inf -inf -inf -inf -inf -inf -inf -inf]
+				high = [ inf  inf  inf  inf  inf  inf  inf  inf]
+				bounded_below = [False False False False False False False False]
+				bounded_above = [False False False False False False False False]
+				np_random = RandomState(MT19937)
+	state_size = (8,)
+	action_size = (2,)
+	action_space = Box(2,) 
+		dtype = float32
+		shape = (2,)
+		low = [-1.000 -1.000]
+		high = [ 1.000  1.000]
+		bounded_below = [ True  True]
+		bounded_above = [ True  True]
+		np_random = RandomState(MT19937)
+	server_ports = <list len=16>
+	conn = <src.utils.multiprocess.MPIConnection object at 0x7fed871a8fd0> 
+		root = 0
+		rank = 0
+		cluster = <list len=16>
+	num_envs = 16
+	max_steps = 1000,
+agent: <src.models.wrappers.ParallelAgent object at 0x7fed871a8f28> 
+	icm = None
+	stack = <src.models.wrappers.RawState object at 0x7fed871a8908> 
+		state_size = (8,)
+	agent = <src.models.pytorch.agents.ppo.PPOAgent object at 0x7fed871a8940> 
+		noise_process = <src.utils.rand.BrownianNoise object at 0x7fed871a8860> 
+			size = (2,)
+			dt = 0.2
+			action = [ 0.410 -0.613]
+			daction_dt = [-0.304  0.580]
+		discrete = False
+		action_size = (2,)
+		state_size = (8,)
+		config = <src.utils.config.Config object at 0x7fed906b4a58> 
+			TRIAL_AT = 1000
+			SAVE_AT = 1
+			SEED = 0
+			REG_LAMBDA = 1e-06
+			LEARN_RATE = 0.0001
+			DISCOUNT_RATE = 0.99
+			ADVANTAGE_DECAY = 0.95
+			INPUT_LAYER = 512
+			ACTOR_HIDDEN = 256
+			CRITIC_HIDDEN = 1024
+			EPS_MAX = 1.0
+			EPS_MIN = 0.1
+			EPS_DECAY = 0.998
+			NUM_STEPS = 500
+			MAX_BUFFER_SIZE = 1000000
+			REPLAY_BATCH_SIZE = 32
+			TARGET_UPDATE_RATE = 0.0004
+			BATCH_SIZE = 32
+			PPO_EPOCHS = 2
+			ENTROPY_WEIGHT = 0.01
+			CLIP_PARAM = 0.05
+			dynamics_size = 8
+			state_size = (8,)
+			action_size = (2,)
+			env_name = LunarLanderContinuous-v2
+			rank = 0
+			size = 17
+			split = 17
+			model = ppo
+			framework = pt
+			train_prop = 1.0
+			tcp_ports = []
+			tcp_rank = 0
+			num_envs = 1
+			nsteps = 500000
+			render = False
+			trial = False
+			icm = False
+			rs = False
+		stats = <src.utils.logger.Stats object at 0x7fed871a8898> 
+			mean_dict = {}
+			sum_dict = {}
+		eps = 1.0
+		network = PPONetwork(
+			  (actor_local): PPOActor(
+			    (layer1): Linear(in_features=8, out_features=512, bias=True)
+			    (layer2): Linear(in_features=512, out_features=256, bias=True)
+			    (layer3): Linear(in_features=256, out_features=256, bias=True)
+			    (action_mu): Linear(in_features=256, out_features=2, bias=True)
+			  )
+			  (actor_target): PPOActor(
+			    (layer1): Linear(in_features=8, out_features=512, bias=True)
+			    (layer2): Linear(in_features=512, out_features=256, bias=True)
+			    (layer3): Linear(in_features=256, out_features=256, bias=True)
+			    (action_mu): Linear(in_features=256, out_features=2, bias=True)
+			  )
+			  (critic_local): PPOCritic(
+			    (layer1): Linear(in_features=8, out_features=512, bias=True)
+			    (layer2): Linear(in_features=512, out_features=1024, bias=True)
+			    (layer3): Linear(in_features=1024, out_features=1024, bias=True)
+			    (value): Linear(in_features=1024, out_features=1, bias=True)
+			  )
+			  (critic_target): PPOCritic(
+			    (layer1): Linear(in_features=8, out_features=512, bias=True)
+			    (layer2): Linear(in_features=512, out_features=1024, bias=True)
+			    (layer3): Linear(in_features=1024, out_features=1024, bias=True)
+			    (value): Linear(in_features=1024, out_features=1, bias=True)
+			  )
+			) 
+			training = True
+			tau = 0.0004
+			name = ppo
+			stats = <src.utils.logger.Stats object at 0x7fed871a87f0> 
+				mean_dict = {}
+				sum_dict = {}
+			config = <src.utils.config.Config object at 0x7fed906b4a58> 
+				TRIAL_AT = 1000
+				SAVE_AT = 1
+				SEED = 0
+				REG_LAMBDA = 1e-06
+				LEARN_RATE = 0.0001
+				DISCOUNT_RATE = 0.99
+				ADVANTAGE_DECAY = 0.95
+				INPUT_LAYER = 512
+				ACTOR_HIDDEN = 256
+				CRITIC_HIDDEN = 1024
+				EPS_MAX = 1.0
+				EPS_MIN = 0.1
+				EPS_DECAY = 0.998
+				NUM_STEPS = 500
+				MAX_BUFFER_SIZE = 1000000
+				REPLAY_BATCH_SIZE = 32
+				TARGET_UPDATE_RATE = 0.0004
+				BATCH_SIZE = 32
+				PPO_EPOCHS = 2
+				ENTROPY_WEIGHT = 0.01
+				CLIP_PARAM = 0.05
+				dynamics_size = 8
+				state_size = (8,)
+				action_size = (2,)
+				env_name = LunarLanderContinuous-v2
+				rank = 0
+				size = 17
+				split = 17
+				model = ppo
+				framework = pt
+				train_prop = 1.0
+				tcp_ports = []
+				tcp_rank = 0
+				num_envs = 1
+				nsteps = 500000
+				render = False
+				trial = False
+				icm = False
+				rs = False
+			device = cuda
+			src = ['class PPOActor(torch.nn.Module):\n\tdef __init__(self, state_size, action_size, config, use_discrete=False):\n\t\tsuper().__init__()\n\t\tinput_layer, actor_hidden = config.INPUT_LAYER, config.ACTOR_HIDDEN\n\t\tself.discrete = use_discrete and type(action_size) != tuple\n\t\tself.layer1 = torch.nn.Linear(state_size[-1], input_layer) if len(state_size)!=3 else Conv(state_size, input_layer)\n\t\tself.layer2 = torch.nn.Linear(input_layer, actor_hidden)\n\t\tself.layer3 = torch.nn.Linear(actor_hidden, actor_hidden)\n\t\tself.action_mu = torch.nn.Linear(actor_hidden, action_size[-1])\n\t\tself.action_sig = torch.nn.Parameter(torch.zeros(action_size[-1]))\n\t\tself.apply(lambda m: torch.nn.init.xavier_normal_(m.weight) if type(m) in [torch.nn.Conv2d, torch.nn.Linear] else None)\n\t\tself.dist = lambda m,s: torch.distributions.Categorical(m.softmax(-1)) if self.discrete else torch.distributions.Normal(m,s)\n\t\t\n\tdef forward(self, state, action_in=None, sample=True):\n\t\tstate = self.layer1(state).relu()\n\t\tstate = self.layer2(state).relu()\n\t\tstate = self.layer3(state).relu()\n\t\taction_mu = self.action_mu(state)\n\t\taction_sig = self.action_sig.exp().expand_as(action_mu)\n\t\tdist = self.dist(action_mu, action_sig)\n\t\taction = dist.sample() if action_in is None else action_in.argmax(-1) if self.discrete else action_in\n\t\taction_out = one_hot_from_indices(action, action_mu.size(-1)) if self.discrete else action\n\t\tlog_prob = dist.log_prob(action)\n\t\tentropy = dist.entropy()\n\t\treturn action_out, log_prob, entropy\n', 'class PPOCritic(torch.nn.Module):\n\tdef __init__(self, state_size, action_size, config):\n\t\tsuper().__init__()\n\t\tinput_layer, critic_hidden = config.INPUT_LAYER, config.CRITIC_HIDDEN\n\t\tself.layer1 = torch.nn.Linear(state_size[-1], input_layer) if len(state_size)!=3 else Conv(state_size, input_layer)\n\t\tself.layer2 = torch.nn.Linear(input_layer, critic_hidden)\n\t\tself.layer3 = torch.nn.Linear(critic_hidden, critic_hidden)\n\t\tself.value = torch.nn.Linear(critic_hidden, 1)\n\t\tself.apply(lambda m: torch.nn.init.xavier_normal_(m.weight) if type(m) in [torch.nn.Conv2d, torch.nn.Linear] else None)\n\n\tdef forward(self, state):\n\t\tstate = self.layer1(state).relu()\n\t\tstate = self.layer2(state).relu()\n\t\tstate = self.layer3(state).relu()\n\t\tvalue = self.value(state)\n\t\treturn value\n']
+			actor_optimizer = Adam (
+			Parameter Group 0
+			    amsgrad: False
+			    betas: (0.9, 0.999)
+			    eps: 1e-08
+			    lr: 0.0001
+			    weight_decay: 1e-06
+			)
+			critic_optimizer = Adam (
+			Parameter Group 0
+			    amsgrad: False
+			    betas: (0.9, 0.999)
+			    eps: 1e-08
+			    lr: 0.0001
+			    weight_decay: 1e-06
+			)
+		replay_buffer = <src.utils.rand.ReplayBuffer object at 0x7fed8719b2b0> 
+			buffer = deque([], maxlen=1000000)
+		buffer = []
+	noise_process = <src.utils.rand.BrownianNoise object at 0x7fed8719b240> 
+		size = (2,)
+		dt = 0.2
+		action = [-0.808 -0.200]
+		daction_dt = [ 2.770  0.598]
+	discrete = False
+	action_size = (2,)
+	state_size = (8,)
+	config = <src.utils.config.Config object at 0x7fed906b4a58> 
+		TRIAL_AT = 1000
+		SAVE_AT = 1
+		SEED = 0
+		REG_LAMBDA = 1e-06
+		LEARN_RATE = 0.0001
+		DISCOUNT_RATE = 0.99
+		ADVANTAGE_DECAY = 0.95
+		INPUT_LAYER = 512
+		ACTOR_HIDDEN = 256
+		CRITIC_HIDDEN = 1024
+		EPS_MAX = 1.0
+		EPS_MIN = 0.1
+		EPS_DECAY = 0.998
+		NUM_STEPS = 500
+		MAX_BUFFER_SIZE = 1000000
+		REPLAY_BATCH_SIZE = 32
+		TARGET_UPDATE_RATE = 0.0004
+		BATCH_SIZE = 32
+		PPO_EPOCHS = 2
+		ENTROPY_WEIGHT = 0.01
+		CLIP_PARAM = 0.05
+		dynamics_size = 8
+		state_size = (8,)
+		action_size = (2,)
+		env_name = LunarLanderContinuous-v2
+		rank = 0
+		size = 17
+		split = 17
+		model = ppo
+		framework = pt
+		train_prop = 1.0
+		tcp_ports = []
+		tcp_rank = 0
+		num_envs = 1
+		nsteps = 500000
+		render = False
+		trial = False
+		icm = False
+		rs = False
+	stats = <src.utils.logger.Stats object at 0x7fed8719b1d0> 
+		mean_dict = {}
+		sum_dict = {},
+conn: None,
+
+import torch
+import numpy as np
+from .base import PTACNetwork, PTAgent, Conv, one_hot_from_indices
+from src.utils.rand import ReplayBuffer, PrioritizedReplayBuffer
+
+class PPOActor(torch.nn.Module):
+	def __init__(self, state_size, action_size, config, use_discrete=False):
+		super().__init__()
+		input_layer, actor_hidden = config.INPUT_LAYER, config.ACTOR_HIDDEN
+		self.discrete = use_discrete and type(action_size) != tuple
+		self.layer1 = torch.nn.Linear(state_size[-1], input_layer) if len(state_size)!=3 else Conv(state_size, input_layer)
+		self.layer2 = torch.nn.Linear(input_layer, actor_hidden)
+		self.layer3 = torch.nn.Linear(actor_hidden, actor_hidden)
+		self.action_mu = torch.nn.Linear(actor_hidden, action_size[-1])
+		self.action_sig = torch.nn.Parameter(torch.zeros(action_size[-1]))
+		self.apply(lambda m: torch.nn.init.xavier_normal_(m.weight) if type(m) in [torch.nn.Conv2d, torch.nn.Linear] else None)
+		self.dist = lambda m,s: torch.distributions.Categorical(m.softmax(-1)) if self.discrete else torch.distributions.Normal(m,s)
+		
+	def forward(self, state, action_in=None, sample=True):
+		state = self.layer1(state).relu()
+		state = self.layer2(state).relu()
+		state = self.layer3(state).relu()
+		action_mu = self.action_mu(state)
+		action_sig = self.action_sig.exp().expand_as(action_mu)
+		dist = self.dist(action_mu, action_sig)
+		action = dist.sample() if action_in is None else action_in.argmax(-1) if self.discrete else action_in
+		action_out = one_hot_from_indices(action, action_mu.size(-1)) if self.discrete else action
+		log_prob = dist.log_prob(action)
+		entropy = dist.entropy()
+		return action_out, log_prob, entropy
+
+class PPOCritic(torch.nn.Module):
+	def __init__(self, state_size, action_size, config):
+		super().__init__()
+		input_layer, critic_hidden = config.INPUT_LAYER, config.CRITIC_HIDDEN
+		self.layer1 = torch.nn.Linear(state_size[-1], input_layer) if len(state_size)!=3 else Conv(state_size, input_layer)
+		self.layer2 = torch.nn.Linear(input_layer, critic_hidden)
+		self.layer3 = torch.nn.Linear(critic_hidden, critic_hidden)
+		self.value = torch.nn.Linear(critic_hidden, 1)
+		self.apply(lambda m: torch.nn.init.xavier_normal_(m.weight) if type(m) in [torch.nn.Conv2d, torch.nn.Linear] else None)
+
+	def forward(self, state):
+		state = self.layer1(state).relu()
+		state = self.layer2(state).relu()
+		state = self.layer3(state).relu()
+		value = self.value(state)
+		return value
+
+class PPONetwork(PTACNetwork):
+	def __init__(self, state_size, action_size, config, actor=PPOActor, critic=PPOCritic, gpu=True, load=None, name="ppo"):
+		super().__init__(state_size, action_size, config, actor=actor, critic=critic, gpu=gpu, load=load, name=name)
+
+	def get_action_probs(self, state, action_in=None, grad=False, numpy=False, sample=True):
+		with torch.enable_grad() if grad else torch.no_grad():
+			action, log_prob, entropy = self.actor_local(state.to(self.device), action_in, sample)
+			action_or_entropy = action if action_in is None else entropy.mean()
+			return (x.cpu().numpy() if numpy else x for x in [action_or_entropy, log_prob])
+
+	def get_value(self, state, grad=False, numpy=False):
+		with torch.enable_grad() if grad else torch.no_grad():
+			return self.critic_local(state.to(self.device)).cpu().numpy() if numpy else self.critic_local(state.to(self.device))
+
+	def optimize(self, states, actions, old_log_probs, targets, advantages, config):
+		values = self.get_value(states, grad=True)
+		critic_loss = (values - targets).pow(2).mean()
+		self.step(self.critic_optimizer, critic_loss)
+
+		entropy, new_log_probs = self.get_action_probs(states, actions, grad=True)
+		ratio = (new_log_probs - old_log_probs).exp()
+		ratio_clipped = torch.clamp(ratio, 1.0-config.CLIP_PARAM, 1.0+config.CLIP_PARAM)
+		actor_loss = -(torch.min(ratio*advantages, ratio_clipped*advantages) + config.ENTROPY_WEIGHT*entropy).mean()
+		self.step(self.actor_optimizer, actor_loss)
+		self.stats.mean(critic_loss=critic_loss, actor_loss=actor_loss)
+
+class PPOAgent(PTAgent):
+	def __init__(self, state_size, action_size, config, gpu=True, load=None):
+		super().__init__(state_size, action_size, config, PPONetwork, gpu=gpu, load=load)
+
+	def get_action(self, state, eps=None, sample=True):
+		self.action, self.log_prob = self.network.get_action_probs(self.to_tensor(state), numpy=True, sample=sample)
+		return np.tanh(self.action)
+
+	def train(self, state, action, next_state, reward, done):
+		self.buffer.append((state, self.action, self.log_prob, reward, done))
+		if np.any(done[0]) or len(self.buffer) >= self.config.NUM_STEPS:
+			states, actions, log_probs, rewards, dones = map(self.to_tensor, zip(*self.buffer))
+			self.buffer.clear()
+			states = torch.cat([states, self.to_tensor(next_state).unsqueeze(0)], dim=0)
+			values = self.network.get_value(states)
+			targets, advantages = self.compute_gae(values[-1], rewards.unsqueeze(-1), dones.unsqueeze(-1), values[:-1])
+			states, actions, log_probs, targets, advantages = [x.view(x.size(0)*x.size(1), *x.size()[2:]) for x in (states[:-1], actions, log_probs, targets, advantages)]
+			self.replay_buffer.clear().extend(list(zip(states, actions, log_probs, targets, advantages)), shuffle=True)
+			for _ in range((len(self.replay_buffer)*self.config.PPO_EPOCHS)//self.config.BATCH_SIZE):
+				state, action, log_prob, target, advantage = self.replay_buffer.next_batch(self.config.BATCH_SIZE, torch.stack)
+				self.network.optimize(state, action, log_prob, target, advantage, config=self.config)
+				
+
+Step:       0, Reward:  -258.272 [ 165.529], Avg:  -258.272 (1.000) <0-00:00:00> ({'r_t':    -0.6408, 'eps':     1.0000, 'eps_e':     1.0000})

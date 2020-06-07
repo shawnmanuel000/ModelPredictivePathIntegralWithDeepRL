@@ -1,0 +1,967 @@
+Model: <class 'src.models.pytorch.agents.sac.SACAgent'>, Env: Pendulum-v0, Date: 07/06/2020 01:04:36
+CPU: 20 Core, 0.0GHz, 377.59 GB, Linux-4.14.175-llgrid-10ms-x86_64-with-debian-buster-sid
+GPU 0: Tesla V100-PCIE-32GB, 32.51 GB (Driver: 440.33.01)
+GPU 1: Tesla V100-PCIE-32GB, 32.51 GB (Driver: 440.33.01)
+Git URL: https://github.com/shawnmanuel000/ModelPredictivePathIntegralWithDeepRL.git
+Hash: df05964fa4262840095e5c93d6ca54a9f32dc498
+Branch: master
+
+config: 
+   TRIAL_AT = 1000
+   SAVE_AT = 1
+   SEED = 0
+   REG_LAMBDA = 1e-06
+   LEARN_RATE = 0.0001
+   DISCOUNT_RATE = 0.99
+   ADVANTAGE_DECAY = 0.95
+   INPUT_LAYER = 512
+   ACTOR_HIDDEN = 256
+   CRITIC_HIDDEN = 1024
+   EPS_MAX = 1.0
+   EPS_MIN = 0.1
+   EPS_DECAY = 0.998
+   NUM_STEPS = 500
+   MAX_BUFFER_SIZE = 1000000
+   REPLAY_BATCH_SIZE = 32
+   TARGET_UPDATE_RATE = 0.0004
+   dynamics_size = 3
+   state_size = (3,)
+   action_size = (1,)
+   env_name = Pendulum-v0
+   rank = 0
+   size = 17
+   split = 17
+   model = sac
+   framework = pt
+   train_prop = 1.0
+   tcp_ports = []
+   tcp_rank = 0
+   num_envs = 1
+   nsteps = 500000
+   render = False
+   trial = False
+   icm = False
+   rs = False,
+num_envs: 16,
+envs: <src.utils.envs.EnvManager object at 0x7f15df339ba8> 
+	env = <GymEnv<TimeLimit<PendulumEnv<Pendulum-v0>>>> 
+		env = <TimeLimit<PendulumEnv<Pendulum-v0>>> 
+			env = <PendulumEnv<Pendulum-v0>> 
+				max_speed = 8
+				max_torque = 2.0
+				dt = 0.05
+				g = 10.0
+				m = 1.0
+				l = 1.0
+				viewer = None
+				action_space = Box(1,) 
+					dtype = float32
+					shape = (1,)
+					low = [-2.000]
+					high = [ 2.000]
+					bounded_below = [ True]
+					bounded_above = [ True]
+					np_random = RandomState(MT19937)
+				observation_space = Box(3,) 
+					dtype = float32
+					shape = (3,)
+					low = [-1.000 -1.000 -8.000]
+					high = [ 1.000  1.000  8.000]
+					bounded_below = [ True  True  True]
+					bounded_above = [ True  True  True]
+					np_random = RandomState(MT19937)
+				np_random = RandomState(MT19937)
+				spec = EnvSpec(Pendulum-v0) 
+					id = Pendulum-v0
+					entry_point = gym.envs.classic_control:PendulumEnv
+					reward_threshold = None
+					nondeterministic = False
+					max_episode_steps = 200
+				verbose = 0
+			action_space = Box(1,) 
+				dtype = float32
+				shape = (1,)
+				low = [-2.000]
+				high = [ 2.000]
+				bounded_below = [ True]
+				bounded_above = [ True]
+				np_random = RandomState(MT19937)
+			observation_space = Box(3,) 
+				dtype = float32
+				shape = (3,)
+				low = [-1.000 -1.000 -8.000]
+				high = [ 1.000  1.000  8.000]
+				bounded_below = [ True  True  True]
+				bounded_above = [ True  True  True]
+				np_random = RandomState(MT19937)
+			reward_range = (-inf, inf)
+			metadata = {'render.modes': ['human', 'rgb_array'], 'video.frames_per_second': 30}
+		action_space = Box(1,) 
+			dtype = float32
+			shape = (1,)
+			low = [-2.000]
+			high = [ 2.000]
+			bounded_below = [ True]
+			bounded_above = [ True]
+			np_random = RandomState(MT19937)
+		observation_space = Box(3,) 
+			dtype = float32
+			shape = (3,)
+			low = [-1.000 -1.000 -8.000]
+			high = [ 1.000  1.000  8.000]
+			bounded_below = [ True  True  True]
+			bounded_above = [ True  True  True]
+			np_random = RandomState(MT19937)
+		reward_range = (-inf, inf)
+		metadata = {'render.modes': ['human', 'rgb_array'], 'video.frames_per_second': 30}
+		preprocess = <src.envs.wrappers.RawPreprocess object at 0x7f15df34e9b0> 
+			observation_space = Box(3,) 
+				dtype = float32
+				shape = (3,)
+				low = [-1.000 -1.000 -8.000]
+				high = [ 1.000  1.000  8.000]
+				bounded_below = [ True  True  True]
+				bounded_above = [ True  True  True]
+				np_random = RandomState(MT19937)
+	state_size = (3,)
+	action_size = (1,)
+	action_space = Box(1,) 
+		dtype = float32
+		shape = (1,)
+		low = [-2.000]
+		high = [ 2.000]
+		bounded_below = [ True]
+		bounded_above = [ True]
+		np_random = RandomState(MT19937)
+	server_ports = <list len=16>
+	conn = <src.utils.multiprocess.MPIConnection object at 0x7f15df2d6080> 
+		root = 0
+		rank = 0
+		cluster = <list len=16>
+	num_envs = 16
+	max_steps = 200,
+agent: <src.models.wrappers.ParallelAgent object at 0x7f15df2d60b8> 
+	icm = None
+	stack = <src.models.wrappers.RawState object at 0x7f15df2e87f0> 
+		state_size = (3,)
+	agent = <src.models.pytorch.agents.sac.SACAgent object at 0x7f15df2f8c18> 
+		noise_process = <src.utils.rand.BrownianNoise object at 0x7f15df2f8c50> 
+			size = (1,)
+			dt = 0.2
+			action = [ 0.057]
+			daction_dt = [-0.473]
+		discrete = False
+		action_size = (1,)
+		state_size = (3,)
+		config = <src.utils.config.Config object at 0x7f15df643a58> 
+			TRIAL_AT = 1000
+			SAVE_AT = 1
+			SEED = 0
+			REG_LAMBDA = 1e-06
+			LEARN_RATE = 0.0001
+			DISCOUNT_RATE = 0.99
+			ADVANTAGE_DECAY = 0.95
+			INPUT_LAYER = 512
+			ACTOR_HIDDEN = 256
+			CRITIC_HIDDEN = 1024
+			EPS_MAX = 1.0
+			EPS_MIN = 0.1
+			EPS_DECAY = 0.998
+			NUM_STEPS = 500
+			MAX_BUFFER_SIZE = 1000000
+			REPLAY_BATCH_SIZE = 32
+			TARGET_UPDATE_RATE = 0.0004
+			dynamics_size = 3
+			state_size = (3,)
+			action_size = (1,)
+			env_name = Pendulum-v0
+			rank = 0
+			size = 17
+			split = 17
+			model = sac
+			framework = pt
+			train_prop = 1.0
+			tcp_ports = []
+			tcp_rank = 0
+			num_envs = 1
+			nsteps = 500000
+			render = False
+			trial = False
+			icm = False
+			rs = False
+		stats = <src.utils.logger.Stats object at 0x7f15df2f8c88> 
+			mean_dict = {}
+			sum_dict = {}
+		eps = 1.0
+		network = SACNetwork(
+			  (actor_local): SACActor(
+			    (layer1): Linear(in_features=3, out_features=512, bias=True)
+			    (layer2): Linear(in_features=512, out_features=256, bias=True)
+			    (layer3): Linear(in_features=256, out_features=256, bias=True)
+			    (action_mu): Linear(in_features=256, out_features=1, bias=True)
+			    (action_sig): Linear(in_features=256, out_features=1, bias=True)
+			  )
+			  (actor_target): SACActor(
+			    (layer1): Linear(in_features=3, out_features=512, bias=True)
+			    (layer2): Linear(in_features=512, out_features=256, bias=True)
+			    (layer3): Linear(in_features=256, out_features=256, bias=True)
+			    (action_mu): Linear(in_features=256, out_features=1, bias=True)
+			    (action_sig): Linear(in_features=256, out_features=1, bias=True)
+			  )
+			  (critic_local): SACCritic(
+			    (net_state): Linear(in_features=3, out_features=512, bias=True)
+			    (net_action): Linear(in_features=1, out_features=512, bias=True)
+			    (net_layer1): Linear(in_features=1024, out_features=1024, bias=True)
+			    (net_layer2): Linear(in_features=1024, out_features=1024, bias=True)
+			    (q_value): Linear(in_features=1024, out_features=1, bias=True)
+			  )
+			  (critic_target): SACCritic(
+			    (net_state): Linear(in_features=3, out_features=512, bias=True)
+			    (net_action): Linear(in_features=1, out_features=512, bias=True)
+			    (net_layer1): Linear(in_features=1024, out_features=1024, bias=True)
+			    (net_layer2): Linear(in_features=1024, out_features=1024, bias=True)
+			    (q_value): Linear(in_features=1024, out_features=1, bias=True)
+			  )
+			) 
+			discrete = False
+			training = True
+			tau = 0.0004
+			name = sac
+			stats = <src.utils.logger.Stats object at 0x7f15df2f8cf8> 
+				mean_dict = {}
+				sum_dict = {}
+			config = <src.utils.config.Config object at 0x7f15df643a58> 
+				TRIAL_AT = 1000
+				SAVE_AT = 1
+				SEED = 0
+				REG_LAMBDA = 1e-06
+				LEARN_RATE = 0.0001
+				DISCOUNT_RATE = 0.99
+				ADVANTAGE_DECAY = 0.95
+				INPUT_LAYER = 512
+				ACTOR_HIDDEN = 256
+				CRITIC_HIDDEN = 1024
+				EPS_MAX = 1.0
+				EPS_MIN = 0.1
+				EPS_DECAY = 0.998
+				NUM_STEPS = 500
+				MAX_BUFFER_SIZE = 1000000
+				REPLAY_BATCH_SIZE = 32
+				TARGET_UPDATE_RATE = 0.0004
+				dynamics_size = 3
+				state_size = (3,)
+				action_size = (1,)
+				env_name = Pendulum-v0
+				rank = 0
+				size = 17
+				split = 17
+				model = sac
+				framework = pt
+				train_prop = 1.0
+				tcp_ports = []
+				tcp_rank = 0
+				num_envs = 1
+				nsteps = 500000
+				render = False
+				trial = False
+				icm = False
+				rs = False
+			device = cuda
+			src = ['class SACActor(torch.nn.Module):\n\tdef __init__(self, state_size, action_size, config, use_discrete=False):\n\t\tsuper().__init__()\n\t\tinput_layer, actor_hidden = config.INPUT_LAYER, config.ACTOR_HIDDEN\n\t\tself.discrete = use_discrete and type(action_size) != tuple\n\t\tself.layer1 = torch.nn.Linear(state_size[-1], input_layer) if len(state_size)!=3 else Conv(state_size, input_layer)\n\t\tself.layer2 = torch.nn.Linear(input_layer, actor_hidden)\n\t\tself.layer3 = torch.nn.Linear(actor_hidden, actor_hidden)\n\t\tself.action_mu = torch.nn.Linear(actor_hidden, action_size[-1])\n\t\tself.action_sig = torch.nn.Linear(actor_hidden, action_size[-1])\n\t\tself.apply(lambda m: torch.nn.init.xavier_normal_(m.weight) if type(m) in [torch.nn.Conv2d, torch.nn.Linear] else None)\n\t\tself.dist = lambda m,s: torch.distributions.Categorical(m.softmax(-1)) if self.discrete else torch.distributions.Normal(m,s)\n\t\t\n\tdef forward(self, state, action=None, sample=True):\n\t\tstate = self.layer1(state).relu()\n\t\tstate = self.layer2(state).relu()\n\t\tstate = self.layer3(state).relu()\n\t\taction_mu = self.action_mu(state)\n\t\taction_sig = self.action_sig(state).clamp(-5,0).exp()\n\t\tdist = torch.distributions.Normal(action_mu, action_sig)\n\t\taction = dist.rsample() if sample else action_mu\n\t\taction_out = gsoftmax(action_mu, hard=False) if self.discrete else action.tanh()\n\t\tlog_prob = torch.log(action_out+1e-6) if self.discrete else dist.log_prob(action)-torch.log(1-action_out.pow(2)+1e-6)\n\t\treturn action_out, log_prob\n', 'class SACCritic(torch.nn.Module):\n\tdef __init__(self, state_size, action_size, config):\n\t\tsuper().__init__()\n\t\tinput_layer, critic_hidden = config.INPUT_LAYER, config.CRITIC_HIDDEN\n\t\tself.net_state = torch.nn.Linear(state_size[-1], input_layer) if len(state_size)!=3 else Conv(state_size, input_layer)\n\t\tself.net_action = torch.nn.Linear(action_size[-1], input_layer)\n\t\tself.net_layer1 = torch.nn.Linear(2*input_layer, critic_hidden)\n\t\tself.net_layer2 = torch.nn.Linear(critic_hidden, critic_hidden)\n\t\tself.q_value = torch.nn.Linear(critic_hidden, 1)\n\t\tself.apply(lambda m: torch.nn.init.xavier_normal_(m.weight) if type(m) in [torch.nn.Conv2d, torch.nn.Linear] else None)\n\n\tdef forward(self, state, action):\n\t\tstate = self.net_state(state).relu()\n\t\tnet_action = self.net_action(action).relu()\n\t\tnet_layer = torch.cat([state, net_action], dim=-1)\n\t\tnet_layer = self.net_layer1(net_layer).relu()\n\t\tnet_layer = self.net_layer2(net_layer).relu()\n\t\tq_value = self.q_value(net_layer)\n\t\treturn q_value\n']
+			actor_optimizer = Adam (
+			Parameter Group 0
+			    amsgrad: False
+			    betas: (0.9, 0.999)
+			    eps: 1e-08
+			    lr: 0.0001
+			    weight_decay: 1e-06
+			)
+			critic_optimizer = Adam (
+			Parameter Group 0
+			    amsgrad: False
+			    betas: (0.9, 0.999)
+			    eps: 1e-08
+			    lr: 0.0001
+			    weight_decay: 1e-06
+			)
+			alpha_optimizer = Adam (
+			Parameter Group 0
+			    amsgrad: False
+			    betas: (0.9, 0.999)
+			    eps: 1e-08
+			    lr: 0.0001
+			    weight_decay: 0
+			)
+			target_entropy = -1
+		replay_buffer = <src.utils.rand.ReplayBuffer object at 0x7f15df30d470> 
+			buffer = deque([], maxlen=1000000)
+		buffer = []
+	noise_process = <src.utils.rand.BrownianNoise object at 0x7f15df30d4a8> 
+		size = (1,)
+		dt = 0.2
+		action = [-0.134]
+		daction_dt = [ 0.351]
+	discrete = False
+	action_size = (1,)
+	state_size = (3,)
+	config = <src.utils.config.Config object at 0x7f15df643a58> 
+		TRIAL_AT = 1000
+		SAVE_AT = 1
+		SEED = 0
+		REG_LAMBDA = 1e-06
+		LEARN_RATE = 0.0001
+		DISCOUNT_RATE = 0.99
+		ADVANTAGE_DECAY = 0.95
+		INPUT_LAYER = 512
+		ACTOR_HIDDEN = 256
+		CRITIC_HIDDEN = 1024
+		EPS_MAX = 1.0
+		EPS_MIN = 0.1
+		EPS_DECAY = 0.998
+		NUM_STEPS = 500
+		MAX_BUFFER_SIZE = 1000000
+		REPLAY_BATCH_SIZE = 32
+		TARGET_UPDATE_RATE = 0.0004
+		dynamics_size = 3
+		state_size = (3,)
+		action_size = (1,)
+		env_name = Pendulum-v0
+		rank = 0
+		size = 17
+		split = 17
+		model = sac
+		framework = pt
+		train_prop = 1.0
+		tcp_ports = []
+		tcp_rank = 0
+		num_envs = 1
+		nsteps = 500000
+		render = False
+		trial = False
+		icm = False
+		rs = False
+	stats = <src.utils.logger.Stats object at 0x7f15df30d4e0> 
+		mean_dict = {}
+		sum_dict = {},
+conn: None,
+
+import torch
+import numpy as np
+from .base import PTACNetwork, PTAgent, PTCritic, Conv, gsoftmax
+from src.utils.rand import ReplayBuffer
+
+class SACActor(torch.nn.Module):
+	def __init__(self, state_size, action_size, config, use_discrete=False):
+		super().__init__()
+		input_layer, actor_hidden = config.INPUT_LAYER, config.ACTOR_HIDDEN
+		self.discrete = use_discrete and type(action_size) != tuple
+		self.layer1 = torch.nn.Linear(state_size[-1], input_layer) if len(state_size)!=3 else Conv(state_size, input_layer)
+		self.layer2 = torch.nn.Linear(input_layer, actor_hidden)
+		self.layer3 = torch.nn.Linear(actor_hidden, actor_hidden)
+		self.action_mu = torch.nn.Linear(actor_hidden, action_size[-1])
+		self.action_sig = torch.nn.Linear(actor_hidden, action_size[-1])
+		self.apply(lambda m: torch.nn.init.xavier_normal_(m.weight) if type(m) in [torch.nn.Conv2d, torch.nn.Linear] else None)
+		self.dist = lambda m,s: torch.distributions.Categorical(m.softmax(-1)) if self.discrete else torch.distributions.Normal(m,s)
+		
+	def forward(self, state, action=None, sample=True):
+		state = self.layer1(state).relu()
+		state = self.layer2(state).relu()
+		state = self.layer3(state).relu()
+		action_mu = self.action_mu(state)
+		action_sig = self.action_sig(state).clamp(-5,0).exp()
+		dist = torch.distributions.Normal(action_mu, action_sig)
+		action = dist.rsample() if sample else action_mu
+		action_out = gsoftmax(action_mu, hard=False) if self.discrete else action.tanh()
+		log_prob = torch.log(action_out+1e-6) if self.discrete else dist.log_prob(action)-torch.log(1-action_out.pow(2)+1e-6)
+		return action_out, log_prob
+
+class SACCritic(torch.nn.Module):
+	def __init__(self, state_size, action_size, config):
+		super().__init__()
+		input_layer, critic_hidden = config.INPUT_LAYER, config.CRITIC_HIDDEN
+		self.net_state = torch.nn.Linear(state_size[-1], input_layer) if len(state_size)!=3 else Conv(state_size, input_layer)
+		self.net_action = torch.nn.Linear(action_size[-1], input_layer)
+		self.net_layer1 = torch.nn.Linear(2*input_layer, critic_hidden)
+		self.net_layer2 = torch.nn.Linear(critic_hidden, critic_hidden)
+		self.q_value = torch.nn.Linear(critic_hidden, 1)
+		self.apply(lambda m: torch.nn.init.xavier_normal_(m.weight) if type(m) in [torch.nn.Conv2d, torch.nn.Linear] else None)
+
+	def forward(self, state, action):
+		state = self.net_state(state).relu()
+		net_action = self.net_action(action).relu()
+		net_layer = torch.cat([state, net_action], dim=-1)
+		net_layer = self.net_layer1(net_layer).relu()
+		net_layer = self.net_layer2(net_layer).relu()
+		q_value = self.q_value(net_layer)
+		return q_value
+
+class SACNetwork(PTACNetwork):
+	def __init__(self, state_size, action_size, config, actor=SACActor, critic=SACCritic, gpu=True, load=None, name="sac", use_discrete=False):
+		self.discrete = use_discrete and critic==SACCritic and type(action_size)!=tuple
+		super().__init__(state_size, action_size, config, actor, critic if not self.discrete else lambda s,a,c: PTCritic(s,a,c), gpu=gpu, load=load, name=name)
+		self.log_alpha = torch.nn.Parameter(torch.zeros(1, requires_grad=True).to(self.device))
+		self.alpha_optimizer = torch.optim.Adam([self.log_alpha], lr=config.LEARN_RATE)
+		self.target_entropy = -np.product(action_size)
+
+	def get_action_probs(self, state, action_in=None, grad=False, numpy=False, sample=True):
+		with torch.enable_grad() if grad else torch.no_grad():
+			action, log_prob = self.actor_local(state.to(self.device), action_in, sample)
+			return [x.cpu().numpy() if numpy else x for x in [action, log_prob]]
+
+	def get_q_value(self, state, action, use_target=False, grad=False, numpy=False, probs=False):
+		with torch.enable_grad() if grad else torch.no_grad():
+			critic = self.critic_local if not use_target else self.critic_target
+			q_value = critic(state) if self.discrete else critic(state, action)
+			return q_value.cpu().numpy() if numpy else q_value
+	
+	def optimize(self, states, actions, targets, next_log_probs, dones, config):
+		alpha = self.log_alpha.clamp(-5, 0).detach().exp()
+		if not self.discrete: next_log_probs = next_log_probs.sum(-1, keepdim=True)
+		q_targets = targets - config.DISCOUNT_RATE*alpha*next_log_probs*(1-dones.view(-1,*[1]*(len(targets.shape)-1)))
+		q_targets = (actions*q_targets).mean(-1, keepdim=True) if self.discrete else q_targets
+
+		q_values = self.get_q_value(states, actions, grad=True)
+		q_values = q_values.gather(-1, actions.argmax(-1, keepdim=True)) if self.discrete else q_values
+		critic_loss = (q_values - q_targets.detach()).pow(2).mean()
+		self.step(self.critic_optimizer, critic_loss, self.critic_local.parameters())
+		self.soft_copy(self.critic_local, self.critic_target)
+
+		actor_action, log_prob = self.actor_local(states)
+		q_actions = self.get_q_value(states, actor_action, grad=True)
+		q_baseline = q_targets if self.discrete else q_values
+		actor_loss = alpha*log_prob - (q_actions - q_baseline.detach())
+		actor_loss = actor_action*actor_loss if self.discrete else actor_loss
+		self.step(self.actor_optimizer, actor_loss.mean(), self.actor_local.parameters())
+		
+		log_prob = (actor_action*log_prob).sum(-1) if self.discrete else log_prob
+		alpha_loss = -(self.log_alpha * (log_prob.detach() + self.target_entropy)).mean()
+		self.step(self.alpha_optimizer, alpha_loss, [self.log_alpha])
+		self.stats.mean(critic_loss=critic_loss, actor_loss=actor_loss.mean(), alpha_loss=alpha_loss)
+
+class SACAgent(PTAgent):
+	def __init__(self, state_size, action_size, config, gpu=True, load=None):
+		super().__init__(state_size, action_size, config, SACNetwork, gpu=gpu, load=load)
+
+	def get_action(self, state, eps=None, sample=True, e_greedy=False):
+		action, self.log_prob = self.network.get_action_probs(self.to_tensor(state), numpy=True, sample=sample)
+		return action
+		
+	def train(self, state, action, next_state, reward, done):
+		self.buffer.append((state, action, self.log_prob, reward, done))
+		if np.any(done[0]) or len(self.buffer) >= self.config.NUM_STEPS:
+			states, actions, log_probs, rewards, dones = map(self.to_tensor, zip(*self.buffer))
+			self.buffer.clear()	
+			states = torch.cat([states, self.to_tensor(next_state).unsqueeze(0)], dim=0)
+			next_action, next_log_prob = self.network.get_action_probs(states[-1])
+			actions = torch.cat([actions, next_action.unsqueeze(0)], dim=0)
+			log_probs = torch.cat([log_probs, next_log_prob.unsqueeze(0)], dim=0)
+			values = self.network.get_q_value(states, actions, use_target=True)
+			targets = self.compute_gae(values[-1], rewards.unsqueeze(-1), dones.unsqueeze(-1), values[:-1])[0]
+			states, actions, targets, next_log_probs, dones = [x.view(x.size(0)*x.size(1), *x.size()[2:]).cpu().numpy() for x in (states[:-1], actions[:-1], targets, log_probs[1:], dones)]
+			self.replay_buffer.extend(list(zip(states, actions, targets, next_log_probs, dones)), shuffle=False)	
+		if len(self.replay_buffer) > self.config.REPLAY_BATCH_SIZE:
+			states, actions, targets, next_log_probs, dones = self.replay_buffer.sample(self.config.REPLAY_BATCH_SIZE, dtype=self.to_tensor)[0]
+			self.network.optimize(states, actions, targets, next_log_probs, dones, config=self.config)
+
+
+Step:       0, Reward: -1406.847 [ 240.380], Avg: -1406.847 (1.000) <0-00:00:00> ({'r_t':    -3.0234, 'eps':     1.0000, 'eps_e':     1.0000})
+Step:    1000, Reward: -1386.948 [ 189.266], Avg: -1396.898 (1.000) <0-00:00:14> ({'r_t': -6207.5980, 'eps':     1.0000, 'critic_loss':  1073.0061, 'actor_loss':    -0.7215, 'alpha_loss':    -0.0630, 'eps_e':     1.0000})
+Step:    2000, Reward: -1333.863 [ 191.301], Avg: -1375.886 (1.000) <0-00:00:29> ({'r_t': -6581.4527, 'eps':     1.0000, 'critic_loss':   498.2941, 'actor_loss':    -0.6761, 'alpha_loss':    -0.2123, 'eps_e':     1.0000})
+Step:    3000, Reward: -1258.843 [ 163.876], Avg: -1346.625 (1.000) <0-00:00:45> ({'r_t': -6447.8118, 'eps':     1.0000, 'critic_loss':   506.0611, 'actor_loss':    -0.6610, 'alpha_loss':    -0.3735, 'eps_e':     1.0000})
+Step:    4000, Reward: -1121.252 [ 282.669], Avg: -1301.551 (1.000) <0-00:01:00> ({'r_t': -5931.3576, 'eps':     1.0000, 'critic_loss':   552.2209, 'actor_loss':    -0.5821, 'alpha_loss':    -0.5328, 'eps_e':     1.0000})
+Step:    5000, Reward: -1264.356 [  37.951], Avg: -1295.352 (1.000) <0-00:01:16> ({'r_t': -5760.9389, 'eps':     1.0000, 'critic_loss':   627.9911, 'actor_loss':    -0.5675, 'alpha_loss':    -0.6403, 'eps_e':     1.0000})
+Step:    6000, Reward: -1001.024 [ 103.060], Avg: -1253.305 (1.000) <0-00:01:31> ({'r_t': -5064.1043, 'eps':     1.0000, 'critic_loss':   735.9180, 'actor_loss':    -0.5319, 'alpha_loss':    -0.7656, 'eps_e':     1.0000})
+Step:    7000, Reward:  -895.198 [  69.685], Avg: -1208.542 (1.000) <0-00:01:47> ({'r_t': -4795.7059, 'eps':     1.0000, 'critic_loss':   797.7147, 'actor_loss':    -0.4371, 'alpha_loss':    -0.9272, 'eps_e':     1.0000})
+Step:    8000, Reward: -1140.370 [ 133.427], Avg: -1200.967 (1.000) <0-00:02:02> ({'r_t': -5231.9579, 'eps':     1.0000, 'critic_loss':   898.3799, 'actor_loss':    -0.3873, 'alpha_loss':    -1.0971, 'eps_e':     1.0000})
+Step:    9000, Reward: -1109.057 [ 142.804], Avg: -1191.776 (1.000) <0-00:02:18> ({'r_t': -5384.6512, 'eps':     1.0000, 'critic_loss':  1073.8905, 'actor_loss':    -0.4046, 'alpha_loss':    -1.2293, 'eps_e':     1.0000})
+Step:   10000, Reward: -1030.259 [ 231.129], Avg: -1177.093 (1.000) <0-00:02:33> ({'r_t': -5528.4640, 'eps':     1.0000, 'critic_loss':  1246.6210, 'actor_loss':    -0.3647, 'alpha_loss':    -1.4098, 'eps_e':     1.0000})
+Step:   11000, Reward: -1289.150 [ 110.383], Avg: -1186.431 (1.000) <0-00:02:48> ({'r_t': -6197.3363, 'eps':     1.0000, 'critic_loss':  1430.1035, 'actor_loss':    -0.4678, 'alpha_loss':    -1.2554, 'eps_e':     1.0000})
+Step:   12000, Reward: -1365.830 [ 183.454], Avg: -1200.231 (1.000) <0-00:03:04> ({'r_t': -6211.1774, 'eps':     1.0000, 'critic_loss':  1686.6724, 'actor_loss':    -0.7946, 'alpha_loss':    -0.9771, 'eps_e':     1.0000})
+Step:   13000, Reward: -1275.485 [ 128.428], Avg: -1205.606 (1.000) <0-00:03:17> ({'r_t': -6273.7146, 'eps':     1.0000, 'critic_loss':  1874.5602, 'actor_loss':    -0.6388, 'alpha_loss':    -1.4140, 'eps_e':     1.0000})
+Step:   14000, Reward: -1280.772 [ 218.276], Avg: -1210.617 (1.000) <0-00:03:33> ({'r_t': -6602.1228, 'eps':     1.0000, 'critic_loss':  2073.2100, 'actor_loss':    -0.5471, 'alpha_loss':    -1.5681, 'eps_e':     1.0000})
+Step:   15000, Reward: -1197.648 [ 241.450], Avg: -1209.806 (1.000) <0-00:03:46> ({'r_t': -6170.1166, 'eps':     1.0000, 'critic_loss':  2209.5535, 'actor_loss':    -0.8354, 'alpha_loss':    -1.0591, 'eps_e':     1.0000})
+Step:   16000, Reward:  -818.788 [ 188.899], Avg: -1186.805 (1.000) <0-00:04:02> ({'r_t': -5491.4861, 'eps':     1.0000, 'critic_loss':  2346.4971, 'actor_loss':    -0.5831, 'alpha_loss':    -1.3719, 'eps_e':     1.0000})
+Step:   17000, Reward:  -796.149 [ 181.180], Avg: -1165.102 (1.000) <0-00:04:17> ({'r_t': -5335.1463, 'eps':     1.0000, 'critic_loss':  2401.5591, 'actor_loss':    -0.8415, 'alpha_loss':    -0.9646, 'eps_e':     1.0000})
+Step:   18000, Reward:  -809.206 [  94.230], Avg: -1146.371 (1.000) <0-00:04:33> ({'r_t': -4170.8665, 'eps':     1.0000, 'critic_loss':  2479.1748, 'actor_loss':    -0.6553, 'alpha_loss':    -1.4717, 'eps_e':     1.0000})
+Step:   19000, Reward: -1017.089 [  84.799], Avg: -1139.907 (1.000) <0-00:04:49> ({'r_t': -4625.7496, 'eps':     1.0000, 'critic_loss':  2371.5835, 'actor_loss':    -0.9724, 'alpha_loss':    -1.1205, 'eps_e':     1.0000})
+Step:   20000, Reward:  -828.396 [ 106.536], Avg: -1125.073 (1.000) <0-00:05:05> ({'r_t': -4870.8258, 'eps':     1.0000, 'critic_loss':  2396.3760, 'actor_loss':    -0.9152, 'alpha_loss':    -1.3706, 'eps_e':     1.0000})
+Step:   21000, Reward:  -946.214 [ 140.353], Avg: -1116.943 (1.000) <0-00:05:21> ({'r_t': -4359.4686, 'eps':     1.0000, 'critic_loss':  2433.5540, 'actor_loss':    -1.0011, 'alpha_loss':    -1.1902, 'eps_e':     1.0000})
+Step:   22000, Reward:  -171.868 [ 163.059], Avg: -1075.853 (1.000) <0-00:05:36> ({'r_t': -2673.6314, 'eps':     1.0000, 'critic_loss':  2418.6980, 'actor_loss':    -1.1447, 'alpha_loss':    -0.7576, 'eps_e':     1.0000})
+Step:   23000, Reward:  -198.472 [ 189.343], Avg: -1039.295 (1.000) <0-00:05:51> ({'r_t': -1496.9237, 'eps':     1.0000, 'critic_loss':  2361.2544, 'actor_loss':    -1.2151, 'alpha_loss':    -0.4927, 'eps_e':     1.0000})
+Step:   24000, Reward:  -263.180 [ 334.312], Avg: -1008.251 (1.000) <0-00:06:07> ({'r_t': -1119.6408, 'eps':     1.0000, 'critic_loss':  2250.7825, 'actor_loss':    -1.3878, 'alpha_loss':    -0.1150, 'eps_e':     1.0000})
+Step:   25000, Reward:  -357.102 [ 377.100], Avg:  -983.206 (1.000) <0-00:06:23> ({'r_t': -1626.5630, 'eps':     1.0000, 'critic_loss':  2188.5149, 'actor_loss':    -1.5173, 'alpha_loss':     0.0161, 'eps_e':     1.0000})
+Step:   26000, Reward:  -433.396 [ 503.167], Avg:  -962.843 (1.000) <0-00:06:39> ({'r_t': -1916.1413, 'eps':     1.0000, 'critic_loss':  2132.7681, 'actor_loss':    -1.6292, 'alpha_loss':     0.2271, 'eps_e':     1.0000})
+Step:   27000, Reward:  -359.783 [ 411.196], Avg:  -941.305 (1.000) <0-00:06:55> ({'r_t': -2593.5455, 'eps':     1.0000, 'critic_loss':  2111.5520, 'actor_loss':    -1.6813, 'alpha_loss':     0.2702, 'eps_e':     1.0000})
+Step:   28000, Reward:  -454.973 [ 321.347], Avg:  -924.535 (1.000) <0-00:07:11> ({'r_t': -1919.1022, 'eps':     1.0000, 'critic_loss':  2116.1941, 'actor_loss':    -1.5819, 'alpha_loss':     0.0897, 'eps_e':     1.0000})
+Step:   29000, Reward:  -390.719 [ 248.833], Avg:  -906.741 (1.000) <0-00:07:27> ({'r_t': -1868.3201, 'eps':     1.0000, 'critic_loss':  2051.9424, 'actor_loss':    -1.7156, 'alpha_loss':     0.2923, 'eps_e':     1.0000})
+Step:   30000, Reward:  -242.572 [ 196.222], Avg:  -885.316 (1.000) <0-00:07:44> ({'r_t': -1615.5804, 'eps':     1.0000, 'critic_loss':  2004.3477, 'actor_loss':    -1.5256, 'alpha_loss':    -0.0578, 'eps_e':     1.0000})
+Step:   31000, Reward:  -142.835 [  83.464], Avg:  -862.114 (1.000) <0-00:08:00> ({'r_t': -1511.3637, 'eps':     1.0000, 'critic_loss':  1995.0607, 'actor_loss':    -1.6230, 'alpha_loss':     0.1255, 'eps_e':     1.0000})
+Step:   32000, Reward:  -336.206 [ 380.597], Avg:  -846.177 (1.000) <0-00:08:16> ({'r_t': -1807.8346, 'eps':     1.0000, 'critic_loss':  1954.9850, 'actor_loss':    -1.6658, 'alpha_loss':     0.1336, 'eps_e':     1.0000})
+Step:   33000, Reward:  -448.055 [ 397.730], Avg:  -834.468 (1.000) <0-00:08:32> ({'r_t': -1479.3129, 'eps':     1.0000, 'critic_loss':  1903.4170, 'actor_loss':    -1.6956, 'alpha_loss':     0.1031, 'eps_e':     1.0000})
+Step:   34000, Reward:  -476.774 [ 297.643], Avg:  -824.248 (1.000) <0-00:08:49> ({'r_t': -2269.5002, 'eps':     1.0000, 'critic_loss':  1865.2933, 'actor_loss':    -1.5427, 'alpha_loss':    -0.0945, 'eps_e':     1.0000})
+Step:   35000, Reward:  -570.880 [ 561.064], Avg:  -817.210 (1.000) <0-00:09:05> ({'r_t': -2418.1044, 'eps':     1.0000, 'critic_loss':  1839.4175, 'actor_loss':    -1.5812, 'alpha_loss':    -0.1622, 'eps_e':     1.0000})
+Step:   36000, Reward:  -736.951 [ 590.517], Avg:  -815.041 (1.000) <0-00:09:22> ({'r_t': -2047.1978, 'eps':     1.0000, 'critic_loss':  1864.3367, 'actor_loss':    -1.5194, 'alpha_loss':    -0.1658, 'eps_e':     1.0000})
+Step:   37000, Reward:  -348.817 [ 330.777], Avg:  -802.772 (1.000) <0-00:09:38> ({'r_t': -2111.7124, 'eps':     1.0000, 'critic_loss':  1795.2302, 'actor_loss':    -1.5470, 'alpha_loss':     0.0689, 'eps_e':     1.0000})
+Step:   38000, Reward:  -251.314 [ 200.394], Avg:  -788.632 (1.000) <0-00:09:55> ({'r_t': -1615.6418, 'eps':     1.0000, 'critic_loss':  1779.7535, 'actor_loss':    -1.5842, 'alpha_loss':     0.2136, 'eps_e':     1.0000})
+Step:   39000, Reward:  -475.227 [ 345.283], Avg:  -780.797 (1.000) <0-00:10:12> ({'r_t': -1953.0141, 'eps':     1.0000, 'critic_loss':  1749.8335, 'actor_loss':    -1.5631, 'alpha_loss':     0.2045, 'eps_e':     1.0000})
+Step:   40000, Reward:  -232.167 [ 135.990], Avg:  -767.416 (1.000) <0-00:10:28> ({'r_t': -1544.8074, 'eps':     1.0000, 'critic_loss':  1746.5601, 'actor_loss':    -1.4727, 'alpha_loss':     0.0281, 'eps_e':     1.0000})
+Step:   41000, Reward:  -434.820 [ 517.324], Avg:  -759.497 (1.000) <0-00:10:45> ({'r_t': -1979.2212, 'eps':     1.0000, 'critic_loss':  1700.4095, 'actor_loss':    -1.5034, 'alpha_loss':     0.0146, 'eps_e':     1.0000})
+Step:   42000, Reward:  -461.629 [ 563.163], Avg:  -752.569 (1.000) <0-00:11:02> ({'r_t': -1981.0966, 'eps':     1.0000, 'critic_loss':  1708.1310, 'actor_loss':    -1.6006, 'alpha_loss':     0.3065, 'eps_e':     1.0000})
+Step:   43000, Reward:  -291.575 [ 284.499], Avg:  -742.092 (1.000) <0-00:11:19> ({'r_t': -2772.4264, 'eps':     1.0000, 'critic_loss':  1691.2933, 'actor_loss':    -1.6150, 'alpha_loss':     0.2616, 'eps_e':     1.0000})
+Step:   44000, Reward:  -237.974 [ 159.850], Avg:  -730.890 (1.000) <0-00:11:36> ({'r_t': -1775.0828, 'eps':     1.0000, 'critic_loss':  1631.6780, 'actor_loss':    -1.6926, 'alpha_loss':     0.2740, 'eps_e':     1.0000})
+Step:   45000, Reward:  -321.861 [ 378.353], Avg:  -721.998 (1.000) <0-00:11:53> ({'r_t': -1256.5944, 'eps':     1.0000, 'critic_loss':  1668.8812, 'actor_loss':    -1.6994, 'alpha_loss':     0.3372, 'eps_e':     1.0000})
+Step:   46000, Reward:  -297.612 [ 280.513], Avg:  -712.968 (1.000) <0-00:12:10> ({'r_t': -1858.2119, 'eps':     1.0000, 'critic_loss':  1625.8315, 'actor_loss':    -1.7821, 'alpha_loss':     0.3465, 'eps_e':     1.0000})
+Step:   47000, Reward:  -272.342 [ 282.730], Avg:  -703.789 (1.000) <0-00:12:28> ({'r_t': -2074.0734, 'eps':     1.0000, 'critic_loss':  1583.4146, 'actor_loss':    -1.8939, 'alpha_loss':     0.2397, 'eps_e':     1.0000})
+Step:   48000, Reward:  -431.653 [ 430.589], Avg:  -698.235 (1.000) <0-00:12:45> ({'r_t': -1806.4175, 'eps':     1.0000, 'critic_loss':  1568.6853, 'actor_loss':    -1.9480, 'alpha_loss':     0.3780, 'eps_e':     1.0000})
+Step:   49000, Reward:  -493.840 [ 575.082], Avg:  -694.147 (1.000) <0-00:13:02> ({'r_t': -1760.1397, 'eps':     1.0000, 'critic_loss':  1598.2748, 'actor_loss':    -1.8498, 'alpha_loss':     0.2049, 'eps_e':     1.0000})
+Step:   50000, Reward:  -316.742 [ 437.385], Avg:  -686.747 (1.000) <0-00:13:20> ({'r_t': -2974.3716, 'eps':     1.0000, 'critic_loss':  1558.8485, 'actor_loss':    -2.0835, 'alpha_loss':     0.2432, 'eps_e':     1.0000})
+Step:   51000, Reward:  -247.125 [ 153.408], Avg:  -678.292 (1.000) <0-00:13:37> ({'r_t': -2146.0059, 'eps':     1.0000, 'critic_loss':  1587.9381, 'actor_loss':    -1.9605, 'alpha_loss':     0.1732, 'eps_e':     1.0000})
+Step:   52000, Reward:  -123.375 [  68.717], Avg:  -667.822 (1.000) <0-00:13:55> ({'r_t': -1163.6024, 'eps':     1.0000, 'critic_loss':  1605.2413, 'actor_loss':    -2.1862, 'alpha_loss':     0.3260, 'eps_e':     1.0000})
+Step:   53000, Reward:  -163.991 [ 120.863], Avg:  -658.492 (1.000) <0-00:14:13> ({'r_t':  -959.0026, 'eps':     1.0000, 'critic_loss':  1544.9523, 'actor_loss':    -2.2804, 'alpha_loss':     0.4915, 'eps_e':     1.0000})
+Step:   54000, Reward:  -269.919 [ 124.896], Avg:  -651.427 (1.000) <0-00:14:30> ({'r_t': -1408.9391, 'eps':     1.0000, 'critic_loss':  1533.8733, 'actor_loss':    -2.1534, 'alpha_loss':     0.2964, 'eps_e':     1.0000})
+Step:   55000, Reward:  -586.608 [ 603.874], Avg:  -650.270 (1.000) <0-00:14:48> ({'r_t': -2115.4609, 'eps':     1.0000, 'critic_loss':  1559.3104, 'actor_loss':    -2.2110, 'alpha_loss':     0.2107, 'eps_e':     1.0000})
+Step:   56000, Reward:  -249.474 [ 173.677], Avg:  -643.238 (1.000) <0-00:15:06> ({'r_t': -2282.2356, 'eps':     1.0000, 'critic_loss':  1503.8781, 'actor_loss':    -2.1694, 'alpha_loss':     0.1509, 'eps_e':     1.0000})
+Step:   57000, Reward:  -194.120 [ 147.508], Avg:  -635.495 (1.000) <0-00:15:24> ({'r_t': -1398.5723, 'eps':     1.0000, 'critic_loss':  1499.0923, 'actor_loss':    -2.2286, 'alpha_loss':     0.2014, 'eps_e':     1.0000})
+Step:   58000, Reward:  -268.930 [ 138.228], Avg:  -629.282 (1.000) <0-00:15:42> ({'r_t': -1242.4472, 'eps':     1.0000, 'critic_loss':  1489.1471, 'actor_loss':    -2.2287, 'alpha_loss':     0.2134, 'eps_e':     1.0000})
+Step:   59000, Reward:  -329.776 [ 257.074], Avg:  -624.290 (1.000) <0-00:16:00> ({'r_t': -1212.0641, 'eps':     1.0000, 'critic_loss':  1469.2722, 'actor_loss':    -2.3575, 'alpha_loss':     0.1933, 'eps_e':     1.0000})
+Step:   60000, Reward:  -314.097 [ 171.946], Avg:  -619.205 (1.000) <0-00:16:19> ({'r_t': -1109.1729, 'eps':     1.0000, 'critic_loss':  1421.3140, 'actor_loss':    -2.2354, 'alpha_loss':     0.1929, 'eps_e':     1.0000})
+Step:   61000, Reward:  -315.148 [ 243.365], Avg:  -614.301 (1.000) <0-00:16:37> ({'r_t':  -897.4605, 'eps':     1.0000, 'critic_loss':  1407.0145, 'actor_loss':    -2.2174, 'alpha_loss':     0.1410, 'eps_e':     1.0000})
+Step:   62000, Reward:  -182.915 [ 163.100], Avg:  -607.453 (1.000) <0-00:16:55> ({'r_t': -1323.9313, 'eps':     1.0000, 'critic_loss':  1371.2677, 'actor_loss':    -2.3251, 'alpha_loss':     0.1319, 'eps_e':     1.0000})
+Step:   63000, Reward:  -220.854 [ 167.487], Avg:  -601.413 (1.000) <0-00:17:14> ({'r_t': -1139.4146, 'eps':     1.0000, 'critic_loss':  1394.9116, 'actor_loss':    -2.2826, 'alpha_loss':     0.1092, 'eps_e':     1.0000})
+Step:   64000, Reward:  -323.323 [ 166.404], Avg:  -597.134 (1.000) <0-00:17:32> ({'r_t': -1239.5219, 'eps':     1.0000, 'critic_loss':  1254.5900, 'actor_loss':    -2.4304, 'alpha_loss':     0.1197, 'eps_e':     1.0000})
+Step:   65000, Reward:  -199.463 [ 140.882], Avg:  -591.109 (1.000) <0-00:17:51> ({'r_t':  -980.2173, 'eps':     1.0000, 'critic_loss':  1094.0336, 'actor_loss':    -2.4272, 'alpha_loss':     0.0945, 'eps_e':     1.0000})
+Step:   66000, Reward:  -121.900 [  80.618], Avg:  -584.106 (1.000) <0-00:18:09> ({'r_t': -1024.9131, 'eps':     1.0000, 'critic_loss':   950.7473, 'actor_loss':    -2.5096, 'alpha_loss':     0.0868, 'eps_e':     1.0000})
+Step:   67000, Reward:  -206.443 [ 106.850], Avg:  -578.552 (1.000) <0-00:18:27> ({'r_t':  -903.1587, 'eps':     1.0000, 'critic_loss':   846.4294, 'actor_loss':    -2.6621, 'alpha_loss':     0.0683, 'eps_e':     1.0000})
+Step:   68000, Reward:  -220.636 [ 112.676], Avg:  -573.365 (1.000) <0-00:18:46> ({'r_t':  -800.9105, 'eps':     1.0000, 'critic_loss':   804.1980, 'actor_loss':    -2.6983, 'alpha_loss':     0.0367, 'eps_e':     1.0000})
+Step:   69000, Reward:  -193.541 [ 111.274], Avg:  -567.939 (1.000) <0-00:19:04> ({'r_t':  -838.3601, 'eps':     1.0000, 'critic_loss':   759.7133, 'actor_loss':    -2.9334, 'alpha_loss':    -0.0078, 'eps_e':     1.0000})
+Step:   70000, Reward:  -167.564 [ 121.258], Avg:  -562.300 (1.000) <0-00:19:23> ({'r_t':  -851.1035, 'eps':     1.0000, 'critic_loss':   722.4634, 'actor_loss':    -3.0016, 'alpha_loss':    -0.0624, 'eps_e':     1.0000})
+Step:   71000, Reward:  -212.089 [ 129.490], Avg:  -557.436 (1.000) <0-00:19:41> ({'r_t':  -842.6694, 'eps':     1.0000, 'critic_loss':   672.4324, 'actor_loss':    -3.1520, 'alpha_loss':    -0.1337, 'eps_e':     1.0000})
+Step:   72000, Reward:  -140.493 [  95.380], Avg:  -551.724 (1.000) <0-00:19:58> ({'r_t':  -783.7658, 'eps':     1.0000, 'critic_loss':   625.6560, 'actor_loss':    -3.1261, 'alpha_loss':    -0.2052, 'eps_e':     1.0000})
+Step:   73000, Reward:  -122.829 [  92.681], Avg:  -545.928 (1.000) <0-00:20:16> ({'r_t':  -911.3985, 'eps':     1.0000, 'critic_loss':   637.0705, 'actor_loss':    -3.2047, 'alpha_loss':    -0.2801, 'eps_e':     1.0000})
+Step:   74000, Reward:  -212.100 [ 103.066], Avg:  -541.477 (1.000) <0-00:20:34> ({'r_t':  -888.8423, 'eps':     1.0000, 'critic_loss':   632.2057, 'actor_loss':    -3.2946, 'alpha_loss':    -0.3906, 'eps_e':     1.0000})
+Step:   75000, Reward:  -139.662 [  86.381], Avg:  -536.190 (1.000) <0-00:20:51> ({'r_t':  -847.6536, 'eps':     1.0000, 'critic_loss':   545.8889, 'actor_loss':    -3.3072, 'alpha_loss':    -0.4735, 'eps_e':     1.0000})
+Step:   76000, Reward:  -154.877 [ 100.101], Avg:  -531.238 (1.000) <0-00:21:09> ({'r_t':  -925.6591, 'eps':     1.0000, 'critic_loss':   512.3674, 'actor_loss':    -3.3708, 'alpha_loss':    -0.5760, 'eps_e':     1.0000})
+Step:   77000, Reward:  -135.774 [  82.001], Avg:  -526.168 (1.000) <0-00:21:26> ({'r_t':  -924.6259, 'eps':     1.0000, 'critic_loss':   472.3240, 'actor_loss':    -3.4522, 'alpha_loss':    -0.7220, 'eps_e':     1.0000})
+Step:   78000, Reward:  -187.743 [ 103.377], Avg:  -521.884 (1.000) <0-00:21:43> ({'r_t':  -873.5391, 'eps':     1.0000, 'critic_loss':   435.7280, 'actor_loss':    -3.4382, 'alpha_loss':    -0.8658, 'eps_e':     1.0000})
+Step:   79000, Reward:  -133.978 [  77.196], Avg:  -517.035 (1.000) <0-00:22:00> ({'r_t':  -800.5913, 'eps':     1.0000, 'critic_loss':   395.6704, 'actor_loss':    -3.4790, 'alpha_loss':    -0.9565, 'eps_e':     1.0000})
+Step:   80000, Reward:  -133.107 [  61.271], Avg:  -512.296 (1.000) <0-00:22:17> ({'r_t':  -834.6299, 'eps':     1.0000, 'critic_loss':   381.6176, 'actor_loss':    -3.3306, 'alpha_loss':    -1.0932, 'eps_e':     1.0000})
+Step:   81000, Reward:  -101.524 [  85.876], Avg:  -507.286 (1.000) <0-00:22:35> ({'r_t':  -794.9863, 'eps':     1.0000, 'critic_loss':   372.5502, 'actor_loss':    -3.1882, 'alpha_loss':    -1.2077, 'eps_e':     1.0000})
+Step:   82000, Reward:  -164.820 [  72.638], Avg:  -503.160 (1.000) <0-00:22:52> ({'r_t':  -808.6405, 'eps':     1.0000, 'critic_loss':   357.1432, 'actor_loss':    -3.0051, 'alpha_loss':    -1.3611, 'eps_e':     1.0000})
+Step:   83000, Reward:  -113.547 [  62.029], Avg:  -498.522 (1.000) <0-00:23:09> ({'r_t':  -700.8987, 'eps':     1.0000, 'critic_loss':   301.7137, 'actor_loss':    -2.6850, 'alpha_loss':    -1.4465, 'eps_e':     1.0000})
+Step:   84000, Reward:  -164.615 [  85.280], Avg:  -494.593 (1.000) <0-00:23:26> ({'r_t':  -789.5654, 'eps':     1.0000, 'critic_loss':   284.7404, 'actor_loss':    -2.3256, 'alpha_loss':    -1.5451, 'eps_e':     1.0000})
+Step:   85000, Reward:  -148.019 [  56.947], Avg:  -490.564 (1.000) <0-00:23:43> ({'r_t':  -776.1859, 'eps':     1.0000, 'critic_loss':   256.7770, 'actor_loss':    -2.1693, 'alpha_loss':    -1.6973, 'eps_e':     1.0000})
+Step:   86000, Reward:  -197.575 [  83.171], Avg:  -487.196 (1.000) <0-00:24:01> ({'r_t':  -904.9791, 'eps':     1.0000, 'critic_loss':   254.9121, 'actor_loss':    -1.9972, 'alpha_loss':    -1.7928, 'eps_e':     1.0000})
+Step:   87000, Reward:  -192.903 [  87.539], Avg:  -483.852 (1.000) <0-00:24:18> ({'r_t':  -857.0753, 'eps':     1.0000, 'critic_loss':   235.4158, 'actor_loss':    -1.7901, 'alpha_loss':    -1.8656, 'eps_e':     1.0000})
+Step:   88000, Reward:  -161.101 [  82.061], Avg:  -480.225 (1.000) <0-00:24:35> ({'r_t':  -800.6798, 'eps':     1.0000, 'critic_loss':   244.5740, 'actor_loss':    -1.6947, 'alpha_loss':    -1.9156, 'eps_e':     1.0000})
+Step:   89000, Reward:  -252.394 [ 276.147], Avg:  -477.694 (1.000) <0-00:24:52> ({'r_t':  -785.3939, 'eps':     1.0000, 'critic_loss':   232.3873, 'actor_loss':    -1.5585, 'alpha_loss':    -1.9780, 'eps_e':     1.0000})
+Step:   90000, Reward:  -139.292 [  51.242], Avg:  -473.975 (1.000) <0-00:25:10> ({'r_t':  -885.6680, 'eps':     1.0000, 'critic_loss':   220.7577, 'actor_loss':    -1.4504, 'alpha_loss':    -2.0043, 'eps_e':     1.0000})
+Step:   91000, Reward:  -142.518 [ 104.161], Avg:  -470.372 (1.000) <0-00:25:27> ({'r_t':  -823.0416, 'eps':     1.0000, 'critic_loss':   224.5839, 'actor_loss':    -1.3466, 'alpha_loss':    -2.0654, 'eps_e':     1.0000})
+Step:   92000, Reward:  -134.269 [  89.001], Avg:  -466.758 (1.000) <0-00:25:44> ({'r_t':  -762.5733, 'eps':     1.0000, 'critic_loss':   205.3984, 'actor_loss':    -1.2179, 'alpha_loss':    -2.0694, 'eps_e':     1.0000})
+Step:   93000, Reward:  -182.311 [ 112.887], Avg:  -463.732 (1.000) <0-00:26:01> ({'r_t':  -758.9329, 'eps':     1.0000, 'critic_loss':   228.9948, 'actor_loss':    -1.2694, 'alpha_loss':    -2.1446, 'eps_e':     1.0000})
+Step:   94000, Reward:  -183.162 [  77.426], Avg:  -460.779 (1.000) <0-00:26:18> ({'r_t':  -839.4901, 'eps':     1.0000, 'critic_loss':   187.7049, 'actor_loss':    -1.2998, 'alpha_loss':    -2.2212, 'eps_e':     1.0000})
+Step:   95000, Reward:  -144.696 [ 109.825], Avg:  -457.486 (1.000) <0-00:26:36> ({'r_t':  -879.6097, 'eps':     1.0000, 'critic_loss':   194.9433, 'actor_loss':    -1.3554, 'alpha_loss':    -2.2305, 'eps_e':     1.0000})
+Step:   96000, Reward:  -119.949 [  85.169], Avg:  -454.007 (1.000) <0-00:26:53> ({'r_t':  -873.4799, 'eps':     1.0000, 'critic_loss':   203.5369, 'actor_loss':    -1.3301, 'alpha_loss':    -2.2102, 'eps_e':     1.0000})
+Step:   97000, Reward:  -178.443 [ 105.385], Avg:  -451.195 (1.000) <0-00:27:10> ({'r_t':  -782.7438, 'eps':     1.0000, 'critic_loss':   195.7400, 'actor_loss':    -1.2655, 'alpha_loss':    -2.1115, 'eps_e':     1.0000})
+Step:   98000, Reward:  -158.471 [  92.276], Avg:  -448.238 (1.000) <0-00:27:27> ({'r_t':  -749.3820, 'eps':     1.0000, 'critic_loss':   187.6466, 'actor_loss':    -1.2034, 'alpha_loss':    -2.1184, 'eps_e':     1.0000})
+Step:   99000, Reward:  -287.724 [ 155.861], Avg:  -446.633 (1.000) <0-00:27:44> ({'r_t':  -775.3965, 'eps':     1.0000, 'critic_loss':   172.2720, 'actor_loss':    -1.0310, 'alpha_loss':    -2.1394, 'eps_e':     1.0000})
+Step:  100000, Reward:  -175.918 [  96.440], Avg:  -443.952 (1.000) <0-00:28:02> ({'r_t': -1070.4745, 'eps':     1.0000, 'critic_loss':   183.1495, 'actor_loss':    -1.0639, 'alpha_loss':    -1.9359, 'eps_e':     1.0000})
+Step:  101000, Reward:  -136.106 [  80.856], Avg:  -440.934 (1.000) <0-00:28:19> ({'r_t':  -855.8907, 'eps':     1.0000, 'critic_loss':   181.2544, 'actor_loss':    -1.1575, 'alpha_loss':    -1.7326, 'eps_e':     1.0000})
+Step:  102000, Reward:  -145.934 [ 100.914], Avg:  -438.070 (1.000) <0-00:28:36> ({'r_t':  -754.4627, 'eps':     1.0000, 'critic_loss':   163.4184, 'actor_loss':    -1.2837, 'alpha_loss':    -1.6091, 'eps_e':     1.0000})
+Step:  103000, Reward:  -161.521 [ 100.681], Avg:  -435.411 (1.000) <0-00:28:53> ({'r_t':  -765.5017, 'eps':     1.0000, 'critic_loss':   163.0804, 'actor_loss':    -1.6827, 'alpha_loss':    -1.4941, 'eps_e':     1.0000})
+Step:  104000, Reward:  -139.918 [ 105.353], Avg:  -432.597 (1.000) <0-00:29:10> ({'r_t':  -890.1666, 'eps':     1.0000, 'critic_loss':   165.9963, 'actor_loss':    -1.9865, 'alpha_loss':    -1.3534, 'eps_e':     1.0000})
+Step:  105000, Reward:  -150.893 [  76.081], Avg:  -429.939 (1.000) <0-00:29:27> ({'r_t':  -856.7221, 'eps':     1.0000, 'critic_loss':   167.2945, 'actor_loss':    -2.6268, 'alpha_loss':    -1.3610, 'eps_e':     1.0000})
+Step:  106000, Reward:  -160.192 [  91.568], Avg:  -427.418 (1.000) <0-00:29:45> ({'r_t':  -797.9652, 'eps':     1.0000, 'critic_loss':   149.4960, 'actor_loss':    -2.7741, 'alpha_loss':    -1.2429, 'eps_e':     1.0000})
+Step:  107000, Reward:  -205.131 [ 113.923], Avg:  -425.360 (1.000) <0-00:30:02> ({'r_t':  -754.0131, 'eps':     1.0000, 'critic_loss':   126.2499, 'actor_loss':    -3.8680, 'alpha_loss':    -1.4567, 'eps_e':     1.0000})
+Step:  108000, Reward:  -197.020 [ 128.119], Avg:  -423.265 (1.000) <0-00:30:19> ({'r_t':  -687.5610, 'eps':     1.0000, 'critic_loss':   154.2110, 'actor_loss':    -4.9019, 'alpha_loss':    -1.8779, 'eps_e':     1.0000})
+Step:  109000, Reward:  -148.464 [ 101.967], Avg:  -420.767 (1.000) <0-00:30:36> ({'r_t':  -766.5841, 'eps':     1.0000, 'critic_loss':   131.8585, 'actor_loss':    -5.4039, 'alpha_loss':    -2.0055, 'eps_e':     1.0000})
+Step:  110000, Reward:  -151.554 [ 117.467], Avg:  -418.342 (1.000) <0-00:30:54> ({'r_t':  -825.7401, 'eps':     1.0000, 'critic_loss':   121.8136, 'actor_loss':    -6.3097, 'alpha_loss':    -2.3243, 'eps_e':     1.0000})
+Step:  111000, Reward:  -172.796 [  92.138], Avg:  -416.149 (1.000) <0-00:31:11> ({'r_t':  -872.6691, 'eps':     1.0000, 'critic_loss':   118.1580, 'actor_loss':    -7.5182, 'alpha_loss':    -2.7884, 'eps_e':     1.0000})
+Step:  112000, Reward:  -125.708 [  84.175], Avg:  -413.579 (1.000) <0-00:31:28> ({'r_t':  -786.4919, 'eps':     1.0000, 'critic_loss':   123.0641, 'actor_loss':    -7.9767, 'alpha_loss':    -3.2103, 'eps_e':     1.0000})
+Step:  113000, Reward:  -154.784 [  76.352], Avg:  -411.309 (1.000) <0-00:31:45> ({'r_t':  -774.3623, 'eps':     1.0000, 'critic_loss':   104.3129, 'actor_loss':    -9.1170, 'alpha_loss':    -3.5752, 'eps_e':     1.0000})
+Step:  114000, Reward:  -119.314 [  82.982], Avg:  -408.770 (1.000) <0-00:32:02> ({'r_t':  -773.0725, 'eps':     1.0000, 'critic_loss':    92.8675, 'actor_loss':    -9.1748, 'alpha_loss':    -3.6872, 'eps_e':     1.0000})
+Step:  115000, Reward:  -151.480 [  57.898], Avg:  -406.552 (1.000) <0-00:32:19> ({'r_t':  -803.6599, 'eps':     1.0000, 'critic_loss':    92.7791, 'actor_loss':    -9.3672, 'alpha_loss':    -3.8942, 'eps_e':     1.0000})
+Step:  116000, Reward:  -123.162 [  76.689], Avg:  -404.130 (1.000) <0-00:32:37> ({'r_t':  -692.8570, 'eps':     1.0000, 'critic_loss':    91.7889, 'actor_loss':    -9.5236, 'alpha_loss':    -3.9690, 'eps_e':     1.0000})
+Step:  117000, Reward:  -123.422 [  78.651], Avg:  -401.751 (1.000) <0-00:32:54> ({'r_t':  -932.4817, 'eps':     1.0000, 'critic_loss':    89.6078, 'actor_loss':    -9.6747, 'alpha_loss':    -4.1342, 'eps_e':     1.0000})
+Step:  118000, Reward:  -133.426 [  77.647], Avg:  -399.496 (1.000) <0-00:33:11> ({'r_t':  -750.0250, 'eps':     1.0000, 'critic_loss':    85.2884, 'actor_loss':    -9.2768, 'alpha_loss':    -4.4609, 'eps_e':     1.0000})
+Step:  119000, Reward:  -152.049 [  97.576], Avg:  -397.434 (1.000) <0-00:33:28> ({'r_t':  -847.1289, 'eps':     1.0000, 'critic_loss':    75.3954, 'actor_loss':    -9.2383, 'alpha_loss':    -4.7708, 'eps_e':     1.0000})
+Step:  120000, Reward:  -168.553 [ 106.520], Avg:  -395.542 (1.000) <0-00:33:46> ({'r_t':  -737.3050, 'eps':     1.0000, 'critic_loss':    73.0296, 'actor_loss':    -9.3928, 'alpha_loss':    -5.0193, 'eps_e':     1.0000})
+Step:  121000, Reward:  -133.299 [  53.268], Avg:  -393.393 (1.000) <0-00:34:03> ({'r_t':  -830.3735, 'eps':     1.0000, 'critic_loss':    75.0510, 'actor_loss':    -9.2437, 'alpha_loss':    -5.2771, 'eps_e':     1.0000})
+Step:  122000, Reward:  -142.188 [  60.581], Avg:  -391.350 (1.000) <0-00:34:20> ({'r_t':  -861.6649, 'eps':     1.0000, 'critic_loss':    73.9319, 'actor_loss':    -8.6693, 'alpha_loss':    -5.3483, 'eps_e':     1.0000})
+Step:  123000, Reward:  -137.462 [  99.507], Avg:  -389.303 (1.000) <0-00:34:37> ({'r_t':  -791.4112, 'eps':     1.0000, 'critic_loss':    73.8285, 'actor_loss':    -8.3752, 'alpha_loss':    -5.5615, 'eps_e':     1.0000})
+Step:  124000, Reward:  -141.002 [ 100.451], Avg:  -387.317 (1.000) <0-00:34:54> ({'r_t':  -818.0155, 'eps':     1.0000, 'critic_loss':    72.2378, 'actor_loss':    -8.2286, 'alpha_loss':    -5.6784, 'eps_e':     1.0000})
+Step:  125000, Reward:  -154.216 [  74.014], Avg:  -385.467 (1.000) <0-00:35:12> ({'r_t':  -779.9206, 'eps':     1.0000, 'critic_loss':    66.9009, 'actor_loss':    -8.3421, 'alpha_loss':    -6.0270, 'eps_e':     1.0000})
+Step:  126000, Reward:  -154.096 [  63.635], Avg:  -383.645 (1.000) <0-00:35:29> ({'r_t':  -838.3323, 'eps':     1.0000, 'critic_loss':    69.0631, 'actor_loss':    -7.9370, 'alpha_loss':    -6.4022, 'eps_e':     1.0000})
+Step:  127000, Reward:  -514.964 [ 430.944], Avg:  -384.671 (1.000) <0-00:35:46> ({'r_t':  -893.8087, 'eps':     1.0000, 'critic_loss':    69.4453, 'actor_loss':    -7.3774, 'alpha_loss':    -5.8500, 'eps_e':     1.0000})
+Step:  128000, Reward:  -146.836 [  62.113], Avg:  -382.827 (1.000) <0-00:36:03> ({'r_t':  -835.7642, 'eps':     1.0000, 'critic_loss':    68.7769, 'actor_loss':    -6.7259, 'alpha_loss':    -5.2242, 'eps_e':     1.0000})
+Step:  129000, Reward:  -138.427 [  78.905], Avg:  -380.947 (1.000) <0-00:36:20> ({'r_t':  -823.1277, 'eps':     1.0000, 'critic_loss':    68.4698, 'actor_loss':    -6.5013, 'alpha_loss':    -5.2357, 'eps_e':     1.0000})
+Step:  130000, Reward:  -160.722 [  75.969], Avg:  -379.266 (1.000) <0-00:36:38> ({'r_t':  -854.0453, 'eps':     1.0000, 'critic_loss':    64.5076, 'actor_loss':    -6.0043, 'alpha_loss':    -4.7765, 'eps_e':     1.0000})
+Step:  131000, Reward:  -134.979 [  78.784], Avg:  -377.415 (1.000) <0-00:36:55> ({'r_t':  -827.7323, 'eps':     1.0000, 'critic_loss':    65.5021, 'actor_loss':    -5.8109, 'alpha_loss':    -4.5877, 'eps_e':     1.0000})
+Step:  132000, Reward:  -137.631 [  88.745], Avg:  -375.612 (1.000) <0-00:37:12> ({'r_t':  -856.1732, 'eps':     1.0000, 'critic_loss':    66.0084, 'actor_loss':    -5.5918, 'alpha_loss':    -3.9663, 'eps_e':     1.0000})
+Step:  133000, Reward:  -102.205 [  78.478], Avg:  -373.572 (1.000) <0-00:37:29> ({'r_t':  -786.3246, 'eps':     1.0000, 'critic_loss':    66.3473, 'actor_loss':    -5.3417, 'alpha_loss':    -4.0875, 'eps_e':     1.0000})
+Step:  134000, Reward:  -145.781 [ 100.099], Avg:  -371.885 (1.000) <0-00:37:46> ({'r_t':  -778.3152, 'eps':     1.0000, 'critic_loss':    64.9237, 'actor_loss':    -5.1505, 'alpha_loss':    -3.9507, 'eps_e':     1.0000})
+Step:  135000, Reward:  -140.573 [  70.006], Avg:  -370.184 (1.000) <0-00:38:03> ({'r_t':  -897.3316, 'eps':     1.0000, 'critic_loss':    66.7107, 'actor_loss':    -5.0113, 'alpha_loss':    -3.8698, 'eps_e':     1.0000})
+Step:  136000, Reward:  -151.059 [  89.769], Avg:  -368.584 (1.000) <0-00:38:21> ({'r_t':  -785.5462, 'eps':     1.0000, 'critic_loss':    61.1076, 'actor_loss':    -5.0154, 'alpha_loss':    -3.8901, 'eps_e':     1.0000})
+Step:  137000, Reward:  -149.895 [  88.515], Avg:  -367.000 (1.000) <0-00:38:38> ({'r_t':  -734.6839, 'eps':     1.0000, 'critic_loss':    64.4337, 'actor_loss':    -4.7435, 'alpha_loss':    -3.6172, 'eps_e':     1.0000})
+Step:  138000, Reward:  -159.426 [  61.492], Avg:  -365.506 (1.000) <0-00:38:55> ({'r_t':  -765.5158, 'eps':     1.0000, 'critic_loss':    62.9168, 'actor_loss':    -4.5514, 'alpha_loss':    -3.8596, 'eps_e':     1.0000})
+Step:  139000, Reward:  -152.246 [  92.158], Avg:  -363.983 (1.000) <0-00:39:12> ({'r_t':  -854.1477, 'eps':     1.0000, 'critic_loss':    63.2698, 'actor_loss':    -4.2447, 'alpha_loss':    -3.5415, 'eps_e':     1.0000})
+Step:  140000, Reward:  -145.094 [  86.649], Avg:  -362.431 (1.000) <0-00:39:29> ({'r_t':  -759.6973, 'eps':     1.0000, 'critic_loss':    64.5836, 'actor_loss':    -4.0323, 'alpha_loss':    -3.1968, 'eps_e':     1.0000})
+Step:  141000, Reward:  -168.867 [  83.644], Avg:  -361.067 (1.000) <0-00:39:47> ({'r_t':  -729.9025, 'eps':     1.0000, 'critic_loss':    66.2869, 'actor_loss':    -3.8238, 'alpha_loss':    -3.3067, 'eps_e':     1.0000})
+Step:  142000, Reward:  -183.116 [  88.610], Avg:  -359.823 (1.000) <0-00:40:04> ({'r_t':  -673.9139, 'eps':     1.0000, 'critic_loss':    61.6200, 'actor_loss':    -3.6227, 'alpha_loss':    -2.9643, 'eps_e':     1.0000})
+Step:  143000, Reward:  -177.175 [ 123.807], Avg:  -358.555 (1.000) <0-00:40:21> ({'r_t':  -795.4618, 'eps':     1.0000, 'critic_loss':    63.4518, 'actor_loss':    -3.2832, 'alpha_loss':    -2.8656, 'eps_e':     1.0000})
+Step:  144000, Reward:   -92.218 [  64.962], Avg:  -356.718 (1.000) <0-00:40:38> ({'r_t':  -798.7381, 'eps':     1.0000, 'critic_loss':    64.0120, 'actor_loss':    -3.3137, 'alpha_loss':    -3.1148, 'eps_e':     1.0000})
+Step:  145000, Reward:  -141.049 [  57.083], Avg:  -355.241 (1.000) <0-00:40:55> ({'r_t':  -795.1520, 'eps':     1.0000, 'critic_loss':    61.1316, 'actor_loss':    -3.0656, 'alpha_loss':    -2.9421, 'eps_e':     1.0000})
+Step:  146000, Reward:  -134.308 [  67.379], Avg:  -353.738 (1.000) <0-00:41:12> ({'r_t':  -768.9408, 'eps':     1.0000, 'critic_loss':    59.9028, 'actor_loss':    -2.7799, 'alpha_loss':    -2.3087, 'eps_e':     1.0000})
+Step:  147000, Reward:  -178.144 [ 110.534], Avg:  -352.551 (1.000) <0-00:41:30> ({'r_t':  -732.3877, 'eps':     1.0000, 'critic_loss':    61.1373, 'actor_loss':    -2.5034, 'alpha_loss':    -2.3637, 'eps_e':     1.0000})
+Step:  148000, Reward:  -153.221 [  98.708], Avg:  -351.214 (1.000) <0-00:41:47> ({'r_t':  -792.6719, 'eps':     1.0000, 'critic_loss':    61.3674, 'actor_loss':    -2.3696, 'alpha_loss':    -2.0543, 'eps_e':     1.0000})
+Step:  149000, Reward:  -148.219 [  81.059], Avg:  -349.860 (1.000) <0-00:42:04> ({'r_t':  -773.2746, 'eps':     1.0000, 'critic_loss':    62.9512, 'actor_loss':    -2.2266, 'alpha_loss':    -1.9627, 'eps_e':     1.0000})
+Step:  150000, Reward:  -141.739 [  92.068], Avg:  -348.482 (1.000) <0-00:42:21> ({'r_t':  -806.3936, 'eps':     1.0000, 'critic_loss':    61.3399, 'actor_loss':    -1.9635, 'alpha_loss':    -1.5518, 'eps_e':     1.0000})
+Step:  151000, Reward:  -146.614 [ 103.651], Avg:  -347.154 (1.000) <0-00:42:38> ({'r_t':  -772.6722, 'eps':     1.0000, 'critic_loss':    59.2891, 'actor_loss':    -1.7149, 'alpha_loss':    -1.2335, 'eps_e':     1.0000})
+Step:  152000, Reward:  -148.344 [  47.008], Avg:  -345.854 (1.000) <0-00:42:55> ({'r_t':  -844.6733, 'eps':     1.0000, 'critic_loss':    58.9689, 'actor_loss':    -1.6328, 'alpha_loss':    -1.2212, 'eps_e':     1.0000})
+Step:  153000, Reward:  -134.877 [  82.494], Avg:  -344.484 (1.000) <0-00:43:12> ({'r_t':  -668.4720, 'eps':     1.0000, 'critic_loss':    59.9943, 'actor_loss':    -1.5871, 'alpha_loss':    -0.8679, 'eps_e':     1.0000})
+Step:  154000, Reward:  -146.277 [ 102.448], Avg:  -343.206 (1.000) <0-00:43:30> ({'r_t':  -841.8217, 'eps':     1.0000, 'critic_loss':    57.0607, 'actor_loss':    -1.4709, 'alpha_loss':    -0.8755, 'eps_e':     1.0000})
+Step:  155000, Reward:  -122.241 [  69.558], Avg:  -341.789 (1.000) <0-00:43:47> ({'r_t':  -863.5774, 'eps':     1.0000, 'critic_loss':    52.8824, 'actor_loss':    -1.3977, 'alpha_loss':    -0.9042, 'eps_e':     1.0000})
+Step:  156000, Reward:  -149.845 [  91.656], Avg:  -340.567 (1.000) <0-00:44:04> ({'r_t':  -780.8837, 'eps':     1.0000, 'critic_loss':    58.0130, 'actor_loss':    -1.2028, 'alpha_loss':    -0.4965, 'eps_e':     1.0000})
+Step:  157000, Reward:  -143.007 [  69.240], Avg:  -339.316 (1.000) <0-00:44:21> ({'r_t':  -782.8360, 'eps':     1.0000, 'critic_loss':    57.7882, 'actor_loss':    -0.9848, 'alpha_loss':     0.3839, 'eps_e':     1.0000})
+Step:  158000, Reward:  -143.844 [  77.829], Avg:  -338.087 (1.000) <0-00:44:38> ({'r_t':  -755.3860, 'eps':     1.0000, 'critic_loss':    56.4538, 'actor_loss':    -0.8510, 'alpha_loss':     0.3612, 'eps_e':     1.0000})
+Step:  159000, Reward:  -166.716 [ 100.303], Avg:  -337.016 (1.000) <0-00:44:55> ({'r_t':  -781.7974, 'eps':     1.0000, 'critic_loss':    52.9957, 'actor_loss':    -0.8190, 'alpha_loss':     0.6114, 'eps_e':     1.0000})
+Step:  160000, Reward:  -122.157 [  57.614], Avg:  -335.681 (1.000) <0-00:45:12> ({'r_t':  -846.3146, 'eps':     1.0000, 'critic_loss':    52.9966, 'actor_loss':    -0.9220, 'alpha_loss':     0.3748, 'eps_e':     1.0000})
+Step:  161000, Reward:  -218.130 [  85.908], Avg:  -334.956 (1.000) <0-00:45:30> ({'r_t':  -852.0128, 'eps':     1.0000, 'critic_loss':    52.3625, 'actor_loss':    -0.8492, 'alpha_loss':     1.1694, 'eps_e':     1.0000})
+Step:  162000, Reward:  -140.604 [  57.262], Avg:  -333.763 (1.000) <0-00:45:47> ({'r_t':  -855.3906, 'eps':     1.0000, 'critic_loss':    53.8067, 'actor_loss':    -0.8252, 'alpha_loss':     2.4838, 'eps_e':     1.0000})
+Step:  163000, Reward:  -155.909 [ 104.562], Avg:  -332.679 (1.000) <0-00:46:04> ({'r_t':  -808.5761, 'eps':     1.0000, 'critic_loss':    51.9873, 'actor_loss':    -0.9261, 'alpha_loss':     3.4581, 'eps_e':     1.0000})
+Step:  164000, Reward:  -151.564 [ 100.856], Avg:  -331.581 (1.000) <0-00:46:21> ({'r_t':  -948.2147, 'eps':     1.0000, 'critic_loss':    53.7205, 'actor_loss':    -0.8688, 'alpha_loss':     4.1088, 'eps_e':     1.0000})
+Step:  165000, Reward:  -165.640 [ 102.525], Avg:  -330.582 (1.000) <0-00:46:38> ({'r_t':  -973.6339, 'eps':     1.0000, 'critic_loss':    48.7494, 'actor_loss':    -0.7974, 'alpha_loss':     4.8395, 'eps_e':     1.0000})
+Step:  166000, Reward:  -145.957 [ 109.675], Avg:  -329.476 (1.000) <0-00:46:55> ({'r_t':  -995.3671, 'eps':     1.0000, 'critic_loss':    48.4993, 'actor_loss':    -0.7384, 'alpha_loss':     4.4413, 'eps_e':     1.0000})
+Step:  167000, Reward:  -128.981 [ 106.590], Avg:  -328.283 (1.000) <0-00:47:13> ({'r_t':  -855.7051, 'eps':     1.0000, 'critic_loss':    50.7892, 'actor_loss':    -0.7266, 'alpha_loss':     5.0828, 'eps_e':     1.0000})
+Step:  168000, Reward:  -197.354 [  80.307], Avg:  -327.508 (1.000) <0-00:47:30> ({'r_t':  -826.6839, 'eps':     1.0000, 'critic_loss':    48.3478, 'actor_loss':    -0.7346, 'alpha_loss':     5.0313, 'eps_e':     1.0000})
+Step:  169000, Reward:  -126.013 [  93.963], Avg:  -326.323 (1.000) <0-00:47:47> ({'r_t':  -856.9206, 'eps':     1.0000, 'critic_loss':    47.8510, 'actor_loss':    -0.7296, 'alpha_loss':     5.4602, 'eps_e':     1.0000})
+Step:  170000, Reward:  -145.035 [ 107.468], Avg:  -325.262 (1.000) <0-00:48:04> ({'r_t':  -904.4695, 'eps':     1.0000, 'critic_loss':    45.1373, 'actor_loss':    -0.7600, 'alpha_loss':     5.3668, 'eps_e':     1.0000})
+Step:  171000, Reward:  -176.812 [  97.479], Avg:  -324.399 (1.000) <0-00:48:21> ({'r_t':  -852.0017, 'eps':     1.0000, 'critic_loss':    46.5325, 'actor_loss':    -0.7282, 'alpha_loss':     5.7211, 'eps_e':     1.0000})
+Step:  172000, Reward:  -132.478 [  84.563], Avg:  -323.290 (1.000) <0-00:48:38> ({'r_t':  -785.8014, 'eps':     1.0000, 'critic_loss':    47.0365, 'actor_loss':    -0.6881, 'alpha_loss':     5.7194, 'eps_e':     1.0000})
+Step:  173000, Reward:  -193.659 [ 105.509], Avg:  -322.545 (1.000) <0-00:48:56> ({'r_t':  -749.3902, 'eps':     1.0000, 'critic_loss':    46.5781, 'actor_loss':    -0.6998, 'alpha_loss':     5.7563, 'eps_e':     1.0000})
+Step:  174000, Reward:  -194.175 [  97.853], Avg:  -321.811 (1.000) <0-00:49:13> ({'r_t':  -744.0387, 'eps':     1.0000, 'critic_loss':    44.3064, 'actor_loss':    -0.7188, 'alpha_loss':     6.0615, 'eps_e':     1.0000})
+Step:  175000, Reward:  -160.756 [ 102.068], Avg:  -320.896 (1.000) <0-00:49:30> ({'r_t':  -861.9264, 'eps':     1.0000, 'critic_loss':    41.0355, 'actor_loss':    -0.7764, 'alpha_loss':     6.2270, 'eps_e':     1.0000})
+Step:  176000, Reward:  -158.299 [ 127.547], Avg:  -319.978 (1.000) <0-00:49:47> ({'r_t':  -874.9129, 'eps':     1.0000, 'critic_loss':    43.3807, 'actor_loss':    -0.7945, 'alpha_loss':     6.6992, 'eps_e':     1.0000})
+Step:  177000, Reward:  -125.852 [  83.502], Avg:  -318.887 (1.000) <0-00:50:04> ({'r_t':  -859.6270, 'eps':     1.0000, 'critic_loss':    38.0406, 'actor_loss':    -0.8125, 'alpha_loss':     6.6521, 'eps_e':     1.0000})
+Step:  178000, Reward:  -197.632 [ 122.194], Avg:  -318.210 (1.000) <0-00:50:22> ({'r_t':  -864.0597, 'eps':     1.0000, 'critic_loss':    39.7507, 'actor_loss':    -0.8933, 'alpha_loss':     6.5150, 'eps_e':     1.0000})
+Step:  179000, Reward:  -154.717 [  87.750], Avg:  -317.301 (1.000) <0-00:50:39> ({'r_t':  -893.5082, 'eps':     1.0000, 'critic_loss':    37.8352, 'actor_loss':    -0.9610, 'alpha_loss':     6.5047, 'eps_e':     1.0000})
+Step:  180000, Reward:  -189.316 [  96.810], Avg:  -316.594 (1.000) <0-00:50:56> ({'r_t':  -881.6413, 'eps':     1.0000, 'critic_loss':    39.0821, 'actor_loss':    -1.0096, 'alpha_loss':     6.2356, 'eps_e':     1.0000})
+Step:  181000, Reward:  -200.123 [ 123.116], Avg:  -315.954 (1.000) <0-00:51:13> ({'r_t':  -953.7907, 'eps':     1.0000, 'critic_loss':    37.9857, 'actor_loss':    -1.0988, 'alpha_loss':     6.3340, 'eps_e':     1.0000})
+Step:  182000, Reward:  -130.673 [  97.806], Avg:  -314.942 (1.000) <0-00:51:30> ({'r_t':  -947.8720, 'eps':     1.0000, 'critic_loss':    35.6017, 'actor_loss':    -1.1222, 'alpha_loss':     6.0717, 'eps_e':     1.0000})
+Step:  183000, Reward:  -162.495 [  98.895], Avg:  -314.113 (1.000) <0-00:51:47> ({'r_t':  -909.7069, 'eps':     1.0000, 'critic_loss':    38.3009, 'actor_loss':    -1.1961, 'alpha_loss':     5.9427, 'eps_e':     1.0000})
+Step:  184000, Reward:  -161.003 [  99.928], Avg:  -313.286 (1.000) <0-00:52:04> ({'r_t':  -765.9598, 'eps':     1.0000, 'critic_loss':    37.4746, 'actor_loss':    -1.2162, 'alpha_loss':     5.7318, 'eps_e':     1.0000})
+Step:  185000, Reward:  -111.505 [ 103.557], Avg:  -312.201 (1.000) <0-00:52:22> ({'r_t':  -866.8824, 'eps':     1.0000, 'critic_loss':    34.4715, 'actor_loss':    -1.2564, 'alpha_loss':     5.5266, 'eps_e':     1.0000})
+Step:  186000, Reward:  -113.507 [  86.634], Avg:  -311.138 (1.000) <0-00:52:39> ({'r_t':  -918.1123, 'eps':     1.0000, 'critic_loss':    35.7586, 'actor_loss':    -1.3029, 'alpha_loss':     5.3890, 'eps_e':     1.0000})
+Step:  187000, Reward:  -173.978 [ 124.314], Avg:  -310.409 (1.000) <0-00:52:56> ({'r_t':  -860.4198, 'eps':     1.0000, 'critic_loss':    33.4428, 'actor_loss':    -1.3437, 'alpha_loss':     4.9702, 'eps_e':     1.0000})
+Step:  188000, Reward:  -163.628 [  80.880], Avg:  -309.632 (1.000) <0-00:53:13> ({'r_t':  -904.9968, 'eps':     1.0000, 'critic_loss':    32.4885, 'actor_loss':    -1.3922, 'alpha_loss':     4.8362, 'eps_e':     1.0000})
+Step:  189000, Reward:  -174.135 [  77.046], Avg:  -308.919 (1.000) <0-00:53:30> ({'r_t':  -729.5940, 'eps':     1.0000, 'critic_loss':    35.8565, 'actor_loss':    -1.3951, 'alpha_loss':     4.8440, 'eps_e':     1.0000})
+Step:  190000, Reward:  -181.366 [ 122.940], Avg:  -308.251 (1.000) <0-00:53:47> ({'r_t':  -865.6909, 'eps':     1.0000, 'critic_loss':    31.7300, 'actor_loss':    -1.3874, 'alpha_loss':     4.7367, 'eps_e':     1.0000})
+Step:  191000, Reward:  -182.691 [  98.422], Avg:  -307.597 (1.000) <0-00:54:04> ({'r_t':  -887.4102, 'eps':     1.0000, 'critic_loss':    30.1068, 'actor_loss':    -1.4040, 'alpha_loss':     4.6520, 'eps_e':     1.0000})
+Step:  192000, Reward:  -163.256 [  82.844], Avg:  -306.849 (1.000) <0-00:54:22> ({'r_t':  -801.4735, 'eps':     1.0000, 'critic_loss':    34.1778, 'actor_loss':    -1.4291, 'alpha_loss':     4.3244, 'eps_e':     1.0000})
+Step:  193000, Reward:  -146.902 [  73.555], Avg:  -306.025 (1.000) <0-00:54:39> ({'r_t':  -887.2423, 'eps':     1.0000, 'critic_loss':    31.8431, 'actor_loss':    -1.3934, 'alpha_loss':     4.3230, 'eps_e':     1.0000})
+Step:  194000, Reward:  -132.270 [  87.217], Avg:  -305.134 (1.000) <0-00:54:56> ({'r_t':  -882.2333, 'eps':     1.0000, 'critic_loss':    27.6608, 'actor_loss':    -1.3538, 'alpha_loss':     4.2775, 'eps_e':     1.0000})
+Step:  195000, Reward:  -221.816 [ 108.379], Avg:  -304.709 (1.000) <0-00:55:13> ({'r_t':  -794.4917, 'eps':     1.0000, 'critic_loss':    29.9878, 'actor_loss':    -1.3568, 'alpha_loss':     4.0863, 'eps_e':     1.0000})
+Step:  196000, Reward:  -177.628 [ 120.078], Avg:  -304.064 (1.000) <0-00:55:30> ({'r_t':  -779.2766, 'eps':     1.0000, 'critic_loss':    30.9812, 'actor_loss':    -1.2678, 'alpha_loss':     4.1815, 'eps_e':     1.0000})
+Step:  197000, Reward:  -149.545 [  75.460], Avg:  -303.283 (1.000) <0-00:55:48> ({'r_t':  -936.0573, 'eps':     1.0000, 'critic_loss':    30.3851, 'actor_loss':    -1.2696, 'alpha_loss':     3.9210, 'eps_e':     1.0000})
+Step:  198000, Reward:  -167.525 [ 107.070], Avg:  -302.601 (1.000) <0-00:56:05> ({'r_t':  -804.5222, 'eps':     1.0000, 'critic_loss':    29.8752, 'actor_loss':    -1.2026, 'alpha_loss':     3.9268, 'eps_e':     1.0000})
+Step:  199000, Reward:  -146.268 [  94.156], Avg:  -301.819 (1.000) <0-00:56:22> ({'r_t':  -889.7193, 'eps':     1.0000, 'critic_loss':    26.9816, 'actor_loss':    -1.1587, 'alpha_loss':     3.8406, 'eps_e':     1.0000})
+Step:  200000, Reward:  -195.790 [  97.793], Avg:  -301.292 (1.000) <0-00:56:39> ({'r_t':  -917.7090, 'eps':     1.0000, 'critic_loss':    29.6399, 'actor_loss':    -1.1187, 'alpha_loss':     3.8379, 'eps_e':     1.0000})
+Step:  201000, Reward:  -122.422 [  81.482], Avg:  -300.406 (1.000) <0-00:56:56> ({'r_t':  -929.1695, 'eps':     1.0000, 'critic_loss':    26.4050, 'actor_loss':    -1.0812, 'alpha_loss':     3.7114, 'eps_e':     1.0000})
+Step:  202000, Reward:  -157.104 [  77.466], Avg:  -299.701 (1.000) <0-00:57:13> ({'r_t':  -990.4345, 'eps':     1.0000, 'critic_loss':    28.6858, 'actor_loss':    -1.0127, 'alpha_loss':     3.6617, 'eps_e':     1.0000})
+Step:  203000, Reward:  -189.429 [  72.951], Avg:  -299.160 (1.000) <0-00:57:31> ({'r_t':  -873.2801, 'eps':     1.0000, 'critic_loss':    27.1538, 'actor_loss':    -0.9345, 'alpha_loss':     3.7103, 'eps_e':     1.0000})
+Step:  204000, Reward:  -194.959 [ 112.152], Avg:  -298.652 (1.000) <0-00:57:48> ({'r_t':  -844.7036, 'eps':     1.0000, 'critic_loss':    29.0226, 'actor_loss':    -0.8997, 'alpha_loss':     3.5781, 'eps_e':     1.0000})
+Step:  205000, Reward:  -209.421 [  92.332], Avg:  -298.219 (1.000) <0-00:58:05> ({'r_t': -1005.3586, 'eps':     1.0000, 'critic_loss':    28.4455, 'actor_loss':    -0.8946, 'alpha_loss':     3.4879, 'eps_e':     1.0000})
+Step:  206000, Reward:  -150.080 [ 108.919], Avg:  -297.503 (1.000) <0-00:58:22> ({'r_t':  -972.5876, 'eps':     1.0000, 'critic_loss':    30.5041, 'actor_loss':    -0.8941, 'alpha_loss':     3.3102, 'eps_e':     1.0000})
+Step:  207000, Reward:  -178.635 [ 107.225], Avg:  -296.931 (1.000) <0-00:58:39> ({'r_t':  -730.2764, 'eps':     1.0000, 'critic_loss':    30.7665, 'actor_loss':    -0.7860, 'alpha_loss':     3.3194, 'eps_e':     1.0000})
+Step:  208000, Reward:  -163.821 [  75.951], Avg:  -296.295 (1.000) <0-00:58:56> ({'r_t':  -965.2559, 'eps':     1.0000, 'critic_loss':    32.1682, 'actor_loss':    -0.7263, 'alpha_loss':     3.1599, 'eps_e':     1.0000})
+Step:  209000, Reward:  -191.899 [  93.932], Avg:  -295.797 (1.000) <0-00:59:14> ({'r_t':  -993.3217, 'eps':     1.0000, 'critic_loss':    30.7809, 'actor_loss':    -0.7072, 'alpha_loss':     3.1238, 'eps_e':     1.0000})
+Step:  210000, Reward:  -174.484 [ 120.005], Avg:  -295.222 (1.000) <0-00:59:31> ({'r_t':  -872.2623, 'eps':     1.0000, 'critic_loss':    33.0055, 'actor_loss':    -0.6594, 'alpha_loss':     2.9497, 'eps_e':     1.0000})
+Step:  211000, Reward:  -143.771 [  95.410], Avg:  -294.508 (1.000) <0-00:59:48> ({'r_t':  -972.9423, 'eps':     1.0000, 'critic_loss':    33.0395, 'actor_loss':    -0.5994, 'alpha_loss':     2.8871, 'eps_e':     1.0000})
+Step:  212000, Reward:  -199.896 [  90.371], Avg:  -294.064 (1.000) <0-01:00:05> ({'r_t': -1079.3048, 'eps':     1.0000, 'critic_loss':    36.3378, 'actor_loss':    -0.5460, 'alpha_loss':     2.8379, 'eps_e':     1.0000})
+Step:  213000, Reward:  -224.753 [  88.748], Avg:  -293.740 (1.000) <0-01:00:22> ({'r_t':  -977.0919, 'eps':     1.0000, 'critic_loss':    39.8848, 'actor_loss':    -0.4982, 'alpha_loss':     2.7128, 'eps_e':     1.0000})
+Step:  214000, Reward:  -146.977 [  53.552], Avg:  -293.057 (1.000) <0-01:00:39> ({'r_t':  -945.8216, 'eps':     1.0000, 'critic_loss':    38.8223, 'actor_loss':    -0.4486, 'alpha_loss':     2.6792, 'eps_e':     1.0000})
+Step:  215000, Reward:  -189.863 [  85.692], Avg:  -292.580 (1.000) <0-01:00:57> ({'r_t': -1020.0867, 'eps':     1.0000, 'critic_loss':    37.2229, 'actor_loss':    -0.4082, 'alpha_loss':     2.5713, 'eps_e':     1.0000})
+Step:  216000, Reward:  -216.443 [ 101.476], Avg:  -292.229 (1.000) <0-01:01:14> ({'r_t':  -874.5176, 'eps':     1.0000, 'critic_loss':    39.0869, 'actor_loss':    -0.3635, 'alpha_loss':     2.4023, 'eps_e':     1.0000})
+Step:  217000, Reward:  -134.115 [ 104.439], Avg:  -291.503 (1.000) <0-01:01:31> ({'r_t': -1000.1460, 'eps':     1.0000, 'critic_loss':    42.0899, 'actor_loss':    -0.3240, 'alpha_loss':     2.3874, 'eps_e':     1.0000})
+Step:  218000, Reward:  -183.559 [  95.104], Avg:  -291.011 (1.000) <0-01:01:48> ({'r_t':  -934.0243, 'eps':     1.0000, 'critic_loss':    39.8268, 'actor_loss':    -0.2436, 'alpha_loss':     2.3710, 'eps_e':     1.0000})
+Step:  219000, Reward:  -138.686 [  82.112], Avg:  -290.318 (1.000) <0-01:02:05> ({'r_t':  -814.6959, 'eps':     1.0000, 'critic_loss':    41.1126, 'actor_loss':    -0.2529, 'alpha_loss':     2.2428, 'eps_e':     1.0000})
+Step:  220000, Reward:  -168.527 [  85.084], Avg:  -289.767 (1.000) <0-01:02:23> ({'r_t':  -983.5708, 'eps':     1.0000, 'critic_loss':    43.5993, 'actor_loss':    -0.2123, 'alpha_loss':     2.1871, 'eps_e':     1.0000})
+Step:  221000, Reward:  -134.586 [  90.673], Avg:  -289.068 (1.000) <0-01:02:40> ({'r_t':  -981.5761, 'eps':     1.0000, 'critic_loss':    45.1676, 'actor_loss':    -0.1909, 'alpha_loss':     2.0511, 'eps_e':     1.0000})
+Step:  222000, Reward:  -170.534 [  88.551], Avg:  -288.537 (1.000) <0-01:02:57> ({'r_t': -1067.7880, 'eps':     1.0000, 'critic_loss':    46.9782, 'actor_loss':    -0.1721, 'alpha_loss':     2.0415, 'eps_e':     1.0000})
+Step:  223000, Reward:  -167.380 [ 101.282], Avg:  -287.996 (1.000) <0-01:03:14> ({'r_t':  -932.1972, 'eps':     1.0000, 'critic_loss':    46.2463, 'actor_loss':    -0.1084, 'alpha_loss':     1.8845, 'eps_e':     1.0000})
+Step:  224000, Reward:  -163.641 [  99.807], Avg:  -287.443 (1.000) <0-01:03:31> ({'r_t':  -955.4408, 'eps':     1.0000, 'critic_loss':    46.8786, 'actor_loss':    -0.1168, 'alpha_loss':     1.7519, 'eps_e':     1.0000})
+Step:  225000, Reward:  -158.235 [  75.997], Avg:  -286.871 (1.000) <0-01:03:48> ({'r_t':  -891.8310, 'eps':     1.0000, 'critic_loss':    48.6061, 'actor_loss':    -0.1036, 'alpha_loss':     1.6725, 'eps_e':     1.0000})
+Step:  226000, Reward:  -131.095 [ 101.133], Avg:  -286.185 (1.000) <0-01:04:06> ({'r_t': -1047.5385, 'eps':     1.0000, 'critic_loss':    45.3450, 'actor_loss':    -0.0760, 'alpha_loss':     1.5539, 'eps_e':     1.0000})
+Step:  227000, Reward:  -169.586 [  99.001], Avg:  -285.674 (1.000) <0-01:04:23> ({'r_t': -1049.8817, 'eps':     1.0000, 'critic_loss':    50.7453, 'actor_loss':    -0.0783, 'alpha_loss':     1.5002, 'eps_e':     1.0000})
+Step:  228000, Reward:  -172.195 [  98.431], Avg:  -285.178 (1.000) <0-01:04:40> ({'r_t': -1076.0237, 'eps':     1.0000, 'critic_loss':    51.2305, 'actor_loss':    -0.0669, 'alpha_loss':     1.3450, 'eps_e':     1.0000})
+Step:  229000, Reward:  -213.259 [  97.665], Avg:  -284.865 (1.000) <0-01:04:57> ({'r_t': -1018.3326, 'eps':     1.0000, 'critic_loss':    49.3901, 'actor_loss':    -0.0384, 'alpha_loss':     1.2387, 'eps_e':     1.0000})
+Step:  230000, Reward:  -185.887 [ 103.969], Avg:  -284.437 (1.000) <0-01:05:15> ({'r_t': -1076.8740, 'eps':     1.0000, 'critic_loss':    49.2556, 'actor_loss':    -0.0585, 'alpha_loss':     1.1471, 'eps_e':     1.0000})
+Step:  231000, Reward:  -137.397 [  67.061], Avg:  -283.803 (1.000) <0-01:05:32> ({'r_t': -1032.9326, 'eps':     1.0000, 'critic_loss':    51.4875, 'actor_loss':    -0.0338, 'alpha_loss':     1.0415, 'eps_e':     1.0000})
+Step:  232000, Reward:  -204.085 [  92.252], Avg:  -283.461 (1.000) <0-01:05:49> ({'r_t': -1006.1681, 'eps':     1.0000, 'critic_loss':    52.0506, 'actor_loss':    -0.0643, 'alpha_loss':     0.9258, 'eps_e':     1.0000})
+Step:  233000, Reward:  -173.238 [ 104.828], Avg:  -282.990 (1.000) <0-01:06:06> ({'r_t':  -947.2295, 'eps':     1.0000, 'critic_loss':    51.8846, 'actor_loss':    -0.0403, 'alpha_loss':     0.8131, 'eps_e':     1.0000})
+Step:  234000, Reward:  -220.077 [ 102.719], Avg:  -282.722 (1.000) <0-01:06:24> ({'r_t':  -905.8419, 'eps':     1.0000, 'critic_loss':    55.4147, 'actor_loss':    -0.0463, 'alpha_loss':     0.7056, 'eps_e':     1.0000})
+Step:  235000, Reward:  -114.085 [  68.043], Avg:  -282.008 (1.000) <0-01:06:41> ({'r_t':  -990.1415, 'eps':     1.0000, 'critic_loss':    55.5921, 'actor_loss':    -0.0701, 'alpha_loss':     0.6221, 'eps_e':     1.0000})
+Step:  236000, Reward:  -192.818 [  96.464], Avg:  -281.631 (1.000) <0-01:06:58> ({'r_t':  -825.5295, 'eps':     1.0000, 'critic_loss':    55.0551, 'actor_loss':    -0.0518, 'alpha_loss':     0.4872, 'eps_e':     1.0000})
+Step:  237000, Reward:  -140.794 [  91.664], Avg:  -281.040 (1.000) <0-01:07:15> ({'r_t':  -831.3405, 'eps':     1.0000, 'critic_loss':    55.6878, 'actor_loss':    -0.0651, 'alpha_loss':     0.3754, 'eps_e':     1.0000})
+Step:  238000, Reward:  -113.104 [ 109.782], Avg:  -280.337 (1.000) <0-01:07:32> ({'r_t':  -957.2542, 'eps':     1.0000, 'critic_loss':    56.0443, 'actor_loss':    -0.0194, 'alpha_loss':     0.2752, 'eps_e':     1.0000})
+Step:  239000, Reward:  -128.282 [  71.791], Avg:  -279.703 (1.000) <0-01:07:49> ({'r_t': -1020.6411, 'eps':     1.0000, 'critic_loss':    62.3610, 'actor_loss':    -0.1085, 'alpha_loss':     0.1712, 'eps_e':     1.0000})
+Step:  240000, Reward:  -120.996 [ 110.576], Avg:  -279.045 (1.000) <0-01:08:07> ({'r_t':  -893.4837, 'eps':     1.0000, 'critic_loss':    58.1470, 'actor_loss':    -0.0551, 'alpha_loss':     0.0660, 'eps_e':     1.0000})
+Step:  241000, Reward:  -166.168 [  67.739], Avg:  -278.578 (1.000) <0-01:08:24> ({'r_t':  -945.6068, 'eps':     1.0000, 'critic_loss':    55.6880, 'actor_loss':    -0.0598, 'alpha_loss':    -0.0310, 'eps_e':     1.0000})
+Step:  242000, Reward:  -136.539 [ 100.811], Avg:  -277.994 (1.000) <0-01:08:41> ({'r_t':  -901.1995, 'eps':     1.0000, 'critic_loss':    62.4104, 'actor_loss':    -0.0597, 'alpha_loss':    -0.1242, 'eps_e':     1.0000})
+Step:  243000, Reward:  -142.912 [  73.511], Avg:  -277.440 (1.000) <0-01:08:58> ({'r_t':  -955.0674, 'eps':     1.0000, 'critic_loss':    59.4510, 'actor_loss':    -0.0737, 'alpha_loss':    -0.2161, 'eps_e':     1.0000})
+Step:  244000, Reward:  -167.391 [  65.741], Avg:  -276.991 (1.000) <0-01:09:15> ({'r_t':  -861.1760, 'eps':     1.0000, 'critic_loss':    62.5776, 'actor_loss':    -0.0864, 'alpha_loss':    -0.2930, 'eps_e':     1.0000})
+Step:  245000, Reward:  -155.175 [  64.480], Avg:  -276.496 (1.000) <0-01:09:32> ({'r_t':  -831.0898, 'eps':     1.0000, 'critic_loss':    62.4740, 'actor_loss':    -0.1297, 'alpha_loss':    -0.3553, 'eps_e':     1.0000})
+Step:  246000, Reward:  -169.480 [  79.092], Avg:  -276.063 (1.000) <0-01:09:49> ({'r_t':  -821.1428, 'eps':     1.0000, 'critic_loss':    62.6555, 'actor_loss':    -0.1687, 'alpha_loss':    -0.4097, 'eps_e':     1.0000})
+Step:  247000, Reward:  -115.034 [  84.660], Avg:  -275.413 (1.000) <0-01:10:07> ({'r_t':  -745.3522, 'eps':     1.0000, 'critic_loss':    61.9251, 'actor_loss':    -0.2023, 'alpha_loss':    -0.4667, 'eps_e':     1.0000})
+Step:  248000, Reward:  -155.227 [  85.432], Avg:  -274.931 (1.000) <0-01:10:24> ({'r_t':  -793.9040, 'eps':     1.0000, 'critic_loss':    60.6600, 'actor_loss':    -0.2007, 'alpha_loss':    -0.4859, 'eps_e':     1.0000})
+Step:  249000, Reward:  -159.799 [ 106.682], Avg:  -274.470 (1.000) <0-01:10:41> ({'r_t':  -748.0111, 'eps':     1.0000, 'critic_loss':    62.7159, 'actor_loss':    -0.1966, 'alpha_loss':    -0.5222, 'eps_e':     1.0000})
+Step:  250000, Reward:  -161.195 [  74.897], Avg:  -274.019 (1.000) <0-01:10:58> ({'r_t':  -822.5951, 'eps':     1.0000, 'critic_loss':    62.3950, 'actor_loss':    -0.2167, 'alpha_loss':    -0.5182, 'eps_e':     1.0000})
+Step:  251000, Reward:  -146.311 [ 103.810], Avg:  -273.512 (1.000) <0-01:11:15> ({'r_t':  -858.9609, 'eps':     1.0000, 'critic_loss':    62.2928, 'actor_loss':    -0.2214, 'alpha_loss':    -0.5827, 'eps_e':     1.0000})
+Step:  252000, Reward:  -124.548 [  92.212], Avg:  -272.923 (1.000) <0-01:11:32> ({'r_t':  -800.4710, 'eps':     1.0000, 'critic_loss':    61.3098, 'actor_loss':    -0.2515, 'alpha_loss':    -0.4858, 'eps_e':     1.0000})
+Step:  253000, Reward:  -158.004 [ 100.943], Avg:  -272.471 (1.000) <0-01:11:49> ({'r_t':  -790.3209, 'eps':     1.0000, 'critic_loss':    63.2631, 'actor_loss':    -0.3199, 'alpha_loss':    -0.4346, 'eps_e':     1.0000})
+Step:  254000, Reward:  -171.574 [  81.872], Avg:  -272.075 (1.000) <0-01:12:06> ({'r_t':  -791.0104, 'eps':     1.0000, 'critic_loss':    58.8032, 'actor_loss':    -0.2996, 'alpha_loss':    -0.3812, 'eps_e':     1.0000})
+Step:  255000, Reward:  -129.347 [  50.036], Avg:  -271.518 (1.000) <0-01:12:24> ({'r_t':  -808.6909, 'eps':     1.0000, 'critic_loss':    61.5335, 'actor_loss':    -0.3232, 'alpha_loss':    -0.3197, 'eps_e':     1.0000})
+Step:  256000, Reward:  -107.273 [  56.871], Avg:  -270.879 (1.000) <0-01:12:41> ({'r_t':  -793.8473, 'eps':     1.0000, 'critic_loss':    60.6912, 'actor_loss':    -0.3691, 'alpha_loss':    -0.1270, 'eps_e':     1.0000})
+Step:  257000, Reward:  -141.902 [  83.887], Avg:  -270.379 (1.000) <0-01:12:58> ({'r_t':  -717.9863, 'eps':     1.0000, 'critic_loss':    64.3509, 'actor_loss':    -0.3720, 'alpha_loss':    -0.0900, 'eps_e':     1.0000})
+Step:  258000, Reward:  -140.504 [  80.011], Avg:  -269.877 (1.000) <0-01:13:15> ({'r_t':  -820.2619, 'eps':     1.0000, 'critic_loss':    58.3232, 'actor_loss':    -0.3678, 'alpha_loss':     0.0002, 'eps_e':     1.0000})
+Step:  259000, Reward:  -158.037 [  97.569], Avg:  -269.447 (1.000) <0-01:13:32> ({'r_t':  -788.6104, 'eps':     1.0000, 'critic_loss':    58.3719, 'actor_loss':    -0.3833, 'alpha_loss':    -0.0016, 'eps_e':     1.0000})
+Step:  260000, Reward:  -119.436 [  68.435], Avg:  -268.872 (1.000) <0-01:13:49> ({'r_t':  -694.0625, 'eps':     1.0000, 'critic_loss':    62.1501, 'actor_loss':    -0.3524, 'alpha_loss':    -0.0099, 'eps_e':     1.0000})
+Step:  261000, Reward:  -134.366 [ 100.053], Avg:  -268.359 (1.000) <0-01:14:06> ({'r_t':  -747.6715, 'eps':     1.0000, 'critic_loss':    61.4891, 'actor_loss':    -0.3794, 'alpha_loss':     0.0720, 'eps_e':     1.0000})
+Step:  262000, Reward:  -125.855 [  72.673], Avg:  -267.817 (1.000) <0-01:14:24> ({'r_t':  -790.1505, 'eps':     1.0000, 'critic_loss':    56.9144, 'actor_loss':    -0.3631, 'alpha_loss':     0.0467, 'eps_e':     1.0000})
+Step:  263000, Reward:  -148.400 [  80.160], Avg:  -267.365 (1.000) <0-01:14:41> ({'r_t':  -757.8826, 'eps':     1.0000, 'critic_loss':    62.9100, 'actor_loss':    -0.3854, 'alpha_loss':     0.1068, 'eps_e':     1.0000})
+Step:  264000, Reward:  -197.081 [ 102.477], Avg:  -267.099 (1.000) <0-01:14:58> ({'r_t':  -720.8012, 'eps':     1.0000, 'critic_loss':    59.8328, 'actor_loss':    -0.3860, 'alpha_loss':     0.0638, 'eps_e':     1.0000})
+Step:  265000, Reward:  -130.640 [  96.531], Avg:  -266.586 (1.000) <0-01:15:15> ({'r_t':  -728.3457, 'eps':     1.0000, 'critic_loss':    59.6262, 'actor_loss':    -0.3825, 'alpha_loss':     0.0461, 'eps_e':     1.0000})
+Step:  266000, Reward:  -158.185 [  52.377], Avg:  -266.180 (1.000) <0-01:15:32> ({'r_t':  -744.4618, 'eps':     1.0000, 'critic_loss':    57.8369, 'actor_loss':    -0.3612, 'alpha_loss':    -0.0514, 'eps_e':     1.0000})
+Step:  267000, Reward:  -104.061 [  67.250], Avg:  -265.576 (1.000) <0-01:15:49> ({'r_t':  -728.1841, 'eps':     1.0000, 'critic_loss':    56.1851, 'actor_loss':    -0.3360, 'alpha_loss':    -0.0719, 'eps_e':     1.0000})
+Step:  268000, Reward:  -127.219 [  76.471], Avg:  -265.061 (1.000) <0-01:16:06> ({'r_t':  -803.3159, 'eps':     1.0000, 'critic_loss':    57.1573, 'actor_loss':    -0.3071, 'alpha_loss':    -0.1264, 'eps_e':     1.0000})
+Step:  269000, Reward:  -131.485 [  92.838], Avg:  -264.566 (1.000) <0-01:16:24> ({'r_t':  -888.8843, 'eps':     1.0000, 'critic_loss':    57.6048, 'actor_loss':    -0.3915, 'alpha_loss':     0.0755, 'eps_e':     1.0000})
+Step:  270000, Reward:  -183.766 [  96.680], Avg:  -264.268 (1.000) <0-01:16:41> ({'r_t':  -840.8797, 'eps':     1.0000, 'critic_loss':    57.3435, 'actor_loss':    -0.3616, 'alpha_loss':     0.0055, 'eps_e':     1.0000})
+Step:  271000, Reward:  -142.156 [  73.608], Avg:  -263.819 (1.000) <0-01:16:58> ({'r_t':  -768.7387, 'eps':     1.0000, 'critic_loss':    54.7336, 'actor_loss':    -0.3356, 'alpha_loss':    -0.0324, 'eps_e':     1.0000})
+Step:  272000, Reward:  -129.913 [  92.311], Avg:  -263.329 (1.000) <0-01:17:15> ({'r_t':  -772.0247, 'eps':     1.0000, 'critic_loss':    54.6179, 'actor_loss':    -0.3230, 'alpha_loss':    -0.0569, 'eps_e':     1.0000})
+Step:  273000, Reward:  -148.745 [  72.334], Avg:  -262.911 (1.000) <0-01:17:32> ({'r_t':  -753.6991, 'eps':     1.0000, 'critic_loss':    54.9176, 'actor_loss':    -0.3652, 'alpha_loss':     0.0188, 'eps_e':     1.0000})
+Step:  274000, Reward:  -126.530 [  77.060], Avg:  -262.415 (1.000) <0-01:17:49> ({'r_t':  -722.5510, 'eps':     1.0000, 'critic_loss':    51.7061, 'actor_loss':    -0.3678, 'alpha_loss':    -0.0168, 'eps_e':     1.0000})
+Step:  275000, Reward:  -172.100 [  92.900], Avg:  -262.088 (1.000) <0-01:18:06> ({'r_t':  -752.0758, 'eps':     1.0000, 'critic_loss':    49.3348, 'actor_loss':    -0.3154, 'alpha_loss':    -0.1087, 'eps_e':     1.0000})
+Step:  276000, Reward:  -168.499 [  86.939], Avg:  -261.750 (1.000) <0-01:18:23> ({'r_t':  -719.2116, 'eps':     1.0000, 'critic_loss':    49.8963, 'actor_loss':    -0.3015, 'alpha_loss':    -0.1322, 'eps_e':     1.0000})
+Step:  277000, Reward:  -132.791 [  78.713], Avg:  -261.286 (1.000) <0-01:18:41> ({'r_t':  -755.9396, 'eps':     1.0000, 'critic_loss':    45.9430, 'actor_loss':    -0.2707, 'alpha_loss':    -0.1841, 'eps_e':     1.0000})
+Step:  278000, Reward:  -170.558 [ 105.036], Avg:  -260.961 (1.000) <0-01:18:58> ({'r_t':  -729.6139, 'eps':     1.0000, 'critic_loss':    45.7657, 'actor_loss':    -0.2894, 'alpha_loss':    -0.0698, 'eps_e':     1.0000})
+Step:  279000, Reward:  -140.597 [  93.191], Avg:  -260.531 (1.000) <0-01:19:15> ({'r_t':  -743.9543, 'eps':     1.0000, 'critic_loss':    49.6639, 'actor_loss':    -0.3000, 'alpha_loss':    -0.0550, 'eps_e':     1.0000})
+Step:  280000, Reward:  -124.902 [  74.314], Avg:  -260.048 (1.000) <0-01:19:32> ({'r_t':  -707.3208, 'eps':     1.0000, 'critic_loss':    47.0744, 'actor_loss':    -0.3078, 'alpha_loss':    -0.1016, 'eps_e':     1.0000})
+Step:  281000, Reward:  -137.849 [  74.395], Avg:  -259.615 (1.000) <0-01:19:49> ({'r_t':  -760.8175, 'eps':     1.0000, 'critic_loss':    42.1087, 'actor_loss':    -0.3136, 'alpha_loss':    -0.0568, 'eps_e':     1.0000})
+Step:  282000, Reward:  -132.603 [  52.843], Avg:  -259.166 (1.000) <0-01:20:06> ({'r_t':  -795.4746, 'eps':     1.0000, 'critic_loss':    44.5715, 'actor_loss':    -0.2797, 'alpha_loss':    -0.1887, 'eps_e':     1.0000})
+Step:  283000, Reward:  -162.644 [  97.076], Avg:  -258.826 (1.000) <0-01:20:23> ({'r_t':  -653.9184, 'eps':     1.0000, 'critic_loss':    40.4108, 'actor_loss':    -0.2641, 'alpha_loss':    -0.1633, 'eps_e':     1.0000})
+Step:  284000, Reward:  -139.459 [  78.297], Avg:  -258.407 (1.000) <0-01:20:41> ({'r_t':  -735.8451, 'eps':     1.0000, 'critic_loss':    36.5168, 'actor_loss':    -0.2762, 'alpha_loss':    -0.1116, 'eps_e':     1.0000})
+Step:  285000, Reward:  -146.209 [  74.415], Avg:  -258.015 (1.000) <0-01:20:58> ({'r_t':  -778.3369, 'eps':     1.0000, 'critic_loss':    37.7756, 'actor_loss':    -0.2521, 'alpha_loss':    -0.1454, 'eps_e':     1.0000})
+Step:  286000, Reward:  -160.722 [  83.442], Avg:  -257.676 (1.000) <0-01:21:15> ({'r_t':  -755.5840, 'eps':     1.0000, 'critic_loss':    38.7183, 'actor_loss':    -0.2656, 'alpha_loss':    -0.0255, 'eps_e':     1.0000})
+Step:  287000, Reward:  -194.660 [ 101.991], Avg:  -257.457 (1.000) <0-01:21:32> ({'r_t':  -816.0318, 'eps':     1.0000, 'critic_loss':    37.7822, 'actor_loss':    -0.2752, 'alpha_loss':    -0.1652, 'eps_e':     1.0000})
+Step:  288000, Reward:  -149.880 [  97.971], Avg:  -257.085 (1.000) <0-01:21:49> ({'r_t':  -686.6094, 'eps':     1.0000, 'critic_loss':    37.8626, 'actor_loss':    -0.2831, 'alpha_loss':    -0.1569, 'eps_e':     1.0000})
+Step:  289000, Reward:  -150.219 [ 100.587], Avg:  -256.716 (1.000) <0-01:22:06> ({'r_t':  -825.2751, 'eps':     1.0000, 'critic_loss':    35.0299, 'actor_loss':    -0.2567, 'alpha_loss':    -0.1313, 'eps_e':     1.0000})
+Step:  290000, Reward:  -143.770 [  78.752], Avg:  -256.328 (1.000) <0-01:22:23> ({'r_t':  -635.5688, 'eps':     1.0000, 'critic_loss':    31.7800, 'actor_loss':    -0.2402, 'alpha_loss':    -0.2805, 'eps_e':     1.0000})
+Step:  291000, Reward:  -133.240 [  80.429], Avg:  -255.907 (1.000) <0-01:22:41> ({'r_t':  -774.8222, 'eps':     1.0000, 'critic_loss':    26.6164, 'actor_loss':    -0.2334, 'alpha_loss':    -0.1640, 'eps_e':     1.0000})
+Step:  292000, Reward:  -179.684 [  92.510], Avg:  -255.647 (1.000) <0-01:22:58> ({'r_t':  -716.2081, 'eps':     1.0000, 'critic_loss':    30.9914, 'actor_loss':    -0.2379, 'alpha_loss':    -0.2063, 'eps_e':     1.0000})
+Step:  293000, Reward:  -147.853 [  84.947], Avg:  -255.280 (1.000) <0-01:23:15> ({'r_t':  -813.4275, 'eps':     1.0000, 'critic_loss':    29.0543, 'actor_loss':    -0.2304, 'alpha_loss':    -0.2237, 'eps_e':     1.0000})
+Step:  294000, Reward:  -174.382 [ 119.852], Avg:  -255.006 (1.000) <0-01:23:32> ({'r_t':  -612.6067, 'eps':     1.0000, 'critic_loss':    25.8321, 'actor_loss':    -0.2399, 'alpha_loss':    -0.2149, 'eps_e':     1.0000})
+Step:  295000, Reward:  -116.913 [  76.095], Avg:  -254.539 (1.000) <0-01:23:46> ({'r_t':  -605.2724, 'eps':     1.0000, 'critic_loss':    24.7928, 'actor_loss':    -0.2214, 'alpha_loss':    -0.2941, 'eps_e':     1.0000})
+Step:  296000, Reward:  -159.930 [ 101.914], Avg:  -254.221 (1.000) <0-01:23:56> ({'r_t':  -646.3813, 'eps':     1.0000, 'critic_loss':    23.5636, 'actor_loss':    -0.2183, 'alpha_loss':    -0.2542, 'eps_e':     1.0000})
+Step:  297000, Reward:  -188.129 [  95.627], Avg:  -253.999 (1.000) <0-01:24:07> ({'r_t':  -737.5736, 'eps':     1.0000, 'critic_loss':    22.8785, 'actor_loss':    -0.2123, 'alpha_loss':    -0.2157, 'eps_e':     1.0000})
+Step:  298000, Reward:  -153.203 [  86.118], Avg:  -253.662 (1.000) <0-01:24:17> ({'r_t':  -658.1480, 'eps':     1.0000, 'critic_loss':    19.1342, 'actor_loss':    -0.1995, 'alpha_loss':    -0.2837, 'eps_e':     1.0000})
+Step:  299000, Reward:  -138.326 [  81.433], Avg:  -253.277 (1.000) <0-01:24:28> ({'r_t':  -657.8166, 'eps':     1.0000, 'critic_loss':    19.6248, 'actor_loss':    -0.1987, 'alpha_loss':    -0.3208, 'eps_e':     1.0000})
+Step:  300000, Reward:  -124.257 [  75.376], Avg:  -252.849 (1.000) <0-01:24:38> ({'r_t':  -748.6201, 'eps':     1.0000, 'critic_loss':    18.4918, 'actor_loss':    -0.1756, 'alpha_loss':    -0.2602, 'eps_e':     1.0000})
+Step:  301000, Reward:  -169.597 [  99.867], Avg:  -252.573 (1.000) <0-01:24:49> ({'r_t':  -747.1674, 'eps':     1.0000, 'critic_loss':    15.1251, 'actor_loss':    -0.1720, 'alpha_loss':    -0.4079, 'eps_e':     1.0000})
+Step:  302000, Reward:  -125.480 [  63.371], Avg:  -252.154 (1.000) <0-01:24:59> ({'r_t':  -677.3732, 'eps':     1.0000, 'critic_loss':    14.4482, 'actor_loss':    -0.1688, 'alpha_loss':    -0.2831, 'eps_e':     1.0000})
+Step:  303000, Reward:  -161.632 [  80.441], Avg:  -251.856 (1.000) <0-01:25:10> ({'r_t':  -784.4589, 'eps':     1.0000, 'critic_loss':    12.2816, 'actor_loss':    -0.1535, 'alpha_loss':    -0.3530, 'eps_e':     1.0000})
+Step:  304000, Reward:  -139.811 [  71.278], Avg:  -251.488 (1.000) <0-01:25:20> ({'r_t':  -872.2186, 'eps':     1.0000, 'critic_loss':    12.4705, 'actor_loss':    -0.1574, 'alpha_loss':    -0.3069, 'eps_e':     1.0000})
+Step:  305000, Reward:  -148.602 [  88.299], Avg:  -251.152 (1.000) <0-01:25:31> ({'r_t':  -853.2628, 'eps':     1.0000, 'critic_loss':     9.2808, 'actor_loss':    -0.1315, 'alpha_loss':    -0.3472, 'eps_e':     1.0000})
+Step:  306000, Reward:  -435.708 [ 581.586], Avg:  -251.753 (1.000) <0-01:25:41> ({'r_t':  -810.7916, 'eps':     1.0000, 'critic_loss':    12.2096, 'actor_loss':    -0.1387, 'alpha_loss':    -0.3539, 'eps_e':     1.0000})
+Step:  307000, Reward:  -118.815 [  70.952], Avg:  -251.322 (1.000) <0-01:25:52> ({'r_t': -1114.6897, 'eps':     1.0000, 'critic_loss':    19.9597, 'actor_loss':    -0.1324, 'alpha_loss':    -0.3076, 'eps_e':     1.0000})
+Step:  308000, Reward:  -135.948 [  85.495], Avg:  -250.948 (1.000) <0-01:26:02> ({'r_t':  -717.9607, 'eps':     1.0000, 'critic_loss':    19.9527, 'actor_loss':    -0.1352, 'alpha_loss':    -0.3343, 'eps_e':     1.0000})
+Step:  309000, Reward:  -171.304 [  83.256], Avg:  -250.691 (1.000) <0-01:26:13> ({'r_t':  -692.9580, 'eps':     1.0000, 'critic_loss':    17.1521, 'actor_loss':    -0.1481, 'alpha_loss':    -0.2697, 'eps_e':     1.0000})
+Step:  310000, Reward:  -144.869 [  83.324], Avg:  -250.351 (1.000) <0-01:26:24> ({'r_t':  -722.5882, 'eps':     1.0000, 'critic_loss':    15.3069, 'actor_loss':    -0.1317, 'alpha_loss':    -0.4224, 'eps_e':     1.0000})
+Step:  311000, Reward:  -151.100 [ 100.438], Avg:  -250.033 (1.000) <0-01:26:34> ({'r_t':  -714.8883, 'eps':     1.0000, 'critic_loss':    16.6770, 'actor_loss':    -0.1356, 'alpha_loss':    -0.4311, 'eps_e':     1.0000})
+Step:  312000, Reward:  -120.142 [  92.922], Avg:  -249.618 (1.000) <0-01:26:44> ({'r_t':  -695.3764, 'eps':     1.0000, 'critic_loss':    13.2231, 'actor_loss':    -0.1300, 'alpha_loss':    -0.3513, 'eps_e':     1.0000})
+Step:  313000, Reward:  -168.342 [  78.231], Avg:  -249.359 (1.000) <0-01:26:55> ({'r_t':  -744.1713, 'eps':     1.0000, 'critic_loss':    15.9602, 'actor_loss':    -0.1373, 'alpha_loss':    -0.4824, 'eps_e':     1.0000})
+Step:  314000, Reward:  -131.605 [  54.052], Avg:  -248.985 (1.000) <0-01:27:05> ({'r_t':  -790.5189, 'eps':     1.0000, 'critic_loss':    15.8393, 'actor_loss':    -0.1409, 'alpha_loss':    -0.2938, 'eps_e':     1.0000})
+Step:  315000, Reward:  -171.366 [  71.654], Avg:  -248.740 (1.000) <0-01:27:16> ({'r_t':  -722.8556, 'eps':     1.0000, 'critic_loss':    16.2950, 'actor_loss':    -0.1371, 'alpha_loss':    -0.2793, 'eps_e':     1.0000})
+Step:  316000, Reward:  -132.014 [  90.002], Avg:  -248.372 (1.000) <0-01:27:26> ({'r_t':  -642.6255, 'eps':     1.0000, 'critic_loss':    13.7045, 'actor_loss':    -0.1487, 'alpha_loss':    -0.3651, 'eps_e':     1.0000})
+Step:  317000, Reward:  -118.944 [  70.763], Avg:  -247.965 (1.000) <0-01:27:37> ({'r_t':  -735.1689, 'eps':     1.0000, 'critic_loss':    14.3509, 'actor_loss':    -0.1507, 'alpha_loss':    -0.2627, 'eps_e':     1.0000})
+Step:  318000, Reward:   -97.282 [  73.868], Avg:  -247.492 (1.000) <0-01:27:47> ({'r_t':  -763.0602, 'eps':     1.0000, 'critic_loss':    14.3636, 'actor_loss':    -0.1419, 'alpha_loss':    -0.2404, 'eps_e':     1.0000})
+Step:  319000, Reward:  -176.900 [  88.595], Avg:  -247.272 (1.000) <0-01:27:58> ({'r_t':  -845.8798, 'eps':     1.0000, 'critic_loss':    16.9529, 'actor_loss':    -0.1487, 'alpha_loss':     0.1172, 'eps_e':     1.0000})
+Step:  320000, Reward:  -147.944 [  45.034], Avg:  -246.962 (1.000) <0-01:28:08> ({'r_t':  -702.7658, 'eps':     1.0000, 'critic_loss':    18.2441, 'actor_loss':    -0.1640, 'alpha_loss':     0.0546, 'eps_e':     1.0000})
+Step:  321000, Reward:  -150.196 [ 107.413], Avg:  -246.662 (1.000) <0-01:28:19> ({'r_t':  -761.5159, 'eps':     1.0000, 'critic_loss':    13.3589, 'actor_loss':    -0.1834, 'alpha_loss':     0.1843, 'eps_e':     1.0000})
+Step:  322000, Reward:  -184.377 [  66.628], Avg:  -246.469 (1.000) <0-01:28:29> ({'r_t':  -795.7832, 'eps':     1.0000, 'critic_loss':    14.7268, 'actor_loss':    -0.1800, 'alpha_loss':     0.4515, 'eps_e':     1.0000})
+Step:  323000, Reward:  -145.058 [  81.102], Avg:  -246.156 (1.000) <0-01:28:40> ({'r_t':  -722.7661, 'eps':     1.0000, 'critic_loss':    14.9468, 'actor_loss':    -0.1302, 'alpha_loss':    -0.3779, 'eps_e':     1.0000})
+Step:  324000, Reward:  -175.612 [  69.587], Avg:  -245.939 (1.000) <0-01:28:50> ({'r_t':  -801.1061, 'eps':     1.0000, 'critic_loss':    13.6852, 'actor_loss':    -0.1552, 'alpha_loss':    -0.1498, 'eps_e':     1.0000})
+Step:  325000, Reward:  -158.281 [  83.763], Avg:  -245.670 (1.000) <0-01:29:01> ({'r_t':  -774.6845, 'eps':     1.0000, 'critic_loss':    16.0092, 'actor_loss':    -0.1570, 'alpha_loss':     0.2167, 'eps_e':     1.0000})
+Step:  326000, Reward:  -151.553 [  63.827], Avg:  -245.382 (1.000) <0-01:29:11> ({'r_t':  -675.1114, 'eps':     1.0000, 'critic_loss':    15.8911, 'actor_loss':    -0.1335, 'alpha_loss':    -0.2468, 'eps_e':     1.0000})
+Step:  327000, Reward:  -148.922 [  89.874], Avg:  -245.088 (1.000) <0-01:29:22> ({'r_t':  -723.9180, 'eps':     1.0000, 'critic_loss':    14.1033, 'actor_loss':    -0.1248, 'alpha_loss':    -0.3968, 'eps_e':     1.0000})
+Step:  328000, Reward:  -123.680 [  69.978], Avg:  -244.719 (1.000) <0-01:29:33> ({'r_t':  -787.3157, 'eps':     1.0000, 'critic_loss':    15.0494, 'actor_loss':    -0.1266, 'alpha_loss':    -0.2355, 'eps_e':     1.0000})
+Step:  329000, Reward:  -146.076 [  72.294], Avg:  -244.420 (1.000) <0-01:29:43> ({'r_t':  -843.6648, 'eps':     1.0000, 'critic_loss':    11.9267, 'actor_loss':    -0.1187, 'alpha_loss':    -0.4929, 'eps_e':     1.0000})
+Step:  330000, Reward:  -134.302 [  48.076], Avg:  -244.087 (1.000) <0-01:29:54> ({'r_t':  -721.1921, 'eps':     1.0000, 'critic_loss':     9.8522, 'actor_loss':    -0.1223, 'alpha_loss':     0.5988, 'eps_e':     1.0000})
+Step:  331000, Reward:  -183.167 [  80.213], Avg:  -243.904 (1.000) <0-01:30:04> ({'r_t':  -747.1309, 'eps':     1.0000, 'critic_loss':    15.2571, 'actor_loss':    -0.1185, 'alpha_loss':    -0.5676, 'eps_e':     1.0000})
+Step:  332000, Reward:  -194.668 [  83.312], Avg:  -243.756 (1.000) <0-01:30:15> ({'r_t':  -704.4597, 'eps':     1.0000, 'critic_loss':    12.7642, 'actor_loss':    -0.0971, 'alpha_loss':    -0.5842, 'eps_e':     1.0000})
+Step:  333000, Reward:  -147.390 [  99.198], Avg:  -243.467 (1.000) <0-01:30:26> ({'r_t':  -754.2582, 'eps':     1.0000, 'critic_loss':    14.1657, 'actor_loss':    -0.1265, 'alpha_loss':     0.0707, 'eps_e':     1.0000})
+Step:  334000, Reward:  -157.700 [  76.182], Avg:  -243.211 (1.000) <0-01:30:36> ({'r_t':  -761.5274, 'eps':     1.0000, 'critic_loss':    12.3534, 'actor_loss':    -0.1058, 'alpha_loss':    -0.2306, 'eps_e':     1.0000})
+Step:  335000, Reward:  -172.338 [  72.408], Avg:  -243.000 (1.000) <0-01:30:47> ({'r_t':  -681.3641, 'eps':     1.0000, 'critic_loss':    12.1072, 'actor_loss':    -0.1021, 'alpha_loss':    -0.9131, 'eps_e':     1.0000})
+Step:  336000, Reward:  -144.099 [  74.847], Avg:  -242.707 (1.000) <0-01:30:58> ({'r_t':  -755.6858, 'eps':     1.0000, 'critic_loss':    12.5477, 'actor_loss':    -0.0815, 'alpha_loss':    -0.9050, 'eps_e':     1.0000})
+Step:  337000, Reward:  -138.963 [  94.808], Avg:  -242.400 (1.000) <0-01:31:08> ({'r_t':  -821.8890, 'eps':     1.0000, 'critic_loss':    11.4473, 'actor_loss':    -0.0870, 'alpha_loss':    -0.7728, 'eps_e':     1.0000})
+Step:  338000, Reward:  -105.813 [  90.591], Avg:  -241.997 (1.000) <0-01:31:19> ({'r_t':  -732.4706, 'eps':     1.0000, 'critic_loss':    11.0392, 'actor_loss':    -0.0836, 'alpha_loss':    -0.5539, 'eps_e':     1.0000})
+Step:  339000, Reward:  -130.731 [  85.686], Avg:  -241.670 (1.000) <0-01:31:29> ({'r_t':  -859.8182, 'eps':     1.0000, 'critic_loss':    12.3871, 'actor_loss':    -0.1472, 'alpha_loss':    -0.4343, 'eps_e':     1.0000})
+Step:  340000, Reward:  -177.489 [ 116.166], Avg:  -241.482 (1.000) <0-01:31:40> ({'r_t':  -728.6817, 'eps':     1.0000, 'critic_loss':    12.4546, 'actor_loss':    -0.1255, 'alpha_loss':    -0.3405, 'eps_e':     1.0000})
+Step:  341000, Reward:  -129.159 [  93.296], Avg:  -241.153 (1.000) <0-01:31:51> ({'r_t':  -915.6860, 'eps':     1.0000, 'critic_loss':    14.6245, 'actor_loss':    -0.1464, 'alpha_loss':    -0.6168, 'eps_e':     1.0000})
+Step:  342000, Reward:  -194.827 [  91.392], Avg:  -241.018 (1.000) <0-01:32:01> ({'r_t':  -690.6355, 'eps':     1.0000, 'critic_loss':    13.1759, 'actor_loss':    -0.1363, 'alpha_loss':    -0.6210, 'eps_e':     1.0000})
+Step:  343000, Reward:  -155.453 [ 109.861], Avg:  -240.769 (1.000) <0-01:32:12> ({'r_t':  -716.0240, 'eps':     1.0000, 'critic_loss':    14.2776, 'actor_loss':    -0.1204, 'alpha_loss':    -0.5168, 'eps_e':     1.0000})
+Step:  344000, Reward:  -167.930 [  94.472], Avg:  -240.558 (1.000) <0-01:32:23> ({'r_t':  -770.6631, 'eps':     1.0000, 'critic_loss':    12.2680, 'actor_loss':    -0.1353, 'alpha_loss':    -0.4052, 'eps_e':     1.0000})
+Step:  345000, Reward:  -142.797 [  77.112], Avg:  -240.276 (1.000) <0-01:32:33> ({'r_t':  -784.5599, 'eps':     1.0000, 'critic_loss':    11.6980, 'actor_loss':    -0.1179, 'alpha_loss':    -0.4853, 'eps_e':     1.0000})
+Step:  346000, Reward:  -163.544 [  91.891], Avg:  -240.055 (1.000) <0-01:32:44> ({'r_t':  -760.2439, 'eps':     1.0000, 'critic_loss':    16.3863, 'actor_loss':    -0.1138, 'alpha_loss':    -0.1323, 'eps_e':     1.0000})
+Step:  347000, Reward:  -164.248 [ 110.762], Avg:  -239.837 (1.000) <0-01:32:55> ({'r_t':  -731.5970, 'eps':     1.0000, 'critic_loss':    13.9215, 'actor_loss':    -0.0997, 'alpha_loss':    -0.1316, 'eps_e':     1.0000})
+Step:  348000, Reward:  -171.654 [  79.800], Avg:  -239.641 (1.000) <0-01:33:05> ({'r_t':  -755.3058, 'eps':     1.0000, 'critic_loss':    14.3206, 'actor_loss':    -0.1097, 'alpha_loss':    -0.0337, 'eps_e':     1.0000})
+Step:  349000, Reward:  -173.501 [  96.789], Avg:  -239.452 (1.000) <0-01:33:16> ({'r_t':  -682.9957, 'eps':     1.0000, 'critic_loss':     9.3279, 'actor_loss':    -0.1070, 'alpha_loss':     0.3124, 'eps_e':     1.0000})
+Step:  350000, Reward:  -170.278 [ 117.525], Avg:  -239.255 (1.000) <0-01:33:26> ({'r_t':  -775.1387, 'eps':     1.0000, 'critic_loss':    12.3079, 'actor_loss':    -0.1164, 'alpha_loss':     0.6105, 'eps_e':     1.0000})
+Step:  351000, Reward:  -167.560 [ 104.103], Avg:  -239.052 (1.000) <0-01:33:37> ({'r_t':  -686.0610, 'eps':     1.0000, 'critic_loss':    14.5865, 'actor_loss':    -0.1372, 'alpha_loss':     0.3075, 'eps_e':     1.0000})
+Step:  352000, Reward:  -139.434 [  97.242], Avg:  -238.770 (1.000) <0-01:33:48> ({'r_t':  -796.9607, 'eps':     1.0000, 'critic_loss':    11.9813, 'actor_loss':    -0.1216, 'alpha_loss':     0.3901, 'eps_e':     1.0000})
+Step:  353000, Reward:   -99.897 [  65.257], Avg:  -238.377 (1.000) <0-01:33:58> ({'r_t':  -721.9328, 'eps':     1.0000, 'critic_loss':    13.8161, 'actor_loss':    -0.1263, 'alpha_loss':     0.3379, 'eps_e':     1.0000})
+Step:  354000, Reward:  -146.023 [  84.112], Avg:  -238.117 (1.000) <0-01:34:09> ({'r_t':  -752.0656, 'eps':     1.0000, 'critic_loss':    10.1355, 'actor_loss':    -0.1649, 'alpha_loss':     0.2187, 'eps_e':     1.0000})
+Step:  355000, Reward:  -141.045 [  71.932], Avg:  -237.844 (1.000) <0-01:34:19> ({'r_t':  -761.3048, 'eps':     1.0000, 'critic_loss':    18.5783, 'actor_loss':    -0.1494, 'alpha_loss':     0.0485, 'eps_e':     1.0000})
+Step:  356000, Reward:  -138.006 [  86.298], Avg:  -237.565 (1.000) <0-01:34:30> ({'r_t':  -805.1949, 'eps':     1.0000, 'critic_loss':    15.6339, 'actor_loss':    -0.1489, 'alpha_loss':    -0.0027, 'eps_e':     1.0000})
+Step:  357000, Reward:  -150.994 [  64.519], Avg:  -237.323 (1.000) <0-01:34:41> ({'r_t':  -772.1288, 'eps':     1.0000, 'critic_loss':    13.3003, 'actor_loss':    -0.1773, 'alpha_loss':     0.2554, 'eps_e':     1.0000})
+Step:  358000, Reward:  -158.700 [  80.255], Avg:  -237.104 (1.000) <0-01:34:51> ({'r_t':  -803.9705, 'eps':     1.0000, 'critic_loss':    14.7251, 'actor_loss':    -0.1733, 'alpha_loss':     0.3582, 'eps_e':     1.0000})
+Step:  359000, Reward:  -141.916 [  92.823], Avg:  -236.840 (1.000) <0-01:35:02> ({'r_t':  -882.1670, 'eps':     1.0000, 'critic_loss':    13.6027, 'actor_loss':    -0.1669, 'alpha_loss':     0.1716, 'eps_e':     1.0000})
+Step:  360000, Reward:  -146.672 [  67.214], Avg:  -236.590 (1.000) <0-01:35:12> ({'r_t':  -797.5373, 'eps':     1.0000, 'critic_loss':    13.1126, 'actor_loss':    -0.1584, 'alpha_loss':     0.1602, 'eps_e':     1.0000})
+Step:  361000, Reward:  -135.753 [  37.791], Avg:  -236.311 (1.000) <0-01:35:23> ({'r_t':  -815.6980, 'eps':     1.0000, 'critic_loss':    14.7444, 'actor_loss':    -0.1868, 'alpha_loss':     0.4154, 'eps_e':     1.0000})
+Step:  362000, Reward:  -182.190 [ 115.176], Avg:  -236.162 (1.000) <0-01:35:34> ({'r_t':  -786.6199, 'eps':     1.0000, 'critic_loss':    15.3979, 'actor_loss':    -0.1801, 'alpha_loss':     0.4338, 'eps_e':     1.0000})
+Step:  363000, Reward:  -177.637 [  82.616], Avg:  -236.001 (1.000) <0-01:35:44> ({'r_t':  -835.0710, 'eps':     1.0000, 'critic_loss':    13.7310, 'actor_loss':    -0.1665, 'alpha_loss':     0.3988, 'eps_e':     1.0000})
+Step:  364000, Reward:  -133.371 [  79.002], Avg:  -235.720 (1.000) <0-01:35:55> ({'r_t':  -821.6854, 'eps':     1.0000, 'critic_loss':    16.1785, 'actor_loss':    -0.1836, 'alpha_loss':     0.5374, 'eps_e':     1.0000})
+Step:  365000, Reward:  -177.735 [  75.770], Avg:  -235.562 (1.000) <0-01:36:06> ({'r_t':  -738.8375, 'eps':     1.0000, 'critic_loss':    11.9492, 'actor_loss':    -0.1753, 'alpha_loss':     0.3030, 'eps_e':     1.0000})
+Step:  366000, Reward:  -178.967 [ 102.688], Avg:  -235.407 (1.000) <0-01:36:16> ({'r_t':  -719.5399, 'eps':     1.0000, 'critic_loss':    11.0510, 'actor_loss':    -0.1617, 'alpha_loss':     0.2587, 'eps_e':     1.0000})
+Step:  367000, Reward:  -135.463 [  71.813], Avg:  -235.136 (1.000) <0-01:36:27> ({'r_t':  -735.1744, 'eps':     1.0000, 'critic_loss':    14.7930, 'actor_loss':    -0.1845, 'alpha_loss':     0.2185, 'eps_e':     1.0000})
+Step:  368000, Reward:  -177.607 [ 116.808], Avg:  -234.980 (1.000) <0-01:36:37> ({'r_t':  -804.0796, 'eps':     1.0000, 'critic_loss':    14.0951, 'actor_loss':    -0.1512, 'alpha_loss':     0.1159, 'eps_e':     1.0000})
+Step:  369000, Reward:  -139.739 [  76.674], Avg:  -234.723 (1.000) <0-01:36:48> ({'r_t':  -752.9334, 'eps':     1.0000, 'critic_loss':    10.6296, 'actor_loss':    -0.1350, 'alpha_loss':     0.1719, 'eps_e':     1.0000})
+Step:  370000, Reward:  -171.998 [  98.466], Avg:  -234.554 (1.000) <0-01:36:59> ({'r_t':  -717.0289, 'eps':     1.0000, 'critic_loss':     6.9721, 'actor_loss':    -0.1056, 'alpha_loss':     0.2666, 'eps_e':     1.0000})
+Step:  371000, Reward:  -125.774 [  95.538], Avg:  -234.261 (1.000) <0-01:37:09> ({'r_t':  -746.7654, 'eps':     1.0000, 'critic_loss':     8.3624, 'actor_loss':    -0.1273, 'alpha_loss':     0.4500, 'eps_e':     1.0000})
+Step:  372000, Reward:  -128.832 [  79.795], Avg:  -233.978 (1.000) <0-01:37:20> ({'r_t':  -814.9991, 'eps':     1.0000, 'critic_loss':     8.6191, 'actor_loss':    -0.1070, 'alpha_loss':     0.2759, 'eps_e':     1.0000})
+Step:  373000, Reward:  -111.567 [  92.154], Avg:  -233.651 (1.000) <0-01:37:31> ({'r_t':  -807.4840, 'eps':     1.0000, 'critic_loss':     7.9010, 'actor_loss':    -0.1100, 'alpha_loss':     0.3392, 'eps_e':     1.0000})
+Step:  374000, Reward:  -161.017 [  93.031], Avg:  -233.457 (1.000) <0-01:37:41> ({'r_t':  -765.0009, 'eps':     1.0000, 'critic_loss':     7.7224, 'actor_loss':    -0.1238, 'alpha_loss':     0.3956, 'eps_e':     1.0000})
+Step:  375000, Reward:  -163.414 [ 103.169], Avg:  -233.271 (1.000) <0-01:37:52> ({'r_t':  -889.4010, 'eps':     1.0000, 'critic_loss':     7.0278, 'actor_loss':    -0.1201, 'alpha_loss':     0.3620, 'eps_e':     1.0000})
+Step:  376000, Reward:  -173.871 [  82.905], Avg:  -233.114 (1.000) <0-01:38:03> ({'r_t':  -780.6463, 'eps':     1.0000, 'critic_loss':     6.4286, 'actor_loss':    -0.1032, 'alpha_loss':     0.2790, 'eps_e':     1.0000})
+Step:  377000, Reward:  -118.570 [  56.389], Avg:  -232.811 (1.000) <0-01:38:13> ({'r_t':  -748.2927, 'eps':     1.0000, 'critic_loss':     6.3196, 'actor_loss':    -0.0792, 'alpha_loss':     0.0990, 'eps_e':     1.0000})
+Step:  378000, Reward:  -173.467 [ 104.041], Avg:  -232.654 (1.000) <0-01:38:24> ({'r_t':  -716.4037, 'eps':     1.0000, 'critic_loss':     7.1420, 'actor_loss':    -0.0725, 'alpha_loss':     0.1409, 'eps_e':     1.0000})
+Step:  379000, Reward:  -137.129 [  85.730], Avg:  -232.403 (1.000) <0-01:38:35> ({'r_t':  -751.1406, 'eps':     1.0000, 'critic_loss':     6.3328, 'actor_loss':    -0.0825, 'alpha_loss':     0.2773, 'eps_e':     1.0000})
+Step:  380000, Reward:  -119.244 [  71.081], Avg:  -232.106 (1.000) <0-01:38:45> ({'r_t':  -763.2083, 'eps':     1.0000, 'critic_loss':     7.9675, 'actor_loss':    -0.0986, 'alpha_loss':     0.2202, 'eps_e':     1.0000})
+Step:  381000, Reward:  -142.397 [  73.830], Avg:  -231.871 (1.000) <0-01:38:56> ({'r_t':  -841.7482, 'eps':     1.0000, 'critic_loss':     6.6192, 'actor_loss':    -0.0852, 'alpha_loss':     0.1907, 'eps_e':     1.0000})
+Step:  382000, Reward:  -111.969 [  62.965], Avg:  -231.558 (1.000) <0-01:39:07> ({'r_t':  -781.4010, 'eps':     1.0000, 'critic_loss':     6.9363, 'actor_loss':    -0.0890, 'alpha_loss':     0.2226, 'eps_e':     1.0000})
+Step:  383000, Reward:  -154.167 [  84.111], Avg:  -231.356 (1.000) <0-01:39:17> ({'r_t':  -753.5640, 'eps':     1.0000, 'critic_loss':     8.2239, 'actor_loss':    -0.0966, 'alpha_loss':     0.2306, 'eps_e':     1.0000})
+Step:  384000, Reward:  -157.661 [  99.018], Avg:  -231.165 (1.000) <0-01:39:28> ({'r_t':  -720.9587, 'eps':     1.0000, 'critic_loss':     6.7068, 'actor_loss':    -0.0852, 'alpha_loss':     0.2053, 'eps_e':     1.0000})
+Step:  385000, Reward:  -148.880 [  62.640], Avg:  -230.952 (1.000) <0-01:39:38> ({'r_t':  -746.5476, 'eps':     1.0000, 'critic_loss':     7.5316, 'actor_loss':    -0.0901, 'alpha_loss':    -0.0160, 'eps_e':     1.0000})
+Step:  386000, Reward:  -151.648 [  79.659], Avg:  -230.747 (1.000) <0-01:39:49> ({'r_t':  -803.6910, 'eps':     1.0000, 'critic_loss':     7.5625, 'actor_loss':    -0.1144, 'alpha_loss':     0.1860, 'eps_e':     1.0000})
+Step:  387000, Reward:  -164.627 [  80.463], Avg:  -230.576 (1.000) <0-01:40:00> ({'r_t':  -812.0997, 'eps':     1.0000, 'critic_loss':     6.7705, 'actor_loss':    -0.0908, 'alpha_loss':     0.1807, 'eps_e':     1.0000})
+Step:  388000, Reward:  -143.212 [  74.296], Avg:  -230.352 (1.000) <0-01:40:10> ({'r_t':  -746.1380, 'eps':     1.0000, 'critic_loss':     6.1955, 'actor_loss':    -0.0734, 'alpha_loss':    -0.0860, 'eps_e':     1.0000})
+Step:  389000, Reward:  -186.378 [  82.929], Avg:  -230.239 (1.000) <0-01:40:21> ({'r_t':  -816.6535, 'eps':     1.0000, 'critic_loss':     7.3132, 'actor_loss':    -0.0788, 'alpha_loss':    -0.0080, 'eps_e':     1.0000})
+Step:  390000, Reward:  -161.266 [  97.182], Avg:  -230.063 (1.000) <0-01:40:32> ({'r_t':  -780.4076, 'eps':     1.0000, 'critic_loss':     6.8750, 'actor_loss':    -0.0736, 'alpha_loss':    -0.2496, 'eps_e':     1.0000})
+Step:  391000, Reward:  -155.814 [  76.814], Avg:  -229.873 (1.000) <0-01:40:42> ({'r_t':  -799.1171, 'eps':     1.0000, 'critic_loss':     8.1861, 'actor_loss':    -0.0580, 'alpha_loss':    -0.0790, 'eps_e':     1.0000})
+Step:  392000, Reward:  -143.695 [  72.155], Avg:  -229.654 (1.000) <0-01:40:53> ({'r_t':  -795.7855, 'eps':     1.0000, 'critic_loss':     8.4942, 'actor_loss':    -0.0664, 'alpha_loss':     0.0513, 'eps_e':     1.0000})
+Step:  393000, Reward:  -123.966 [  71.325], Avg:  -229.386 (1.000) <0-01:41:04> ({'r_t':  -810.9691, 'eps':     1.0000, 'critic_loss':     8.3275, 'actor_loss':    -0.0674, 'alpha_loss':    -0.0987, 'eps_e':     1.0000})
+Step:  394000, Reward:  -182.950 [  94.017], Avg:  -229.268 (1.000) <0-01:41:14> ({'r_t':  -781.6882, 'eps':     1.0000, 'critic_loss':     8.3105, 'actor_loss':    -0.0459, 'alpha_loss':    -0.2145, 'eps_e':     1.0000})
+Step:  395000, Reward:  -160.222 [  92.422], Avg:  -229.094 (1.000) <0-01:41:25> ({'r_t':  -721.4753, 'eps':     1.0000, 'critic_loss':     8.1005, 'actor_loss':    -0.0540, 'alpha_loss':    -0.1361, 'eps_e':     1.0000})
+Step:  396000, Reward:  -153.042 [  91.786], Avg:  -228.902 (1.000) <0-01:41:36> ({'r_t':  -739.9226, 'eps':     1.0000, 'critic_loss':     9.1870, 'actor_loss':    -0.0437, 'alpha_loss':    -0.3811, 'eps_e':     1.0000})
+Step:  397000, Reward:  -119.529 [  81.201], Avg:  -228.627 (1.000) <0-01:41:46> ({'r_t':  -748.9231, 'eps':     1.0000, 'critic_loss':     7.8904, 'actor_loss':    -0.0483, 'alpha_loss':    -0.2938, 'eps_e':     1.0000})
+Step:  398000, Reward:  -145.665 [ 126.309], Avg:  -228.419 (1.000) <0-01:41:57> ({'r_t':  -796.4958, 'eps':     1.0000, 'critic_loss':     8.7070, 'actor_loss':    -0.0653, 'alpha_loss':    -0.1359, 'eps_e':     1.0000})
+Step:  399000, Reward:  -148.364 [  83.213], Avg:  -228.219 (1.000) <0-01:42:08> ({'r_t':  -779.4511, 'eps':     1.0000, 'critic_loss':     9.9911, 'actor_loss':    -0.0706, 'alpha_loss':    -0.2992, 'eps_e':     1.0000})
+Step:  400000, Reward:  -181.433 [  87.549], Avg:  -228.103 (1.000) <0-01:42:18> ({'r_t':  -789.6780, 'eps':     1.0000, 'critic_loss':     8.1116, 'actor_loss':    -0.0467, 'alpha_loss':    -0.3067, 'eps_e':     1.0000})
+Step:  401000, Reward:  -154.466 [  74.452], Avg:  -227.919 (1.000) <0-01:42:29> ({'r_t':  -807.7175, 'eps':     1.0000, 'critic_loss':     8.6474, 'actor_loss':    -0.0607, 'alpha_loss':    -0.4390, 'eps_e':     1.0000})
+Step:  402000, Reward:  -148.066 [  73.444], Avg:  -227.721 (1.000) <0-01:42:39> ({'r_t':  -790.0032, 'eps':     1.0000, 'critic_loss':     9.2966, 'actor_loss':    -0.0515, 'alpha_loss':    -0.2548, 'eps_e':     1.0000})
+Step:  403000, Reward:  -127.665 [  76.654], Avg:  -227.474 (1.000) <0-01:42:50> ({'r_t':  -823.2612, 'eps':     1.0000, 'critic_loss':     7.6947, 'actor_loss':    -0.0502, 'alpha_loss':    -0.1575, 'eps_e':     1.0000})
+Step:  404000, Reward:  -126.812 [  94.603], Avg:  -227.225 (1.000) <0-01:43:01> ({'r_t':  -841.2358, 'eps':     1.0000, 'critic_loss':     7.8516, 'actor_loss':    -0.0509, 'alpha_loss':    -0.2603, 'eps_e':     1.0000})
+Step:  405000, Reward:  -195.529 [  90.231], Avg:  -227.147 (1.000) <0-01:43:12> ({'r_t':  -745.4805, 'eps':     1.0000, 'critic_loss':     8.1849, 'actor_loss':    -0.0442, 'alpha_loss':    -0.4551, 'eps_e':     1.0000})
+Step:  406000, Reward:  -176.492 [  80.737], Avg:  -227.022 (1.000) <0-01:43:22> ({'r_t':  -722.9272, 'eps':     1.0000, 'critic_loss':     9.0840, 'actor_loss':    -0.0586, 'alpha_loss':    -0.4649, 'eps_e':     1.0000})
+Step:  407000, Reward:  -168.995 [  89.869], Avg:  -226.880 (1.000) <0-01:43:33> ({'r_t':  -818.7313, 'eps':     1.0000, 'critic_loss':     9.6258, 'actor_loss':    -0.0607, 'alpha_loss':    -0.4310, 'eps_e':     1.0000})
+Step:  408000, Reward:  -177.348 [ 107.001], Avg:  -226.759 (1.000) <0-01:43:43> ({'r_t':  -726.9240, 'eps':     1.0000, 'critic_loss':     8.7374, 'actor_loss':    -0.0638, 'alpha_loss':    -0.1906, 'eps_e':     1.0000})
+Step:  409000, Reward:  -142.916 [  73.928], Avg:  -226.555 (1.000) <0-01:43:54> ({'r_t':  -774.4633, 'eps':     1.0000, 'critic_loss':     9.2226, 'actor_loss':    -0.0613, 'alpha_loss':    -0.2903, 'eps_e':     1.0000})
+Step:  410000, Reward:  -171.022 [  56.168], Avg:  -226.420 (1.000) <0-01:44:05> ({'r_t':  -759.0092, 'eps':     1.0000, 'critic_loss':     7.8854, 'actor_loss':    -0.0879, 'alpha_loss':     0.1019, 'eps_e':     1.0000})
+Step:  411000, Reward:  -169.219 [ 106.460], Avg:  -226.281 (1.000) <0-01:44:16> ({'r_t':  -705.9414, 'eps':     1.0000, 'critic_loss':     9.1304, 'actor_loss':    -0.1081, 'alpha_loss':     0.1493, 'eps_e':     1.0000})
+Step:  412000, Reward:  -148.899 [  86.213], Avg:  -226.093 (1.000) <0-01:44:26> ({'r_t':  -737.8604, 'eps':     1.0000, 'critic_loss':     9.0966, 'actor_loss':    -0.1337, 'alpha_loss':     0.2196, 'eps_e':     1.0000})
+Step:  413000, Reward:  -162.895 [  78.988], Avg:  -225.941 (1.000) <0-01:44:37> ({'r_t':  -789.6016, 'eps':     1.0000, 'critic_loss':     8.1200, 'actor_loss':    -0.1221, 'alpha_loss':    -0.0637, 'eps_e':     1.0000})
+Step:  414000, Reward:  -155.494 [  94.185], Avg:  -225.771 (1.000) <0-01:44:48> ({'r_t':  -831.8146, 'eps':     1.0000, 'critic_loss':     9.3572, 'actor_loss':    -0.1396, 'alpha_loss':    -0.1406, 'eps_e':     1.0000})
+Step:  415000, Reward:  -137.320 [  82.855], Avg:  -225.558 (1.000) <0-01:44:58> ({'r_t':  -746.9667, 'eps':     1.0000, 'critic_loss':     7.6274, 'actor_loss':    -0.1401, 'alpha_loss':    -0.1127, 'eps_e':     1.0000})
+Step:  416000, Reward:  -163.913 [ 105.418], Avg:  -225.410 (1.000) <0-01:45:09> ({'r_t':  -816.3836, 'eps':     1.0000, 'critic_loss':     7.9759, 'actor_loss':    -0.1258, 'alpha_loss':    -0.1411, 'eps_e':     1.0000})
+Step:  417000, Reward:  -152.448 [  90.340], Avg:  -225.236 (1.000) <0-01:45:19> ({'r_t':  -722.9886, 'eps':     1.0000, 'critic_loss':     7.0776, 'actor_loss':    -0.1743, 'alpha_loss':     0.5163, 'eps_e':     1.0000})
+Step:  418000, Reward:  -105.085 [  55.746], Avg:  -224.949 (1.000) <0-01:45:30> ({'r_t':  -851.2661, 'eps':     1.0000, 'critic_loss':     7.7526, 'actor_loss':    -0.1717, 'alpha_loss':     0.5110, 'eps_e':     1.0000})
+Step:  419000, Reward:  -133.400 [  98.735], Avg:  -224.731 (1.000) <0-01:45:41> ({'r_t':  -821.8486, 'eps':     1.0000, 'critic_loss':     7.2991, 'actor_loss':    -0.1773, 'alpha_loss':     0.5354, 'eps_e':     1.0000})
+Step:  420000, Reward:  -142.989 [  74.743], Avg:  -224.537 (1.000) <0-01:45:51> ({'r_t':  -662.4174, 'eps':     1.0000, 'critic_loss':     7.1546, 'actor_loss':    -0.1873, 'alpha_loss':     0.6173, 'eps_e':     1.0000})
+Step:  421000, Reward:  -154.767 [  74.861], Avg:  -224.372 (1.000) <0-01:46:02> ({'r_t':  -664.8794, 'eps':     1.0000, 'critic_loss':     6.7777, 'actor_loss':    -0.2101, 'alpha_loss':     1.3621, 'eps_e':     1.0000})
+Step:  422000, Reward:  -181.821 [  98.523], Avg:  -224.271 (1.000) <0-01:46:13> ({'r_t':  -777.0817, 'eps':     1.0000, 'critic_loss':     7.2164, 'actor_loss':    -0.1756, 'alpha_loss':     0.5562, 'eps_e':     1.0000})
+Step:  423000, Reward:  -139.169 [  87.936], Avg:  -224.070 (1.000) <0-01:46:23> ({'r_t':  -758.3149, 'eps':     1.0000, 'critic_loss':     7.7327, 'actor_loss':    -0.1560, 'alpha_loss':     0.3147, 'eps_e':     1.0000})
+Step:  424000, Reward:  -146.030 [  77.509], Avg:  -223.887 (1.000) <0-01:46:34> ({'r_t':  -719.7518, 'eps':     1.0000, 'critic_loss':     7.7368, 'actor_loss':    -0.1598, 'alpha_loss':     0.2424, 'eps_e':     1.0000})
+Step:  425000, Reward:  -142.733 [  96.857], Avg:  -223.696 (1.000) <0-01:46:44> ({'r_t':  -764.2908, 'eps':     1.0000, 'critic_loss':     5.9916, 'actor_loss':    -0.1417, 'alpha_loss':     0.0122, 'eps_e':     1.0000})
+Step:  426000, Reward:  -116.457 [ 104.670], Avg:  -223.445 (1.000) <0-01:46:55> ({'r_t':  -762.4907, 'eps':     1.0000, 'critic_loss':     6.4369, 'actor_loss':    -0.1230, 'alpha_loss':    -0.1810, 'eps_e':     1.0000})
+Step:  427000, Reward:  -113.332 [  96.644], Avg:  -223.188 (1.000) <0-01:47:06> ({'r_t':  -812.2852, 'eps':     1.0000, 'critic_loss':     6.7319, 'actor_loss':    -0.1435, 'alpha_loss':    -0.0089, 'eps_e':     1.0000})
+Step:  428000, Reward:  -132.509 [  52.799], Avg:  -222.976 (1.000) <0-01:47:16> ({'r_t':  -776.1677, 'eps':     1.0000, 'critic_loss':     6.7022, 'actor_loss':    -0.1347, 'alpha_loss':     0.0581, 'eps_e':     1.0000})
+Step:  429000, Reward:  -119.708 [  66.243], Avg:  -222.736 (1.000) <0-01:47:27> ({'r_t':  -655.4508, 'eps':     1.0000, 'critic_loss':     6.1769, 'actor_loss':    -0.1299, 'alpha_loss':    -0.1619, 'eps_e':     1.0000})
+Step:  430000, Reward:  -165.342 [ 101.078], Avg:  -222.603 (1.000) <0-01:47:38> ({'r_t':  -790.7361, 'eps':     1.0000, 'critic_loss':     6.0474, 'actor_loss':    -0.1382, 'alpha_loss':     0.0470, 'eps_e':     1.0000})
+Step:  431000, Reward:  -139.342 [  78.785], Avg:  -222.410 (1.000) <0-01:47:48> ({'r_t':  -733.5090, 'eps':     1.0000, 'critic_loss':     6.3982, 'actor_loss':    -0.1323, 'alpha_loss':     0.0074, 'eps_e':     1.0000})
+Step:  432000, Reward:  -161.478 [ 104.516], Avg:  -222.270 (1.000) <0-01:47:59> ({'r_t':  -845.3389, 'eps':     1.0000, 'critic_loss':     6.5506, 'actor_loss':    -0.1242, 'alpha_loss':     0.0087, 'eps_e':     1.0000})
+Step:  433000, Reward:  -134.110 [  79.824], Avg:  -222.067 (1.000) <0-01:48:10> ({'r_t':  -861.1062, 'eps':     1.0000, 'critic_loss':     7.2344, 'actor_loss':    -0.1181, 'alpha_loss':    -0.1731, 'eps_e':     1.0000})
+Step:  434000, Reward:  -149.281 [ 114.194], Avg:  -221.899 (1.000) <0-01:48:20> ({'r_t':  -799.3600, 'eps':     1.0000, 'critic_loss':     5.6821, 'actor_loss':    -0.1228, 'alpha_loss':     0.0515, 'eps_e':     1.0000})
+Step:  435000, Reward:  -141.017 [  99.780], Avg:  -221.714 (1.000) <0-01:48:31> ({'r_t':  -762.0012, 'eps':     1.0000, 'critic_loss':     7.0727, 'actor_loss':    -0.1195, 'alpha_loss':     0.0212, 'eps_e':     1.0000})
+Step:  436000, Reward:  -141.321 [  69.798], Avg:  -221.530 (1.000) <0-01:48:42> ({'r_t':  -712.5648, 'eps':     1.0000, 'critic_loss':     6.5287, 'actor_loss':    -0.1118, 'alpha_loss':    -0.0482, 'eps_e':     1.0000})
+Step:  437000, Reward:  -112.296 [ 103.715], Avg:  -221.280 (1.000) <0-01:48:52> ({'r_t':  -797.0056, 'eps':     1.0000, 'critic_loss':     6.6256, 'actor_loss':    -0.1214, 'alpha_loss':    -0.0481, 'eps_e':     1.0000})
+Step:  438000, Reward:  -133.366 [  66.780], Avg:  -221.080 (1.000) <0-01:49:03> ({'r_t':  -714.6093, 'eps':     1.0000, 'critic_loss':     7.1949, 'actor_loss':    -0.1245, 'alpha_loss':     0.0082, 'eps_e':     1.0000})
+Step:  439000, Reward:  -143.436 [  89.553], Avg:  -220.904 (1.000) <0-01:49:14> ({'r_t':  -710.0159, 'eps':     1.0000, 'critic_loss':     7.5351, 'actor_loss':    -0.1176, 'alpha_loss':     0.0379, 'eps_e':     1.0000})
+Step:  440000, Reward:  -105.352 [  69.628], Avg:  -220.642 (1.000) <0-01:49:24> ({'r_t':  -737.2383, 'eps':     1.0000, 'critic_loss':     5.4970, 'actor_loss':    -0.1121, 'alpha_loss':     0.0115, 'eps_e':     1.0000})
+Step:  441000, Reward:  -119.764 [  77.876], Avg:  -220.413 (1.000) <0-01:49:35> ({'r_t':  -769.3749, 'eps':     1.0000, 'critic_loss':     7.4118, 'actor_loss':    -0.0964, 'alpha_loss':    -0.3075, 'eps_e':     1.0000})
+Step:  442000, Reward:  -105.534 [  55.721], Avg:  -220.154 (1.000) <0-01:49:45> ({'r_t':  -825.4176, 'eps':     1.0000, 'critic_loss':     6.6101, 'actor_loss':    -0.0884, 'alpha_loss':    -0.2294, 'eps_e':     1.0000})
+Step:  443000, Reward:  -167.942 [ 105.222], Avg:  -220.037 (1.000) <0-01:49:56> ({'r_t':  -735.4765, 'eps':     1.0000, 'critic_loss':     5.7309, 'actor_loss':    -0.0808, 'alpha_loss':    -0.4117, 'eps_e':     1.0000})
+Step:  444000, Reward:  -116.886 [  79.025], Avg:  -219.805 (1.000) <0-01:50:07> ({'r_t':  -723.9300, 'eps':     1.0000, 'critic_loss':     7.1790, 'actor_loss':    -0.0872, 'alpha_loss':    -0.2183, 'eps_e':     1.0000})
+Step:  445000, Reward:  -155.407 [  66.644], Avg:  -219.660 (1.000) <0-01:50:17> ({'r_t':  -787.9468, 'eps':     1.0000, 'critic_loss':     6.2829, 'actor_loss':    -0.0885, 'alpha_loss':     0.0182, 'eps_e':     1.0000})
+Step:  446000, Reward:  -162.578 [  76.709], Avg:  -219.533 (1.000) <0-01:50:28> ({'r_t':  -775.6000, 'eps':     1.0000, 'critic_loss':     5.6011, 'actor_loss':    -0.0738, 'alpha_loss':    -0.3821, 'eps_e':     1.0000})
+Step:  447000, Reward:  -159.106 [  93.409], Avg:  -219.398 (1.000) <0-01:50:38> ({'r_t':  -727.0917, 'eps':     1.0000, 'critic_loss':     6.5366, 'actor_loss':    -0.0706, 'alpha_loss':    -0.4787, 'eps_e':     1.0000})
+Step:  448000, Reward:  -144.634 [  78.267], Avg:  -219.231 (1.000) <0-01:50:49> ({'r_t':  -741.9005, 'eps':     1.0000, 'critic_loss':     5.4976, 'actor_loss':    -0.0634, 'alpha_loss':    -0.2024, 'eps_e':     1.0000})
+Step:  449000, Reward:  -131.999 [  91.089], Avg:  -219.037 (1.000) <0-01:51:00> ({'r_t':  -811.6053, 'eps':     1.0000, 'critic_loss':     6.4066, 'actor_loss':    -0.0687, 'alpha_loss':    -0.2383, 'eps_e':     1.0000})
+Step:  450000, Reward:  -147.594 [  72.914], Avg:  -218.879 (1.000) <0-01:51:10> ({'r_t':  -747.4610, 'eps':     1.0000, 'critic_loss':     6.5951, 'actor_loss':    -0.0560, 'alpha_loss':    -0.4559, 'eps_e':     1.0000})
+Step:  451000, Reward:  -159.857 [  80.609], Avg:  -218.748 (1.000) <0-01:51:21> ({'r_t':  -789.4311, 'eps':     1.0000, 'critic_loss':     7.1682, 'actor_loss':    -0.0699, 'alpha_loss':    -0.0482, 'eps_e':     1.0000})
+Step:  452000, Reward:  -148.948 [  87.189], Avg:  -218.594 (1.000) <0-01:51:31> ({'r_t':  -821.5194, 'eps':     1.0000, 'critic_loss':     6.1409, 'actor_loss':    -0.0577, 'alpha_loss':    -0.2831, 'eps_e':     1.0000})
+Step:  453000, Reward:  -151.030 [ 105.038], Avg:  -218.445 (1.000) <0-01:51:42> ({'r_t':  -734.7605, 'eps':     1.0000, 'critic_loss':     5.6744, 'actor_loss':    -0.0566, 'alpha_loss':    -0.0044, 'eps_e':     1.0000})
+Step:  454000, Reward:  -166.480 [  89.217], Avg:  -218.331 (1.000) <0-01:51:53> ({'r_t':  -786.2740, 'eps':     1.0000, 'critic_loss':     5.7330, 'actor_loss':    -0.0550, 'alpha_loss':    -0.1321, 'eps_e':     1.0000})
+Step:  455000, Reward:  -134.820 [  88.704], Avg:  -218.148 (1.000) <0-01:52:03> ({'r_t':  -762.3034, 'eps':     1.0000, 'critic_loss':     5.6289, 'actor_loss':    -0.0525, 'alpha_loss':     0.0002, 'eps_e':     1.0000})
+Step:  456000, Reward:  -132.994 [  74.879], Avg:  -217.962 (1.000) <0-01:52:14> ({'r_t':  -761.3396, 'eps':     1.0000, 'critic_loss':     6.2977, 'actor_loss':    -0.0447, 'alpha_loss':    -0.0344, 'eps_e':     1.0000})
+Step:  457000, Reward:  -137.715 [  90.510], Avg:  -217.787 (1.000) <0-01:52:24> ({'r_t':  -811.7664, 'eps':     1.0000, 'critic_loss':     6.0103, 'actor_loss':    -0.0437, 'alpha_loss':    -0.1469, 'eps_e':     1.0000})
+Step:  458000, Reward:  -127.116 [  94.035], Avg:  -217.589 (1.000) <0-01:52:35> ({'r_t':  -782.7758, 'eps':     1.0000, 'critic_loss':     4.8984, 'actor_loss':    -0.0393, 'alpha_loss':    -0.2259, 'eps_e':     1.0000})
+Step:  459000, Reward:  -137.124 [  94.903], Avg:  -217.414 (1.000) <0-01:52:46> ({'r_t':  -686.3167, 'eps':     1.0000, 'critic_loss':     6.3783, 'actor_loss':    -0.0386, 'alpha_loss':    -0.2620, 'eps_e':     1.0000})
+Step:  460000, Reward:  -147.164 [ 102.261], Avg:  -217.262 (1.000) <0-01:52:56> ({'r_t':  -734.4849, 'eps':     1.0000, 'critic_loss':     5.7440, 'actor_loss':    -0.0411, 'alpha_loss':    -0.1788, 'eps_e':     1.0000})
+Step:  461000, Reward:  -112.734 [  76.375], Avg:  -217.035 (1.000) <0-01:53:07> ({'r_t':  -696.6488, 'eps':     1.0000, 'critic_loss':     5.5908, 'actor_loss':    -0.0345, 'alpha_loss':    -0.0313, 'eps_e':     1.0000})
+Step:  462000, Reward:  -189.365 [  93.289], Avg:  -216.976 (1.000) <0-01:53:17> ({'r_t':  -680.4850, 'eps':     1.0000, 'critic_loss':     5.6325, 'actor_loss':    -0.0312, 'alpha_loss':    -0.3258, 'eps_e':     1.0000})
+Step:  463000, Reward:  -149.652 [ 101.367], Avg:  -216.831 (1.000) <0-01:53:28> ({'r_t':  -688.7486, 'eps':     1.0000, 'critic_loss':     5.7778, 'actor_loss':    -0.0311, 'alpha_loss':    -0.3256, 'eps_e':     1.0000})
+Step:  464000, Reward:  -127.350 [  76.533], Avg:  -216.638 (1.000) <0-01:53:39> ({'r_t':  -643.8727, 'eps':     1.0000, 'critic_loss':     5.5651, 'actor_loss':    -0.0286, 'alpha_loss':    -0.1617, 'eps_e':     1.0000})
+Step:  465000, Reward:  -142.927 [ 114.924], Avg:  -216.480 (1.000) <0-01:53:49> ({'r_t':  -801.8331, 'eps':     1.0000, 'critic_loss':     5.6150, 'actor_loss':    -0.0362, 'alpha_loss':    -0.2461, 'eps_e':     1.0000})
+Step:  466000, Reward:  -130.036 [ 102.577], Avg:  -216.295 (1.000) <0-01:54:00> ({'r_t':  -737.9446, 'eps':     1.0000, 'critic_loss':     6.5230, 'actor_loss':    -0.0275, 'alpha_loss':    -0.4945, 'eps_e':     1.0000})
+Step:  467000, Reward:  -173.100 [  85.428], Avg:  -216.203 (1.000) <0-01:54:10> ({'r_t':  -763.7740, 'eps':     1.0000, 'critic_loss':     5.0819, 'actor_loss':    -0.0345, 'alpha_loss':    -0.3511, 'eps_e':     1.0000})
+Step:  468000, Reward:  -112.028 [  63.071], Avg:  -215.980 (1.000) <0-01:54:21> ({'r_t':  -740.0554, 'eps':     1.0000, 'critic_loss':     5.2325, 'actor_loss':    -0.0363, 'alpha_loss':    -0.3302, 'eps_e':     1.0000})
+Step:  469000, Reward:  -150.524 [  98.453], Avg:  -215.841 (1.000) <0-01:54:32> ({'r_t':  -697.0993, 'eps':     1.0000, 'critic_loss':     5.8830, 'actor_loss':    -0.0354, 'alpha_loss':    -0.5623, 'eps_e':     1.0000})
+Step:  470000, Reward:  -137.672 [  78.415], Avg:  -215.675 (1.000) <0-01:54:42> ({'r_t':  -766.3173, 'eps':     1.0000, 'critic_loss':     5.4999, 'actor_loss':    -0.0369, 'alpha_loss':    -0.3485, 'eps_e':     1.0000})
+Step:  471000, Reward:  -146.267 [  84.648], Avg:  -215.528 (1.000) <0-01:54:53> ({'r_t':  -783.5010, 'eps':     1.0000, 'critic_loss':     6.3051, 'actor_loss':    -0.0336, 'alpha_loss':    -0.4099, 'eps_e':     1.0000})
+Step:  472000, Reward:  -110.280 [  74.351], Avg:  -215.306 (1.000) <0-01:55:03> ({'r_t':  -763.4015, 'eps':     1.0000, 'critic_loss':     6.6326, 'actor_loss':    -0.0430, 'alpha_loss':    -0.5946, 'eps_e':     1.0000})
+Step:  473000, Reward:  -159.053 [  92.458], Avg:  -215.187 (1.000) <0-01:55:14> ({'r_t':  -788.5858, 'eps':     1.0000, 'critic_loss':     6.4533, 'actor_loss':    -0.0410, 'alpha_loss':    -0.6502, 'eps_e':     1.0000})
+Step:  474000, Reward:  -153.799 [  91.132], Avg:  -215.058 (1.000) <0-01:55:25> ({'r_t':  -707.8051, 'eps':     1.0000, 'critic_loss':     6.0395, 'actor_loss':    -0.0371, 'alpha_loss':    -0.3611, 'eps_e':     1.0000})
+Step:  475000, Reward:  -152.198 [  79.949], Avg:  -214.926 (1.000) <0-01:55:35> ({'r_t':  -790.8822, 'eps':     1.0000, 'critic_loss':     5.1359, 'actor_loss':    -0.0386, 'alpha_loss':    -0.3620, 'eps_e':     1.0000})
+Step:  476000, Reward:  -119.594 [  81.382], Avg:  -214.726 (1.000) <0-01:55:46> ({'r_t':  -774.7488, 'eps':     1.0000, 'critic_loss':     5.8519, 'actor_loss':    -0.0421, 'alpha_loss':    -0.6039, 'eps_e':     1.0000})
+Step:  477000, Reward:  -153.998 [  77.399], Avg:  -214.599 (1.000) <0-01:55:56> ({'r_t':  -807.4517, 'eps':     1.0000, 'critic_loss':     5.3073, 'actor_loss':    -0.0392, 'alpha_loss':    -0.5639, 'eps_e':     1.0000})
+Step:  478000, Reward:  -139.633 [  70.969], Avg:  -214.442 (1.000) <0-01:56:07> ({'r_t':  -749.4557, 'eps':     1.0000, 'critic_loss':     6.4449, 'actor_loss':    -0.0437, 'alpha_loss':    -0.6781, 'eps_e':     1.0000})
+Step:  479000, Reward:  -130.673 [ 111.725], Avg:  -214.268 (1.000) <0-01:56:18> ({'r_t':  -735.8097, 'eps':     1.0000, 'critic_loss':     6.1641, 'actor_loss':    -0.0497, 'alpha_loss':    -0.6513, 'eps_e':     1.0000})
+Step:  480000, Reward:  -156.882 [  80.650], Avg:  -214.148 (1.000) <0-01:56:28> ({'r_t':  -727.5729, 'eps':     1.0000, 'critic_loss':     6.0686, 'actor_loss':    -0.0421, 'alpha_loss':    -0.7462, 'eps_e':     1.0000})
+Step:  481000, Reward:  -132.960 [  52.707], Avg:  -213.980 (1.000) <0-01:56:39> ({'r_t':  -818.2987, 'eps':     1.0000, 'critic_loss':     5.3813, 'actor_loss':    -0.0470, 'alpha_loss':    -1.0179, 'eps_e':     1.0000})
+Step:  482000, Reward:  -151.317 [  56.305], Avg:  -213.850 (1.000) <0-01:56:49> ({'r_t':  -729.4623, 'eps':     1.0000, 'critic_loss':     6.7256, 'actor_loss':    -0.0444, 'alpha_loss':    -0.8258, 'eps_e':     1.0000})
+Step:  483000, Reward:  -161.472 [  61.488], Avg:  -213.742 (1.000) <0-01:57:00> ({'r_t':  -695.2061, 'eps':     1.0000, 'critic_loss':     5.6891, 'actor_loss':    -0.0513, 'alpha_loss':    -0.3831, 'eps_e':     1.0000})
+Step:  484000, Reward:  -155.410 [  81.395], Avg:  -213.622 (1.000) <0-01:57:11> ({'r_t':  -784.7730, 'eps':     1.0000, 'critic_loss':     6.4717, 'actor_loss':    -0.0513, 'alpha_loss':    -0.4029, 'eps_e':     1.0000})
+Step:  485000, Reward:  -155.322 [ 101.800], Avg:  -213.502 (1.000) <0-01:57:21> ({'r_t':  -773.9375, 'eps':     1.0000, 'critic_loss':     6.0668, 'actor_loss':    -0.0570, 'alpha_loss':    -0.6914, 'eps_e':     1.0000})
+Step:  486000, Reward:  -185.362 [  91.932], Avg:  -213.444 (1.000) <0-01:57:32> ({'r_t':  -733.1194, 'eps':     1.0000, 'critic_loss':     6.5922, 'actor_loss':    -0.0470, 'alpha_loss':    -0.6949, 'eps_e':     1.0000})
+Step:  487000, Reward:  -142.223 [  77.796], Avg:  -213.298 (1.000) <0-01:57:42> ({'r_t':  -808.5120, 'eps':     1.0000, 'critic_loss':     5.6098, 'actor_loss':    -0.0546, 'alpha_loss':    -0.9882, 'eps_e':     1.0000})
+Step:  488000, Reward:  -197.555 [  81.302], Avg:  -213.266 (1.000) <0-01:57:53> ({'r_t':  -771.1702, 'eps':     1.0000, 'critic_loss':     6.1507, 'actor_loss':    -0.0536, 'alpha_loss':    -1.0650, 'eps_e':     1.0000})
+Step:  489000, Reward:  -161.008 [  84.655], Avg:  -213.159 (1.000) <0-01:58:04> ({'r_t':  -675.8302, 'eps':     1.0000, 'critic_loss':     7.4731, 'actor_loss':    -0.0547, 'alpha_loss':    -0.7862, 'eps_e':     1.0000})
+Step:  490000, Reward:  -189.825 [  78.211], Avg:  -213.112 (1.000) <0-01:58:14> ({'r_t':  -779.9255, 'eps':     1.0000, 'critic_loss':     5.4633, 'actor_loss':    -0.0696, 'alpha_loss':    -0.6214, 'eps_e':     1.0000})
+Step:  491000, Reward:  -128.196 [  89.960], Avg:  -212.939 (1.000) <0-01:58:25> ({'r_t':  -698.1531, 'eps':     1.0000, 'critic_loss':     6.1494, 'actor_loss':    -0.0723, 'alpha_loss':    -0.1691, 'eps_e':     1.0000})
+Step:  492000, Reward:  -144.404 [  90.407], Avg:  -212.800 (1.000) <0-01:58:35> ({'r_t':  -669.0960, 'eps':     1.0000, 'critic_loss':     6.0938, 'actor_loss':    -0.0760, 'alpha_loss':     0.2269, 'eps_e':     1.0000})
+Step:  493000, Reward:  -153.411 [  71.356], Avg:  -212.680 (1.000) <0-01:58:46> ({'r_t':  -725.1420, 'eps':     1.0000, 'critic_loss':     5.2412, 'actor_loss':    -0.0665, 'alpha_loss':     0.0077, 'eps_e':     1.0000})
+Step:  494000, Reward:  -179.567 [  96.494], Avg:  -212.613 (1.000) <0-01:58:56> ({'r_t':  -665.7036, 'eps':     1.0000, 'critic_loss':     6.5099, 'actor_loss':    -0.0717, 'alpha_loss':     0.2499, 'eps_e':     1.0000})
+Step:  495000, Reward:  -146.455 [  91.453], Avg:  -212.480 (1.000) <0-01:59:07> ({'r_t':  -710.6657, 'eps':     1.0000, 'critic_loss':     5.9349, 'actor_loss':    -0.0787, 'alpha_loss':     0.6741, 'eps_e':     1.0000})
+Step:  496000, Reward:  -121.580 [  70.983], Avg:  -212.297 (1.000) <0-01:59:18> ({'r_t':  -798.3074, 'eps':     1.0000, 'critic_loss':     5.3489, 'actor_loss':    -0.0729, 'alpha_loss':     0.4915, 'eps_e':     1.0000})
+Step:  497000, Reward:   -84.725 [  56.445], Avg:  -212.041 (1.000) <0-01:59:28> ({'r_t':  -758.8542, 'eps':     1.0000, 'critic_loss':     6.4321, 'actor_loss':    -0.0725, 'alpha_loss':     0.2306, 'eps_e':     1.0000})
+Step:  498000, Reward:  -158.979 [  72.854], Avg:  -211.934 (1.000) <0-01:59:39> ({'r_t':  -742.9840, 'eps':     1.0000, 'critic_loss':     5.6786, 'actor_loss':    -0.0648, 'alpha_loss':     0.2881, 'eps_e':     1.0000})
+Step:  499000, Reward:  -120.495 [  41.049], Avg:  -211.751 (1.000) <0-01:59:49> ({'r_t':  -778.8482, 'eps':     1.0000, 'critic_loss':     5.7383, 'actor_loss':    -0.0661, 'alpha_loss':     0.2291, 'eps_e':     1.0000})
+Step:  500000, Reward:  -102.666 [  88.522], Avg:  -211.534 (1.000) <0-02:00:00> ({'r_t':  -792.7654, 'eps':     1.0000, 'critic_loss':     6.0614, 'actor_loss':    -0.0668, 'alpha_loss':     0.1996, 'eps_e':     1.0000})
