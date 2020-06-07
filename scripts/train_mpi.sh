@@ -18,4 +18,5 @@ module load mpi/openmpi-4.0
 module load anaconda/2020a
 
 # Call your script as you would from the command line
+echo "mpirun python -B train_agent.py $env_name $model --nsteps $nsteps"
 mpirun python -B train_agent.py $env_name $model --nsteps $nsteps
