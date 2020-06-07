@@ -19,8 +19,8 @@ class MPPIController(PTNetwork):
 		self.lamda = config.MPC.LAMBDA
 		self.horizon = config.MPC.HORIZON
 		self.nsamples = config.MPC.NSAMPLES
-		self.config = config
 		self.action_size = action_size
+		self.config = config
 		self.init_control()
 
 	def get_action(self, state, eps=None, sample=True):
@@ -63,8 +63,9 @@ class MPPIAgent(PTAgent):
 		self.dataset = load_module("src.data.loaders:OnlineDataset")
 
 	def get_action(self, state, eps=None, sample=True):
+		action_random = super().get_action(state)
+		if eps is None and not hasattr(self, "losses"): return action_random
 		eps = self.eps if eps is None else eps
-		action_random = super().get_action(state, eps)
 		action_greedy = self.network.get_action(np.array(state), eps)
 		action = np.clip((1-eps)*action_greedy + eps*action_random, -1, 1)
 		return action
@@ -87,20 +88,18 @@ class MPPIAgent(PTAgent):
 		for buffer, s, a, ns, r, d in zip(self.buffers, state, action, next_state, reward, done):
 			buffer.append((s, a, s if d else ns, r, d))
 			if not d: continue
-			states, actions, next_states, rewards, dones = map(np.array, zip(*buffer))
-			states, actions, next_states, rewards, dones = [self.partition(x) for x in (states, actions, next_states, rewards, dones)]
+			states, actions, next_states, rewards, dones = map(lambda x: np.stack(x)[None], zip(*buffer))
 			buffer.clear()
 			self.replay_buffer.extend(list(zip(states, actions, next_states, rewards, dones)), shuffle=False)
 		if len(self.replay_buffer) > self.config.REPLAY_BATCH_SIZE and self.time % self.config.TRAIN_EVERY == 0:
-			losses = []
+			self.losses = []
 			samples = list(self.replay_buffer.sample(self.config.REPLAY_BATCH_SIZE, dtype=None)[0])
 			dataset = self.dataset(self.config, samples, seq_len=self.config.MPC.HORIZON)
 			loader = torch.utils.data.DataLoader(dataset, batch_size=self.config.BATCH_SIZE, shuffle=True)
 			pbar = tqdm.tqdm(loader)
 			for states, actions, next_states, rewards, dones in pbar:
-				losses.append(self.network.optimize(states, actions, next_states, rewards, dones))
-				pbar.set_postfix_str(f"Loss: {losses[-1]:.4f}")
-			self.network.envmodel.network.schedule(np.mean(losses))
-			# self.eps = max(self.eps * self.config.EPS_DECAY, self.config.EPS_MIN)
-		self.eps = max(1-(self.time%self.config.TRAIN_EVERY)/self.config.TRAIN_EVERY, self.config.EPS_MIN)
+				self.losses.append(self.network.optimize(states, actions, next_states, rewards, dones))
+				pbar.set_postfix_str(f"Loss: {self.losses[-1]:.4f}")
+			self.network.envmodel.network.schedule(np.mean(self.losses))
+		self.eps = (self.time%self.config.TRAIN_EVERY)/self.config.TRAIN_EVERY if hasattr(self, "losses") else 1
 		self.stats.mean(len=len(self.replay_buffer))

@@ -118,7 +118,7 @@ class DifferentialEnv(PTNetwork):
 		ns_dot = (ns-s)
 		s_dot = torch.cat([ns_dot[:,0:1,:], ns_dot[:,:-1,:]], -2)
 		next_states, states_dot, states_ddot = self.rollout(a, s[...,0,:], grad=True)[0]
-		rewards = self.reward(a, s, ns, grad=True)
+		rewards = self.reward(a, s, ns, grad=True).squeeze(-1)
 		dyn_loss = (next_states - ns).pow(2).sum(-1).mean()
 		dot_loss = (states_dot - ns_dot).pow(2).sum(-1).mean()
 		ddot_loss = (states_ddot - (ns_dot - s_dot)).pow(2).sum(-1).mean()
