@@ -83,11 +83,21 @@ env_model_configs = {
 		"ddpg": net_config.clone(),
 		"ddqn": net_config.clone(),
 		"sac": net_config.clone(),
+		"mppi": net_config.clone(
+			REPLAY_BATCH_SIZE = 1000,   	# How many experience tuples to sample from the buffer for each train step
+			BATCH_SIZE = 100,				# Number of samples to train on for each train step
+			TRAIN_EVERY = 1000,   			# Number of iterations to sample batches for training
+		),
 	},
 	env_grps["gym_b2d"]: {
 		"ddpg": net_config.clone(),
 		"ddqn": net_config.clone(),
 		"sac": net_config.clone(),
+		"mppi": net_config.clone(
+			REPLAY_BATCH_SIZE = 2000,   	# How many experience tuples to sample from the buffer for each train step
+			BATCH_SIZE = 100,				# Number of samples to train on for each train step
+			TRAIN_EVERY = 1000,   			# Number of iterations to sample batches for training
+		),
 	},
 	env_grps["unt"]: {
 		"mppi": Config(
