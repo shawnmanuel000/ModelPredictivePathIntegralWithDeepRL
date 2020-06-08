@@ -69,10 +69,10 @@ model_configs = {
 		EPS_CYCLE = 10000,             	# The rate at which eps decays from EPS_MAX to EPS_MIN
 		ENV_MODEL = "dfrntl",
 		MPC = Config(
-			NSAMPLES = 100, 
-			HORIZON = 40, 
+			NSAMPLES = 1000, 
+			HORIZON = 20, 
 			LAMBDA = 0.1,
-			COV = 0.1,
+			COV = 1,
 		)
 	)
 }
