@@ -31,7 +31,7 @@ class MPPIController(PTNetwork):
 		noise = self.noise[...,:horizon,:] * max(eps if eps else 0, 0.1)
 		controls = np.clip(self.control[:,None,:horizon,:] + noise, -1, 1)
 		self.states, rewards = self.envmodel.rollout(controls, x, numpy=True)
-		costs = -np.sum(rewards, -1)# + self.lamda * np.copy(self.init_cost)
+		costs = -np.sum(rewards, -1) + self.lamda * np.copy(self.init_cost)
 		beta = np.min(costs, -1, keepdims=True)
 		costs_norm = -(costs - beta)/self.lamda
 		weights = sp.special.softmax(costs_norm, axis=-1)
@@ -44,7 +44,7 @@ class MPPIController(PTNetwork):
 	def init_control(self, batch_size=1):
 		self.control = np.random.uniform(-1, 1, size=[batch_size, self.horizon, *self.action_size])
 		self.noise = np.random.multivariate_normal(self.mu, self.cov, size=[batch_size, self.nsamples, self.horizon])
-		self.init_cost = np.sum(self.control[:,None,:,None,:] @ self.icov[None,None,None,:,:] @ self.noise[:,:,:,:,None], axis=(2,3,4))
+		self.init_cost = np.sum(self.control[:,None,:,None,:] @ self.icov[None,None,None,:,:] @ self.noise[:,:,:,:,None], axis=(2,3,4))/self.horizon
 
 	def optimize(self, states, actions, next_states, rewards, dones):
 		return self.envmodel.optimize(states, actions, next_states, rewards, dones)
@@ -93,5 +93,5 @@ class MPPIAgent(PTAgent):
 				self.losses.append(self.network.optimize(states, actions, next_states, rewards, dones))
 				pbar.set_postfix_str(f"Loss: {self.losses[-1]:.4f}")
 			self.network.envmodel.network.schedule(np.mean(self.losses))
-		self.eps = (self.time%self.config.EPS_CYCLE)/self.config.EPS_CYCLE if hasattr(self, "losses") else 1
+		self.eps = (self.time%self.config.TRAIN_EVERY)/self.config.TRAIN_EVERY if hasattr(self, "losses") else 1
 		self.stats.mean(len=len(self.replay_buffer))

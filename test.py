@@ -39,7 +39,7 @@ class PathAnimator():
 		self.ax = plt.axes(projection='3d')
 		self.X, self.Y, self.Z = track.X, track.Y, track.Z
 
-	def animate_path(self, trajectories, chosen=None, view=20):
+	def animate_path(self, trajectories, chosen=None, view=40):
 		self.ax.cla()
 		point = trajectories[0,0]
 		X, Y, Z = map(lambda x: x, [self.X, self.Y, self.Z])
@@ -58,7 +58,7 @@ class PathAnimator():
 
 def visualize_envmodel():
 	make_env, model, config = get_config("CarRacing-v1", "mppi")
-	config.MPC.update(NSAMPLES=100, HORIZON=50, LAMBDA=0.1, CONTROL_FREQ=1)
+	config.MPC.update(NSAMPLES=100, HORIZON=20, LAMBDA=0.5, CONTROL_FREQ=1)
 	env = make_env()
 	state_size = get_space_size(env.observation_space)
 	action_size = get_space_size(env.action_space)
