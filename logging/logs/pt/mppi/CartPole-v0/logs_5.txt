@@ -1,0 +1,671 @@
+Model: <class 'src.models.pytorch.mpc.mppi.MPPIAgent'>, Env: CartPole-v0, Date: 07/06/2020 16:13:00
+CPU: 8 Core, 5.0GHz, 62.66 GB, Linux-5.3.0-53-generic-x86_64-with-debian-buster-sid
+GPU 0: GeForce RTX 2070, 7.98 GB (Driver: 440.64.00)
+Git URL: git@github.com:shawnmanuel000/ModelPredictivePathIntegralWithDeepRL.git
+Hash: 78eaab65753a45444c8c1759c8997485b5d39aaa
+Branch: master
+
+config: 
+   TRIAL_AT = 1000
+   SAVE_AT = 1
+   SEED = 0
+   REG_LAMBDA = 1e-06
+   LEARN_RATE = 0.0001
+   DISCOUNT_RATE = 0.99
+   ADVANTAGE_DECAY = 0.95
+   INPUT_LAYER = 512
+   ACTOR_HIDDEN = 256
+   CRITIC_HIDDEN = 1024
+   EPS_MAX = 1.0
+   EPS_MIN = 0.1
+   EPS_DECAY = 0.998
+   NUM_STEPS = 500
+   MAX_BUFFER_SIZE = 1000000
+   REPLAY_BATCH_SIZE = 1000
+   TARGET_UPDATE_RATE = 0.0004
+   BATCH_SIZE = 250
+   DYN_EPOCHS = 1
+   TRAIN_EVERY = 1000
+   ENV_MODEL = dfrntl
+   MPC = 
+      NSAMPLES = 100
+      HORIZON = 40
+      LAMBDA = 0.1
+      COV = 0.5
+   dynamics_size = 4
+   state_size = (4,)
+   action_size = [2]
+   env_name = CartPole-v0
+   rank = 0
+   size = 1
+   split = 1
+   model = mppi
+   framework = pt
+   train_prop = 1.0
+   tcp_ports = []
+   tcp_rank = 0
+   num_envs = 4
+   nsteps = 100000
+   render = False
+   trial = False
+   icm = False
+   rs = False
+   DYN = 
+      REG_LAMBDA = 1e-06
+      FACTOR = 0.98
+      PATIENCE = 10
+      LEARN_RATE = 0.0001
+      TRANSITION_HIDDEN = 512
+      REWARD_HIDDEN = 256
+      BETA_DYN = 1
+      BETA_DOT = 0
+      BETA_DDOT = 0,
+num_envs: 0,
+envs: <src.utils.envs.EnsembleEnv object at 0x7f6b64489fd0> 
+	num_envs = 4
+	env = <GymEnv<TimeLimit<CartPoleEnv<CartPole-v0>>>> 
+		env = <TimeLimit<CartPoleEnv<CartPole-v0>>> 
+			env = <CartPoleEnv<CartPole-v0>> 
+				gravity = 9.8
+				masscart = 1.0
+				masspole = 0.1
+				total_mass = 1.1
+				length = 0.5
+				polemass_length = 0.05
+				force_mag = 10.0
+				tau = 0.02
+				kinematics_integrator = euler
+				theta_threshold_radians = 0.20943951023931953
+				x_threshold = 2.4
+				action_space = Discrete(2) 
+					n = 2
+					shape = ()
+					dtype = int64
+					np_random = RandomState(MT19937)
+				observation_space = Box(4,) 
+					dtype = float32
+					shape = (4,)
+					low = [-4.800e+00 -3.403e+38 -4.189e-01 -3.403e+38]
+					high = [ 4.800e+00  3.403e+38  4.189e-01  3.403e+38]
+					bounded_below = [ True  True  True  True]
+					bounded_above = [ True  True  True  True]
+					np_random = RandomState(MT19937)
+				np_random = RandomState(MT19937)
+				viewer = None
+				state = None
+				steps_beyond_done = None
+				spec = EnvSpec(CartPole-v0) 
+					id = CartPole-v0
+					entry_point = gym.envs.classic_control:CartPoleEnv
+					reward_threshold = 195.0
+					nondeterministic = False
+					max_episode_steps = 200
+				verbose = 0
+			action_space = Discrete(2) 
+				n = 2
+				shape = ()
+				dtype = int64
+				np_random = RandomState(MT19937)
+			observation_space = Box(4,) 
+				dtype = float32
+				shape = (4,)
+				low = [-4.800e+00 -3.403e+38 -4.189e-01 -3.403e+38]
+				high = [ 4.800e+00  3.403e+38  4.189e-01  3.403e+38]
+				bounded_below = [ True  True  True  True]
+				bounded_above = [ True  True  True  True]
+				np_random = RandomState(MT19937)
+			reward_range = (-inf, inf)
+			metadata = {'render.modes': ['human', 'rgb_array'], 'video.frames_per_second': 50}
+		action_space = Discrete(2) 
+			n = 2
+			shape = ()
+			dtype = int64
+			np_random = RandomState(MT19937)
+		observation_space = Box(4,) 
+			dtype = float32
+			shape = (4,)
+			low = [-4.800e+00 -3.403e+38 -4.189e-01 -3.403e+38]
+			high = [ 4.800e+00  3.403e+38  4.189e-01  3.403e+38]
+			bounded_below = [ True  True  True  True]
+			bounded_above = [ True  True  True  True]
+			np_random = RandomState(MT19937)
+		reward_range = (-inf, inf)
+		metadata = {'render.modes': ['human', 'rgb_array'], 'video.frames_per_second': 50}
+		preprocess = <src.envs.wrappers.RawPreprocess object at 0x7f6b61d3ac50> 
+			observation_space = Box(4,) 
+				dtype = float32
+				shape = (4,)
+				low = [-4.800e+00 -3.403e+38 -4.189e-01 -3.403e+38]
+				high = [ 4.800e+00  3.403e+38  4.189e-01  3.403e+38]
+				bounded_below = [ True  True  True  True]
+				bounded_above = [ True  True  True  True]
+				np_random = RandomState(MT19937)
+	envs = [<GymEnv<TimeLimit<CartPoleEnv<CartPole-v0>>>>, <GymEnv<TimeLimit<CartPoleEnv<CartPole-v0>>>>, <GymEnv<TimeLimit<CartPoleEnv<CartPole-v0>>>>, <GymEnv<TimeLimit<CartPoleEnv<CartPole-v0>>>>]
+	test_envs = [<GymEnv<TimeLimit<CartPoleEnv<CartPole-v0>>>>, <GymEnv<TimeLimit<CartPoleEnv<CartPole-v0>>>>, <GymEnv<TimeLimit<CartPoleEnv<CartPole-v0>>>>, <GymEnv<TimeLimit<CartPoleEnv<CartPole-v0>>>>]
+	state_size = (4,)
+	action_size = [2]
+	action_space = Discrete(2) 
+		n = 2
+		shape = ()
+		dtype = int64
+		np_random = RandomState(MT19937)
+	max_steps = 200,
+agent: <src.models.wrappers.ParallelAgent object at 0x7f6b61d44d90> 
+	icm = None
+	stack = <src.models.wrappers.RawState object at 0x7f6b61d1fb10> 
+		state_size = (4,)
+	agent = <src.models.pytorch.mpc.mppi.MPPIAgent object at 0x7f6b61d1fb50> 
+		noise_process = <src.utils.rand.BrownianNoise object at 0x7f6b61d1fb90> 
+			size = [2]
+			dt = 0.2
+			action = [ 0.555 -1.000]
+			daction_dt = [ 0.068 -0.726]
+		discrete = True
+		action_size = [2]
+		state_size = (4,)
+		config = <src.utils.config.Config object at 0x7f6b695a6350> 
+			TRIAL_AT = 1000
+			SAVE_AT = 1
+			SEED = 0
+			REG_LAMBDA = 1e-06
+			LEARN_RATE = 0.0001
+			DISCOUNT_RATE = 0.99
+			ADVANTAGE_DECAY = 0.95
+			INPUT_LAYER = 512
+			ACTOR_HIDDEN = 256
+			CRITIC_HIDDEN = 1024
+			EPS_MAX = 1.0
+			EPS_MIN = 0.1
+			EPS_DECAY = 0.998
+			NUM_STEPS = 500
+			MAX_BUFFER_SIZE = 1000000
+			REPLAY_BATCH_SIZE = 1000
+			TARGET_UPDATE_RATE = 0.0004
+			BATCH_SIZE = 250
+			DYN_EPOCHS = 1
+			TRAIN_EVERY = 1000
+			ENV_MODEL = dfrntl
+			MPC = <src.utils.config.Config object at 0x7f6ac2de7fd0> 
+				NSAMPLES = 100
+				HORIZON = 40
+				LAMBDA = 0.1
+				COV = 0.5
+			dynamics_size = 4
+			state_size = (4,)
+			action_size = [2]
+			env_name = CartPole-v0
+			rank = 0
+			size = 1
+			split = 1
+			model = mppi
+			framework = pt
+			train_prop = 1.0
+			tcp_ports = []
+			tcp_rank = 0
+			num_envs = 4
+			nsteps = 100000
+			render = False
+			trial = False
+			icm = False
+			rs = False
+			DYN = <src.utils.config.Config object at 0x7f6ac2e22f10> 
+				REG_LAMBDA = 1e-06
+				FACTOR = 0.98
+				PATIENCE = 10
+				LEARN_RATE = 0.0001
+				TRANSITION_HIDDEN = 512
+				REWARD_HIDDEN = 256
+				BETA_DYN = 1
+				BETA_DOT = 0
+				BETA_DDOT = 0
+		stats = <src.utils.logger.Stats object at 0x7f6b61d1fbd0> 
+			mean_dict = {}
+			sum_dict = {}
+		eps = 1.0
+		network = MPPIController() 
+			training = True
+			tau = 0.0004
+			name = mppi
+			stats = <src.utils.logger.Stats object at 0x7f6b6448e0d0> 
+				mean_dict = {}
+				sum_dict = {}
+			config = <src.utils.config.Config object at 0x7f6b695a6350> 
+				TRIAL_AT = 1000
+				SAVE_AT = 1
+				SEED = 0
+				REG_LAMBDA = 1e-06
+				LEARN_RATE = 0.0001
+				DISCOUNT_RATE = 0.99
+				ADVANTAGE_DECAY = 0.95
+				INPUT_LAYER = 512
+				ACTOR_HIDDEN = 256
+				CRITIC_HIDDEN = 1024
+				EPS_MAX = 1.0
+				EPS_MIN = 0.1
+				EPS_DECAY = 0.998
+				NUM_STEPS = 500
+				MAX_BUFFER_SIZE = 1000000
+				REPLAY_BATCH_SIZE = 1000
+				TARGET_UPDATE_RATE = 0.0004
+				BATCH_SIZE = 250
+				DYN_EPOCHS = 1
+				TRAIN_EVERY = 1000
+				ENV_MODEL = dfrntl
+				MPC = <src.utils.config.Config object at 0x7f6ac2de7fd0> 
+					NSAMPLES = 100
+					HORIZON = 40
+					LAMBDA = 0.1
+					COV = 0.5
+				dynamics_size = 4
+				state_size = (4,)
+				action_size = [2]
+				env_name = CartPole-v0
+				rank = 0
+				size = 1
+				split = 1
+				model = mppi
+				framework = pt
+				train_prop = 1.0
+				tcp_ports = []
+				tcp_rank = 0
+				num_envs = 4
+				nsteps = 100000
+				render = False
+				trial = False
+				icm = False
+				rs = False
+				DYN = <src.utils.config.Config object at 0x7f6ac2e22f10> 
+					REG_LAMBDA = 1e-06
+					FACTOR = 0.98
+					PATIENCE = 10
+					LEARN_RATE = 0.0001
+					TRANSITION_HIDDEN = 512
+					REWARD_HIDDEN = 256
+					BETA_DYN = 1
+					BETA_DOT = 0
+					BETA_DDOT = 0
+			device = cuda
+			envmodel = <src.models.pytorch.mpc.EnvModel object at 0x7f6b61d1fc50> 
+				network = DifferentialEnv(
+					  (reward): RewardModel(
+					    (linear1): Linear(in_features=10, out_features=256, bias=True)
+					    (drop1): Dropout(p=0.5, inplace=False)
+					    (linear2): Linear(in_features=256, out_features=256, bias=True)
+					    (drop2): Dropout(p=0.5, inplace=False)
+					    (linear3): Linear(in_features=256, out_features=256, bias=True)
+					    (linear4): Linear(in_features=256, out_features=1, bias=True)
+					  )
+					  (dynamics): TransitionModel(
+					    (gru): GRUCell(10, 512)
+					    (linear1): Linear(in_features=512, out_features=512, bias=True)
+					    (drop1): Dropout(p=0.5, inplace=False)
+					    (linear2): Linear(in_features=512, out_features=512, bias=True)
+					    (drop2): Dropout(p=0.5, inplace=False)
+					    (state_ddot): Linear(in_features=512, out_features=4, bias=True)
+					  )
+					) 
+					training = True
+					tau = 0.0004
+					name = dfrntl
+					stats = <src.utils.logger.Stats object at 0x7f6b61d1fcd0> 
+						mean_dict = {}
+						sum_dict = {}
+					config = <src.utils.config.Config object at 0x7f6b695a6350> 
+						TRIAL_AT = 1000
+						SAVE_AT = 1
+						SEED = 0
+						REG_LAMBDA = 1e-06
+						LEARN_RATE = 0.0001
+						DISCOUNT_RATE = 0.99
+						ADVANTAGE_DECAY = 0.95
+						INPUT_LAYER = 512
+						ACTOR_HIDDEN = 256
+						CRITIC_HIDDEN = 1024
+						EPS_MAX = 1.0
+						EPS_MIN = 0.1
+						EPS_DECAY = 0.998
+						NUM_STEPS = 500
+						MAX_BUFFER_SIZE = 1000000
+						REPLAY_BATCH_SIZE = 1000
+						TARGET_UPDATE_RATE = 0.0004
+						BATCH_SIZE = 250
+						DYN_EPOCHS = 1
+						TRAIN_EVERY = 1000
+						ENV_MODEL = dfrntl
+						MPC = <src.utils.config.Config object at 0x7f6ac2de7fd0> 
+							NSAMPLES = 100
+							HORIZON = 40
+							LAMBDA = 0.1
+							COV = 0.5
+						dynamics_size = 4
+						state_size = (4,)
+						action_size = [2]
+						env_name = CartPole-v0
+						rank = 0
+						size = 1
+						split = 1
+						model = mppi
+						framework = pt
+						train_prop = 1.0
+						tcp_ports = []
+						tcp_rank = 0
+						num_envs = 4
+						nsteps = 100000
+						render = False
+						trial = False
+						icm = False
+						rs = False
+						DYN = <src.utils.config.Config object at 0x7f6ac2e22f10> 
+							REG_LAMBDA = 1e-06
+							FACTOR = 0.98
+							PATIENCE = 10
+							LEARN_RATE = 0.0001
+							TRANSITION_HIDDEN = 512
+							REWARD_HIDDEN = 256
+							BETA_DYN = 1
+							BETA_DOT = 0
+							BETA_DDOT = 0
+					device = cuda
+					state_size = (4,)
+					action_size = [2]
+					discrete = True
+					dyn_index = 4
+					optimizer = Adam (
+					Parameter Group 0
+					    amsgrad: False
+					    betas: (0.9, 0.999)
+					    eps: 1e-08
+					    lr: 0.0001
+					    weight_decay: 1e-06
+					)
+					scheduler = <torch.optim.lr_scheduler.ReduceLROnPlateau object at 0x7f6b61d343d0>
+				state_size = (4,)
+				action_size = [2]
+			mu = [ 0.000  0.000]
+			cov = [[ 0.500  0.000]
+			 [ 0.000  0.500]]
+			icov = [[ 2.000  0.000]
+			 [ 0.000  2.000]]
+			lamda = 0.1
+			horizon = 40
+			nsamples = 100
+			action_size = [2]
+			control = [[[ 0.336  0.184]
+			  [-0.062 -0.591]
+			  [ 0.848  0.240]
+			  [-0.097  0.641]
+			  [-0.984 -0.219]
+			  [-0.375  0.434]
+			  [-0.912 -0.468]
+			  [ 0.972  0.837]
+			  [ 0.633  0.974]
+			  [ 0.992 -0.080]
+			  [ 0.577  0.033]
+			  [-0.327  0.700]
+			  [-0.943  0.248]
+			  [ 0.190  0.131]
+			  [ 0.087  0.698]
+			  [-0.940  0.159]
+			  [-0.291  0.826]
+			  [ 0.444  0.923]
+			  [-0.716 -0.582]
+			  [ 0.865  0.021]
+			  [ 0.190  0.570]
+			  [-0.950 -0.825]
+			  [-0.779 -0.549]
+			  [ 0.522  0.617]
+			  [-0.031 -0.333]
+			  [-0.978 -0.419]
+			  [-0.169 -0.664]
+			  [-0.676  0.365]
+			  [ 0.350 -0.650]
+			  [ 0.867 -0.784]
+			  [ 0.577 -0.618]
+			  [ 0.276 -0.560]
+			  [ 0.731 -0.677]
+			  [ 0.720  0.642]
+			  [-0.201 -0.272]
+			  [-0.272 -0.930]
+			  [ 0.900 -0.099]
+			  [-0.984 -0.687]
+			  [ 0.229 -0.067]
+			  [-0.364  0.745]]]
+			noise = [[[[-0.329 -0.982]
+			   [ 0.555  0.798]
+			   [ 0.260  0.403]
+			   ...
+			   [ 0.647  0.016]
+			   [-0.731  0.272]
+			   [-0.517 -1.082]]
+			
+			  [[-0.824  0.533]
+			   [-0.274  0.860]
+			   [-0.278  0.487]
+			   ...
+			   [-0.358  0.658]
+			   [-0.783  0.468]
+			   [ 0.314 -0.060]]
+			
+			  [[ 0.142  0.896]
+			   [ 0.113  0.394]
+			   [ 0.761 -0.236]
+			   ...
+			   [-0.347  0.259]
+			   [ 0.058  0.369]
+			   [-1.082  0.396]]
+			
+			  ...
+			
+			  [[-1.288 -1.116]
+			   [-0.477 -0.253]
+			   [ 1.038  0.542]
+			   ...
+			   [-0.514  0.023]
+			   [ 0.745  0.505]
+			   [ 1.109 -0.575]]
+			
+			  [[ 0.905  1.254]
+			   [-0.450 -0.208]
+			   [ 0.966  0.066]
+			   ...
+			   [-0.189 -0.061]
+			   [ 0.048 -1.114]
+			   [-0.689 -0.064]]
+			
+			  [[-0.960 -0.532]
+			   [ 0.307  0.116]
+			   [ 1.452 -0.469]
+			   ...
+			   [-0.050 -0.155]
+			   [-1.162  0.345]
+			   [-0.300  1.936]]]]
+			init_cost = [[ -8.400  15.429  12.083   5.751 -14.703 -13.209   5.050  -6.787   1.145  -8.382  16.573   0.618   6.866  -0.645   2.133   0.162 -12.293  -8.023  -5.828  -9.580  -4.792  -9.199  -3.556  -6.705  16.540 -19.302   6.673  -7.940   5.542  -4.942  -1.980   1.932  -4.977   6.766  -6.952  -1.609  13.292 -10.919  -5.067  -2.803   5.579  -9.085   8.981  21.535  -9.396   5.611  -5.964   3.213   3.053   7.106  -7.610   4.183   5.302   4.640   5.490   4.164   4.518 -13.634   9.641  -3.652   8.032  -4.315  -6.720  -0.365   2.511  12.885  -9.732  -2.848  -3.663   2.316   2.994  -9.575  -3.164 -15.947  13.508   0.977   2.631   3.905  -1.619  -0.812   0.612  -0.860  10.179  -6.716   2.987   0.997  -3.014   0.790  -3.875   0.628   3.059  -4.554   9.645   3.106   4.399  -3.793   0.872   3.071  10.451   4.833]]
+		replay_buffer = <src.utils.rand.ReplayBuffer object at 0x7f6b61d34810> 
+			buffer = deque([], maxlen=1000000)
+		buffer = []
+		dataset = <class 'src.data.loaders.OnlineDataset'>
+	noise_process = <src.utils.rand.BrownianNoise object at 0x7f6b5f4cdd10> 
+		size = [2]
+		dt = 0.2
+		action = [ 0.897  0.213]
+		daction_dt = [-0.143  0.966]
+	discrete = True
+	action_size = [2]
+	state_size = (4,)
+	config = <src.utils.config.Config object at 0x7f6b695a6350> 
+		TRIAL_AT = 1000
+		SAVE_AT = 1
+		SEED = 0
+		REG_LAMBDA = 1e-06
+		LEARN_RATE = 0.0001
+		DISCOUNT_RATE = 0.99
+		ADVANTAGE_DECAY = 0.95
+		INPUT_LAYER = 512
+		ACTOR_HIDDEN = 256
+		CRITIC_HIDDEN = 1024
+		EPS_MAX = 1.0
+		EPS_MIN = 0.1
+		EPS_DECAY = 0.998
+		NUM_STEPS = 500
+		MAX_BUFFER_SIZE = 1000000
+		REPLAY_BATCH_SIZE = 1000
+		TARGET_UPDATE_RATE = 0.0004
+		BATCH_SIZE = 250
+		DYN_EPOCHS = 1
+		TRAIN_EVERY = 1000
+		ENV_MODEL = dfrntl
+		MPC = <src.utils.config.Config object at 0x7f6ac2de7fd0> 
+			NSAMPLES = 100
+			HORIZON = 40
+			LAMBDA = 0.1
+			COV = 0.5
+		dynamics_size = 4
+		state_size = (4,)
+		action_size = [2]
+		env_name = CartPole-v0
+		rank = 0
+		size = 1
+		split = 1
+		model = mppi
+		framework = pt
+		train_prop = 1.0
+		tcp_ports = []
+		tcp_rank = 0
+		num_envs = 4
+		nsteps = 100000
+		render = False
+		trial = False
+		icm = False
+		rs = False
+		DYN = <src.utils.config.Config object at 0x7f6ac2e22f10> 
+			REG_LAMBDA = 1e-06
+			FACTOR = 0.98
+			PATIENCE = 10
+			LEARN_RATE = 0.0001
+			TRANSITION_HIDDEN = 512
+			REWARD_HIDDEN = 256
+			BETA_DYN = 1
+			BETA_DOT = 0
+			BETA_DDOT = 0
+	stats = <src.utils.logger.Stats object at 0x7f6b5cd5fa90> 
+		mean_dict = {}
+		sum_dict = {},
+conn: None,
+
+import tqdm
+import torch
+import random
+import numpy as np
+import scipy as sp
+from scipy.stats import multivariate_normal
+from src.utils.rand import RandomAgent, ReplayBuffer
+from src.utils.misc import load_module
+from ..agents.base import PTNetwork, PTAgent, Conv, one_hot_from_indices
+from . import EnvModel
+
+class MPPIController(PTNetwork):
+	def __init__(self, state_size, action_size, config, load="", gpu=True, name="mppi"):
+		super().__init__(config, gpu=gpu, name=name)
+		self.envmodel = EnvModel(state_size, action_size, config, load=load, gpu=gpu)
+		self.mu = np.zeros(action_size)
+		self.cov = np.diag(np.ones(action_size))*config.MPC.COV
+		self.icov = np.linalg.inv(self.cov)
+		self.lamda = config.MPC.LAMBDA
+		self.horizon = config.MPC.HORIZON
+		self.nsamples = config.MPC.NSAMPLES
+		self.action_size = action_size
+		self.config = config
+		self.init_control()
+
+	def get_action(self, state, eps=None, sample=True):
+		batch = state.shape[:-1]
+		horizon = max(int((1-eps)*self.horizon),1) if eps else self.horizon
+		if len(batch) and self.control.shape[0] != batch[0]: self.init_control(batch[0])
+		x = torch.Tensor(state).view(*batch, 1,-1).repeat_interleave(self.nsamples, -2)
+		controls = np.clip(self.control[:,None,:,:] + self.noise, -1, 1)
+		self.states, rewards = self.envmodel.rollout(controls[...,:horizon,:], x, numpy=True)
+		costs = -np.sum(rewards, -1) #+ self.lamda * np.copy(self.init_cost)
+		beta = np.min(costs, -1, keepdims=True)
+		costs_norm = -(costs - beta)/self.lamda
+		weights = sp.special.softmax(costs_norm, axis=-1)
+		self.control += np.sum(weights[:,:,None,None]*self.noise, len(batch))
+		action = self.control[...,0,:]
+		self.control = np.roll(self.control, -1, axis=-2)
+		self.control[...,-1,:] = 0
+		return action
+
+	def init_control(self, batch_size=1):
+		self.control = np.random.uniform(-1, 1, size=[1, self.horizon, *self.action_size]).repeat(batch_size, 0)
+		self.noise = np.random.multivariate_normal(self.mu, self.cov, size=[1, self.nsamples, self.horizon]).repeat(batch_size, 0)
+		self.init_cost = np.sum(self.control[:,None,:,None,:] @ self.icov[None,None,None,:,:] @ self.noise[:,:,:,:,None], axis=(2,3,4))
+
+	def optimize(self, states, actions, next_states, rewards, dones):
+		return self.envmodel.optimize(states, actions, next_states, rewards, dones)
+
+	def save_model(self, dirname="pytorch", name="checkpoint", net=None):
+		return self.envmodel.save_model(dirname, name, net)
+		
+	def load_model(self, dirname="pytorch", name="checkpoint", net=None):
+		return self.envmodel.load_model(dirname, name, net)
+
+	def get_stats(self):
+		return {**super().get_stats(), **self.envmodel.get_stats()}
+
+class MPPIAgent(PTAgent):
+	def __init__(self, state_size, action_size, config, gpu=True, load=None):
+		super().__init__(state_size, action_size, config, MPPIController, gpu=gpu, load=load)
+		self.dataset = load_module("src.data.loaders:OnlineDataset")
+
+	def get_action(self, state, eps=None, sample=True):
+		action_random = super().get_action(state)
+		if eps is None and not hasattr(self, "losses"): return action_random
+		eps = self.eps if eps is None else eps
+		action_greedy = self.network.get_action(np.array(state), eps)
+		action = np.clip((1-eps)*action_greedy + eps*action_random, -1, 1)
+		return action
+
+	def partition(self, x):
+		if self.config.NUM_STEPS is None:
+			return x[None,...]
+		num_splits = x.shape[0]//self.config.NUM_STEPS
+		if num_splits == 0:
+			arr = np.zeros([self.config.NUM_STEPS, *x.shape[1:]])
+			arr[-x.shape[0]:] = x
+			num_splits = 1
+			x = arr
+		arr = x[:num_splits*self.config.NUM_STEPS].reshape(num_splits, self.config.NUM_STEPS, *x.shape[1:])
+		return arr
+
+	def train(self, state, action, next_state, reward, done):
+		self.time = getattr(self, "time", 0) + 1
+		if not hasattr(self, "buffers"): self.buffers = [[] for _ in done]
+		for buffer, s, a, ns, r, d in zip(self.buffers, state, action, next_state, reward, done):
+			buffer.append((s, a, s if d else ns, r, d))
+			if not d: continue
+			states, actions, next_states, rewards, dones = map(lambda x: self.to_tensor(x)[None], zip(*buffer))
+			buffer.clear()
+			values = self.network.envmodel.network.reward(actions, states, next_states)[0]
+			rewards = self.compute_gae(0*values[-1], rewards.transpose(0,1), dones.transpose(0,1), values)[0].transpose(0,1)
+			states, actions, next_states, rewards, dones = map(lambda x: x.cpu().numpy(), [states, actions, next_states, rewards, dones])
+			self.replay_buffer.extend(list(zip(states, actions, next_states, rewards, dones)), shuffle=False)
+		if len(self.replay_buffer) > self.config.REPLAY_BATCH_SIZE and self.time % self.config.TRAIN_EVERY == 0:
+			self.losses = []
+			samples = list(self.replay_buffer.sample(self.config.REPLAY_BATCH_SIZE, dtype=None)[0])
+			dataset = self.dataset(self.config, samples, seq_len=self.config.MPC.HORIZON)
+			loader = torch.utils.data.DataLoader(dataset, batch_size=self.config.BATCH_SIZE, shuffle=True)
+			pbar = tqdm.tqdm(loader)
+			for states, actions, next_states, rewards, dones in pbar:
+				self.losses.append(self.network.optimize(states, actions, next_states, rewards, dones))
+				pbar.set_postfix_str(f"Loss: {self.losses[-1]:.4f}")
+			self.network.envmodel.network.schedule(np.mean(self.losses))
+		self.eps = (self.time%self.config.TRAIN_EVERY)/self.config.TRAIN_EVERY if hasattr(self, "losses") else 1
+		self.stats.mean(len=len(self.replay_buffer))
+
+
+Step:       0, Reward:    16.250 [   2.385], Avg:    16.250 (1.000) <0-00:00:00> ({'r_t':     1.0000, 'eps':     1.0000, 'len':   0.00e+00, 'lr':     0.0001, 'eps_e':     1.0000, 'lr_e':     0.0001})
+Step:    1000, Reward:     9.250 [   0.433], Avg:    12.750 (1.000) <0-00:00:02> ({'r_t':  1000.0000, 'eps':     1.0000, 'len':   154.2790, 'lr':     0.0001, 'eps_e':     1.0000, 'lr_e':     0.0001})
+Step:    2000, Reward:    10.250 [   1.299], Avg:    11.917 (1.000) <0-00:00:04> ({'r_t':  1000.0000, 'eps':     1.0000, 'len':   442.8070, 'lr':     0.0001, 'eps_e':     1.0000, 'lr_e':     0.0001})
+Step:    3000, Reward:    11.500 [   0.866], Avg:    11.812 (1.000) <0-00:00:06> ({'r_t':  1000.0000, 'eps':     1.0000, 'len':   726.6370, 'lr':     0.0001, 'eps_e':     1.0000, 'lr_e':     0.0001})
+Step:    4000, Reward:    12.750 [   2.861], Avg:    12.000 (0.001) <0-00:00:10> ({'r_t':  1000.0000, 'eps':     0.0010, 'len':  1024.4850, 'dyn_loss':     5.1260, 'dot_loss':     0.5616, 'ddot_loss':     0.2693, 'rew_loss':    52.5638, 'lr':     0.0001, 'eps_e':     0.0010, 'lr_e':     0.0001})
+Step:    5000, Reward:     9.250 [   0.829], Avg:    11.542 (0.001) <0-00:00:43> ({'r_t':  1000.0000, 'eps':     0.0010, 'len':  1347.0400, 'dyn_loss':     1.5234, 'dot_loss':     0.2997, 'ddot_loss':     0.2231, 'rew_loss':    25.6231, 'lr':     0.0001, 'eps_e':     0.0010, 'lr_e':     0.0001})
+Step:    6000, Reward:     9.750 [   0.829], Avg:    11.286 (0.001) <0-00:01:25> ({'r_t':  1000.0000, 'eps':     0.0010, 'len':  1716.7390, 'dyn_loss':     1.0885, 'dot_loss':     0.2591, 'ddot_loss':     0.2127, 'rew_loss':    16.1067, 'lr':     0.0001, 'eps_e':     0.0010, 'lr_e':     0.0001})

@@ -63,17 +63,16 @@ model_configs = {
 	"mppi": net_config.clone(
 		MAX_BUFFER_SIZE = 100000,    	# Sets the maximum length of the replay buffer
 		REPLAY_BATCH_SIZE = 10000,  	# How many experience tuples to sample from the buffer for each train step
+		TRAIN_EVERY = 10000,   			# Number of iterations to sample batches for training
 		BATCH_SIZE = 250,				# Number of samples to train on for each train step
 		NUM_STEPS = None,  				# The number of steps to collect experience in sequence for each GAE calculation
-		DYN_EPOCHS = 1,					# Number of iterations to sample batches for training
-		TRAIN_EVERY = 10000,   			# Number of iterations to sample batches for training
-		EPS_DECAY = 0.97,             	# The rate at which eps decays from EPS_MAX to EPS_MIN
+		EPS_CYCLE = 10000,             	# The rate at which eps decays from EPS_MAX to EPS_MIN
 		ENV_MODEL = "dfrntl",
 		MPC = Config(
 			NSAMPLES = 100, 
 			HORIZON = 40, 
 			LAMBDA = 0.1,
-			COV = 0.5,
+			COV = 0.1,
 		)
 	)
 }
@@ -85,7 +84,6 @@ env_model_configs = {
 		"sac": net_config.clone(),
 		"mppi": net_config.clone(
 			REPLAY_BATCH_SIZE = 1000,   	# How many experience tuples to sample from the buffer for each train step
-			BATCH_SIZE = 250,				# Number of samples to train on for each train step
 			TRAIN_EVERY = 1000,   			# Number of iterations to sample batches for training
 		),
 	},
@@ -95,7 +93,6 @@ env_model_configs = {
 		"sac": net_config.clone(),
 		"mppi": net_config.clone(
 			REPLAY_BATCH_SIZE = 2000,   	# How many experience tuples to sample from the buffer for each train step
-			BATCH_SIZE = 250,				# Number of samples to train on for each train step
 			TRAIN_EVERY = 2000,   			# Number of iterations to sample batches for training
 		),
 	},

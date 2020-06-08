@@ -1,0 +1,765 @@
+Model: <class 'src.models.pytorch.mpc.mppi.MPPIAgent'>, Env: CartPole-v0, Date: 07/06/2020 16:15:00
+CPU: 8 Core, 5.0GHz, 62.66 GB, Linux-5.3.0-53-generic-x86_64-with-debian-buster-sid
+GPU 0: GeForce RTX 2070, 7.98 GB (Driver: 440.64.00)
+Git URL: git@github.com:shawnmanuel000/ModelPredictivePathIntegralWithDeepRL.git
+Hash: 78eaab65753a45444c8c1759c8997485b5d39aaa
+Branch: master
+
+config: 
+   TRIAL_AT = 1000
+   SAVE_AT = 1
+   SEED = 0
+   REG_LAMBDA = 1e-06
+   LEARN_RATE = 0.0001
+   DISCOUNT_RATE = 0.99
+   ADVANTAGE_DECAY = 0.95
+   INPUT_LAYER = 512
+   ACTOR_HIDDEN = 256
+   CRITIC_HIDDEN = 1024
+   EPS_MAX = 1.0
+   EPS_MIN = 0.1
+   EPS_DECAY = 0.998
+   NUM_STEPS = 500
+   MAX_BUFFER_SIZE = 1000000
+   REPLAY_BATCH_SIZE = 5000
+   TARGET_UPDATE_RATE = 0.0004
+   BATCH_SIZE = 250
+   DYN_EPOCHS = 1
+   TRAIN_EVERY = 5000
+   ENV_MODEL = dfrntl
+   MPC = 
+      NSAMPLES = 100
+      HORIZON = 40
+      LAMBDA = 0.1
+      COV = 0.1
+   dynamics_size = 4
+   state_size = (4,)
+   action_size = [2]
+   env_name = CartPole-v0
+   rank = 0
+   size = 1
+   split = 1
+   model = mppi
+   framework = pt
+   train_prop = 1.0
+   tcp_ports = []
+   tcp_rank = 0
+   num_envs = 4
+   nsteps = 100000
+   render = False
+   trial = False
+   icm = False
+   rs = False
+   DYN = 
+      REG_LAMBDA = 1e-06
+      FACTOR = 0.98
+      PATIENCE = 10
+      LEARN_RATE = 0.0001
+      TRANSITION_HIDDEN = 512
+      REWARD_HIDDEN = 256
+      BETA_DYN = 1
+      BETA_DOT = 0
+      BETA_DDOT = 0,
+num_envs: 0,
+envs: <src.utils.envs.EnsembleEnv object at 0x7ff9d823d490> 
+	num_envs = 4
+	env = <GymEnv<TimeLimit<CartPoleEnv<CartPole-v0>>>> 
+		env = <TimeLimit<CartPoleEnv<CartPole-v0>>> 
+			env = <CartPoleEnv<CartPole-v0>> 
+				gravity = 9.8
+				masscart = 1.0
+				masspole = 0.1
+				total_mass = 1.1
+				length = 0.5
+				polemass_length = 0.05
+				force_mag = 10.0
+				tau = 0.02
+				kinematics_integrator = euler
+				theta_threshold_radians = 0.20943951023931953
+				x_threshold = 2.4
+				action_space = Discrete(2) 
+					n = 2
+					shape = ()
+					dtype = int64
+					np_random = RandomState(MT19937)
+				observation_space = Box(4,) 
+					dtype = float32
+					shape = (4,)
+					low = [-4.800e+00 -3.403e+38 -4.189e-01 -3.403e+38]
+					high = [ 4.800e+00  3.403e+38  4.189e-01  3.403e+38]
+					bounded_below = [ True  True  True  True]
+					bounded_above = [ True  True  True  True]
+					np_random = RandomState(MT19937)
+				np_random = RandomState(MT19937)
+				viewer = None
+				state = None
+				steps_beyond_done = None
+				spec = EnvSpec(CartPole-v0) 
+					id = CartPole-v0
+					entry_point = gym.envs.classic_control:CartPoleEnv
+					reward_threshold = 195.0
+					nondeterministic = False
+					max_episode_steps = 200
+				verbose = 0
+			action_space = Discrete(2) 
+				n = 2
+				shape = ()
+				dtype = int64
+				np_random = RandomState(MT19937)
+			observation_space = Box(4,) 
+				dtype = float32
+				shape = (4,)
+				low = [-4.800e+00 -3.403e+38 -4.189e-01 -3.403e+38]
+				high = [ 4.800e+00  3.403e+38  4.189e-01  3.403e+38]
+				bounded_below = [ True  True  True  True]
+				bounded_above = [ True  True  True  True]
+				np_random = RandomState(MT19937)
+			reward_range = (-inf, inf)
+			metadata = {'render.modes': ['human', 'rgb_array'], 'video.frames_per_second': 50}
+		action_space = Discrete(2) 
+			n = 2
+			shape = ()
+			dtype = int64
+			np_random = RandomState(MT19937)
+		observation_space = Box(4,) 
+			dtype = float32
+			shape = (4,)
+			low = [-4.800e+00 -3.403e+38 -4.189e-01 -3.403e+38]
+			high = [ 4.800e+00  3.403e+38  4.189e-01  3.403e+38]
+			bounded_below = [ True  True  True  True]
+			bounded_above = [ True  True  True  True]
+			np_random = RandomState(MT19937)
+		reward_range = (-inf, inf)
+		metadata = {'render.modes': ['human', 'rgb_array'], 'video.frames_per_second': 50}
+		preprocess = <src.envs.wrappers.RawPreprocess object at 0x7ff9beb2f8d0> 
+			observation_space = Box(4,) 
+				dtype = float32
+				shape = (4,)
+				low = [-4.800e+00 -3.403e+38 -4.189e-01 -3.403e+38]
+				high = [ 4.800e+00  3.403e+38  4.189e-01  3.403e+38]
+				bounded_below = [ True  True  True  True]
+				bounded_above = [ True  True  True  True]
+				np_random = RandomState(MT19937)
+	envs = [<GymEnv<TimeLimit<CartPoleEnv<CartPole-v0>>>>, <GymEnv<TimeLimit<CartPoleEnv<CartPole-v0>>>>, <GymEnv<TimeLimit<CartPoleEnv<CartPole-v0>>>>, <GymEnv<TimeLimit<CartPoleEnv<CartPole-v0>>>>]
+	test_envs = [<GymEnv<TimeLimit<CartPoleEnv<CartPole-v0>>>>, <GymEnv<TimeLimit<CartPoleEnv<CartPole-v0>>>>, <GymEnv<TimeLimit<CartPoleEnv<CartPole-v0>>>>, <GymEnv<TimeLimit<CartPoleEnv<CartPole-v0>>>>]
+	state_size = (4,)
+	action_size = [2]
+	action_space = Discrete(2) 
+		n = 2
+		shape = ()
+		dtype = int64
+		np_random = RandomState(MT19937)
+	max_steps = 200,
+agent: <src.models.wrappers.ParallelAgent object at 0x7ff9beb4ea90> 
+	icm = None
+	stack = <src.models.wrappers.RawState object at 0x7ff9beb0cc50> 
+		state_size = (4,)
+	agent = <src.models.pytorch.mpc.mppi.MPPIAgent object at 0x7ff9beb0cc90> 
+		noise_process = <src.utils.rand.BrownianNoise object at 0x7ff9beb0ccd0> 
+			size = [2]
+			dt = 0.2
+			action = [-0.057 -1.000]
+			daction_dt = [ 0.930  1.115]
+		discrete = True
+		action_size = [2]
+		state_size = (4,)
+		config = <src.utils.config.Config object at 0x7ff9d83ba250> 
+			TRIAL_AT = 1000
+			SAVE_AT = 1
+			SEED = 0
+			REG_LAMBDA = 1e-06
+			LEARN_RATE = 0.0001
+			DISCOUNT_RATE = 0.99
+			ADVANTAGE_DECAY = 0.95
+			INPUT_LAYER = 512
+			ACTOR_HIDDEN = 256
+			CRITIC_HIDDEN = 1024
+			EPS_MAX = 1.0
+			EPS_MIN = 0.1
+			EPS_DECAY = 0.998
+			NUM_STEPS = 500
+			MAX_BUFFER_SIZE = 1000000
+			REPLAY_BATCH_SIZE = 5000
+			TARGET_UPDATE_RATE = 0.0004
+			BATCH_SIZE = 250
+			DYN_EPOCHS = 1
+			TRAIN_EVERY = 5000
+			ENV_MODEL = dfrntl
+			MPC = <src.utils.config.Config object at 0x7ff94a2d03d0> 
+				NSAMPLES = 100
+				HORIZON = 40
+				LAMBDA = 0.1
+				COV = 0.1
+			dynamics_size = 4
+			state_size = (4,)
+			action_size = [2]
+			env_name = CartPole-v0
+			rank = 0
+			size = 1
+			split = 1
+			model = mppi
+			framework = pt
+			train_prop = 1.0
+			tcp_ports = []
+			tcp_rank = 0
+			num_envs = 4
+			nsteps = 100000
+			render = False
+			trial = False
+			icm = False
+			rs = False
+			DYN = <src.utils.config.Config object at 0x7ff9d839d290> 
+				REG_LAMBDA = 1e-06
+				FACTOR = 0.98
+				PATIENCE = 10
+				LEARN_RATE = 0.0001
+				TRANSITION_HIDDEN = 512
+				REWARD_HIDDEN = 256
+				BETA_DYN = 1
+				BETA_DOT = 0
+				BETA_DDOT = 0
+		stats = <src.utils.logger.Stats object at 0x7ff9d8248750> 
+			mean_dict = {}
+			sum_dict = {}
+		eps = 1.0
+		network = MPPIController() 
+			training = True
+			tau = 0.0004
+			name = mppi
+			stats = <src.utils.logger.Stats object at 0x7ff9c12ad590> 
+				mean_dict = {}
+				sum_dict = {}
+			config = <src.utils.config.Config object at 0x7ff9d83ba250> 
+				TRIAL_AT = 1000
+				SAVE_AT = 1
+				SEED = 0
+				REG_LAMBDA = 1e-06
+				LEARN_RATE = 0.0001
+				DISCOUNT_RATE = 0.99
+				ADVANTAGE_DECAY = 0.95
+				INPUT_LAYER = 512
+				ACTOR_HIDDEN = 256
+				CRITIC_HIDDEN = 1024
+				EPS_MAX = 1.0
+				EPS_MIN = 0.1
+				EPS_DECAY = 0.998
+				NUM_STEPS = 500
+				MAX_BUFFER_SIZE = 1000000
+				REPLAY_BATCH_SIZE = 5000
+				TARGET_UPDATE_RATE = 0.0004
+				BATCH_SIZE = 250
+				DYN_EPOCHS = 1
+				TRAIN_EVERY = 5000
+				ENV_MODEL = dfrntl
+				MPC = <src.utils.config.Config object at 0x7ff94a2d03d0> 
+					NSAMPLES = 100
+					HORIZON = 40
+					LAMBDA = 0.1
+					COV = 0.1
+				dynamics_size = 4
+				state_size = (4,)
+				action_size = [2]
+				env_name = CartPole-v0
+				rank = 0
+				size = 1
+				split = 1
+				model = mppi
+				framework = pt
+				train_prop = 1.0
+				tcp_ports = []
+				tcp_rank = 0
+				num_envs = 4
+				nsteps = 100000
+				render = False
+				trial = False
+				icm = False
+				rs = False
+				DYN = <src.utils.config.Config object at 0x7ff9d839d290> 
+					REG_LAMBDA = 1e-06
+					FACTOR = 0.98
+					PATIENCE = 10
+					LEARN_RATE = 0.0001
+					TRANSITION_HIDDEN = 512
+					REWARD_HIDDEN = 256
+					BETA_DYN = 1
+					BETA_DOT = 0
+					BETA_DDOT = 0
+			device = cuda
+			envmodel = <src.models.pytorch.mpc.EnvModel object at 0x7ff9beb0cd10> 
+				network = DifferentialEnv(
+					  (reward): RewardModel(
+					    (linear1): Linear(in_features=10, out_features=256, bias=True)
+					    (drop1): Dropout(p=0.5, inplace=False)
+					    (linear2): Linear(in_features=256, out_features=256, bias=True)
+					    (drop2): Dropout(p=0.5, inplace=False)
+					    (linear3): Linear(in_features=256, out_features=256, bias=True)
+					    (linear4): Linear(in_features=256, out_features=1, bias=True)
+					  )
+					  (dynamics): TransitionModel(
+					    (gru): GRUCell(10, 512)
+					    (linear1): Linear(in_features=512, out_features=512, bias=True)
+					    (drop1): Dropout(p=0.5, inplace=False)
+					    (linear2): Linear(in_features=512, out_features=512, bias=True)
+					    (drop2): Dropout(p=0.5, inplace=False)
+					    (state_ddot): Linear(in_features=512, out_features=4, bias=True)
+					  )
+					) 
+					training = True
+					tau = 0.0004
+					name = dfrntl
+					stats = <src.utils.logger.Stats object at 0x7ff9beb0cd90> 
+						mean_dict = {}
+						sum_dict = {}
+					config = <src.utils.config.Config object at 0x7ff9d83ba250> 
+						TRIAL_AT = 1000
+						SAVE_AT = 1
+						SEED = 0
+						REG_LAMBDA = 1e-06
+						LEARN_RATE = 0.0001
+						DISCOUNT_RATE = 0.99
+						ADVANTAGE_DECAY = 0.95
+						INPUT_LAYER = 512
+						ACTOR_HIDDEN = 256
+						CRITIC_HIDDEN = 1024
+						EPS_MAX = 1.0
+						EPS_MIN = 0.1
+						EPS_DECAY = 0.998
+						NUM_STEPS = 500
+						MAX_BUFFER_SIZE = 1000000
+						REPLAY_BATCH_SIZE = 5000
+						TARGET_UPDATE_RATE = 0.0004
+						BATCH_SIZE = 250
+						DYN_EPOCHS = 1
+						TRAIN_EVERY = 5000
+						ENV_MODEL = dfrntl
+						MPC = <src.utils.config.Config object at 0x7ff94a2d03d0> 
+							NSAMPLES = 100
+							HORIZON = 40
+							LAMBDA = 0.1
+							COV = 0.1
+						dynamics_size = 4
+						state_size = (4,)
+						action_size = [2]
+						env_name = CartPole-v0
+						rank = 0
+						size = 1
+						split = 1
+						model = mppi
+						framework = pt
+						train_prop = 1.0
+						tcp_ports = []
+						tcp_rank = 0
+						num_envs = 4
+						nsteps = 100000
+						render = False
+						trial = False
+						icm = False
+						rs = False
+						DYN = <src.utils.config.Config object at 0x7ff9d839d290> 
+							REG_LAMBDA = 1e-06
+							FACTOR = 0.98
+							PATIENCE = 10
+							LEARN_RATE = 0.0001
+							TRANSITION_HIDDEN = 512
+							REWARD_HIDDEN = 256
+							BETA_DYN = 1
+							BETA_DOT = 0
+							BETA_DDOT = 0
+					device = cuda
+					state_size = (4,)
+					action_size = [2]
+					discrete = True
+					dyn_index = 4
+					optimizer = Adam (
+					Parameter Group 0
+					    amsgrad: False
+					    betas: (0.9, 0.999)
+					    eps: 1e-08
+					    lr: 0.0001
+					    weight_decay: 1e-06
+					)
+					scheduler = <torch.optim.lr_scheduler.ReduceLROnPlateau object at 0x7ff9beb1f410>
+				state_size = (4,)
+				action_size = [2]
+			mu = [ 0.000  0.000]
+			cov = [[ 0.100  0.000]
+			 [ 0.000  0.100]]
+			icov = [[ 10.000   0.000]
+			 [  0.000  10.000]]
+			lamda = 0.1
+			horizon = 40
+			nsamples = 100
+			action_size = [2]
+			control = [[[-0.342  0.918]
+			  [ 0.921 -0.002]
+			  [-0.399 -0.255]
+			  [ 0.859 -0.875]
+			  [-0.139 -0.745]
+			  [-0.205  0.375]
+			  [ 0.210 -0.355]
+			  [ 0.122 -0.390]
+			  [-0.611  0.223]
+			  [ 0.030  0.669]
+			  [-0.819 -0.021]
+			  [-0.137 -0.691]
+			  [-0.597 -0.356]
+			  [-0.020  0.845]
+			  [ 0.667  0.347]
+			  [ 0.543 -0.636]
+			  [-0.711  0.354]
+			  [-0.590 -0.894]
+			  [-0.258 -0.550]
+			  [-0.204 -0.834]
+			  [ 0.373 -0.624]
+			  [-0.900 -0.738]
+			  [ 0.091  0.007]
+			  [ 0.147 -0.725]
+			  [ 0.970 -0.343]
+			  [-0.802  0.546]
+			  [-0.785  0.369]
+			  [ 0.729 -0.823]
+			  [-0.207 -0.765]
+			  [ 0.802  0.353]
+			  [-0.996  0.498]
+			  [-0.452 -0.050]
+			  [-0.758  0.876]
+			  [-0.263  0.905]
+			  [ 0.224  0.395]
+			  [ 0.147 -0.122]
+			  [-0.140 -0.672]
+			  [ 0.800  0.576]
+			  [-0.599  0.962]
+			  [-0.462 -0.160]]]
+			noise = [[[[ 0.040 -0.005]
+			   [ 0.406  0.012]
+			   [ 0.238  0.038]
+			   ...
+			   [ 0.059 -0.279]
+			   [ 0.017  0.035]
+			   [ 0.049 -0.219]]
+			
+			  [[-0.379 -0.094]
+			   [-0.364  0.204]
+			   [ 0.088  0.053]
+			   ...
+			   [ 0.050 -0.343]
+			   [-0.183  0.014]
+			   [-0.236  0.631]]
+			
+			  [[ 0.231 -0.502]
+			   [ 0.278 -0.280]
+			   [-0.062 -0.551]
+			   ...
+			   [ 0.461  0.330]
+			   [ 0.487 -0.347]
+			   [ 0.041 -0.271]]
+			
+			  ...
+			
+			  [[-0.474  0.160]
+			   [ 0.195 -0.402]
+			   [ 0.013  0.076]
+			   ...
+			   [ 0.506  0.269]
+			   [-0.425 -0.060]
+			   [ 0.205 -0.021]]
+			
+			  [[ 0.560 -0.863]
+			   [-1.600 -0.146]
+			   [ 0.888 -0.885]
+			   ...
+			   [ 0.011 -0.082]
+			   [-0.270 -0.274]
+			   [-0.219  0.138]]
+			
+			  [[-0.204  0.067]
+			   [ 0.076  0.007]
+			   [-0.293  0.345]
+			   ...
+			   [ 0.296 -0.608]
+			   [ 0.453 -0.465]
+			   [ 0.432  0.200]]]]
+			init_cost = [[  4.984 -23.553  -8.784  14.026   3.882  -8.534  26.498   5.511   3.864  13.612  23.607 -19.568  -2.150  19.597  10.986  12.650  -6.463  27.521  -1.311 -14.033   5.311 -24.000  24.911  24.264  28.539  -1.416  13.892 -23.039  20.245  -8.154 -28.852 -11.802  14.974  -3.629 -14.140 -16.014 -46.015  -4.790 -10.744  17.826  24.111 -13.123   4.268  12.420  17.692  10.143  14.918 -26.054  34.367  28.109 -26.041 -25.552 -18.397   3.881  35.820  16.753   4.151   4.690   2.432  11.947  -9.007 -31.901   0.950   4.482 -11.463  -9.453 -15.575   1.574  23.525  -3.001  -2.237  -3.352 -24.376  12.846   6.369  13.972   7.400  31.208  35.751   1.045   1.105   4.190   2.146  34.987  22.040   8.715  14.015   6.081  35.952  16.896  -4.919 -16.919 -28.299 -11.017  -7.571 -13.838 -12.266  26.991 -25.186  -3.058]]
+		replay_buffer = <src.utils.rand.ReplayBuffer object at 0x7ff9beb1f3d0> 
+			buffer = deque([], maxlen=1000000)
+		buffer = []
+		dataset = <class 'src.data.loaders.OnlineDataset'>
+	noise_process = <src.utils.rand.BrownianNoise object at 0x7ff9b9bab590> 
+		size = [2]
+		dt = 0.2
+		action = [-1.000 -0.541]
+		daction_dt = [ 0.257 -0.041]
+	discrete = True
+	action_size = [2]
+	state_size = (4,)
+	config = <src.utils.config.Config object at 0x7ff9d83ba250> 
+		TRIAL_AT = 1000
+		SAVE_AT = 1
+		SEED = 0
+		REG_LAMBDA = 1e-06
+		LEARN_RATE = 0.0001
+		DISCOUNT_RATE = 0.99
+		ADVANTAGE_DECAY = 0.95
+		INPUT_LAYER = 512
+		ACTOR_HIDDEN = 256
+		CRITIC_HIDDEN = 1024
+		EPS_MAX = 1.0
+		EPS_MIN = 0.1
+		EPS_DECAY = 0.998
+		NUM_STEPS = 500
+		MAX_BUFFER_SIZE = 1000000
+		REPLAY_BATCH_SIZE = 5000
+		TARGET_UPDATE_RATE = 0.0004
+		BATCH_SIZE = 250
+		DYN_EPOCHS = 1
+		TRAIN_EVERY = 5000
+		ENV_MODEL = dfrntl
+		MPC = <src.utils.config.Config object at 0x7ff94a2d03d0> 
+			NSAMPLES = 100
+			HORIZON = 40
+			LAMBDA = 0.1
+			COV = 0.1
+		dynamics_size = 4
+		state_size = (4,)
+		action_size = [2]
+		env_name = CartPole-v0
+		rank = 0
+		size = 1
+		split = 1
+		model = mppi
+		framework = pt
+		train_prop = 1.0
+		tcp_ports = []
+		tcp_rank = 0
+		num_envs = 4
+		nsteps = 100000
+		render = False
+		trial = False
+		icm = False
+		rs = False
+		DYN = <src.utils.config.Config object at 0x7ff9d839d290> 
+			REG_LAMBDA = 1e-06
+			FACTOR = 0.98
+			PATIENCE = 10
+			LEARN_RATE = 0.0001
+			TRANSITION_HIDDEN = 512
+			REWARD_HIDDEN = 256
+			BETA_DYN = 1
+			BETA_DOT = 0
+			BETA_DDOT = 0
+	stats = <src.utils.logger.Stats object at 0x7ff9b9b4bad0> 
+		mean_dict = {}
+		sum_dict = {},
+conn: None,
+
+import tqdm
+import torch
+import random
+import numpy as np
+import scipy as sp
+from scipy.stats import multivariate_normal
+from src.utils.rand import RandomAgent, ReplayBuffer
+from src.utils.misc import load_module
+from ..agents.base import PTNetwork, PTAgent, Conv, one_hot_from_indices
+from . import EnvModel
+
+class MPPIController(PTNetwork):
+	def __init__(self, state_size, action_size, config, load="", gpu=True, name="mppi"):
+		super().__init__(config, gpu=gpu, name=name)
+		self.envmodel = EnvModel(state_size, action_size, config, load=load, gpu=gpu)
+		self.mu = np.zeros(action_size)
+		self.cov = np.diag(np.ones(action_size))*config.MPC.COV
+		self.icov = np.linalg.inv(self.cov)
+		self.lamda = config.MPC.LAMBDA
+		self.horizon = config.MPC.HORIZON
+		self.nsamples = config.MPC.NSAMPLES
+		self.action_size = action_size
+		self.config = config
+		self.init_control()
+
+	def get_action(self, state, eps=None, sample=True):
+		batch = state.shape[:-1]
+		horizon = max(int((1-eps)*self.horizon),1) if eps else self.horizon
+		if len(batch) and self.control.shape[0] != batch[0]: self.init_control(batch[0])
+		x = torch.Tensor(state).view(*batch, 1,-1).repeat_interleave(self.nsamples, -2)
+		controls = np.clip(self.control[:,None,:,:] + self.noise, -1, 1)
+		self.states, rewards = self.envmodel.rollout(controls[...,:horizon,:], x, numpy=True)
+		costs = -np.sum(rewards, -1) #+ self.lamda * np.copy(self.init_cost)
+		beta = np.min(costs, -1, keepdims=True)
+		costs_norm = -(costs - beta)/self.lamda
+		weights = sp.special.softmax(costs_norm, axis=-1)
+		self.control += np.sum(weights[:,:,None,None]*self.noise, len(batch))
+		action = self.control[...,0,:]
+		self.control = np.roll(self.control, -1, axis=-2)
+		self.control[...,-1,:] = 0
+		return action
+
+	def init_control(self, batch_size=1):
+		self.control = np.random.uniform(-1, 1, size=[1, self.horizon, *self.action_size]).repeat(batch_size, 0)
+		self.noise = np.random.multivariate_normal(self.mu, self.cov, size=[1, self.nsamples, self.horizon]).repeat(batch_size, 0)
+		self.init_cost = np.sum(self.control[:,None,:,None,:] @ self.icov[None,None,None,:,:] @ self.noise[:,:,:,:,None], axis=(2,3,4))
+
+	def optimize(self, states, actions, next_states, rewards, dones):
+		return self.envmodel.optimize(states, actions, next_states, rewards, dones)
+
+	def save_model(self, dirname="pytorch", name="checkpoint", net=None):
+		return self.envmodel.save_model(dirname, name, net)
+		
+	def load_model(self, dirname="pytorch", name="checkpoint", net=None):
+		return self.envmodel.load_model(dirname, name, net)
+
+	def get_stats(self):
+		return {**super().get_stats(), **self.envmodel.get_stats()}
+
+class MPPIAgent(PTAgent):
+	def __init__(self, state_size, action_size, config, gpu=True, load=None):
+		super().__init__(state_size, action_size, config, MPPIController, gpu=gpu, load=load)
+		self.dataset = load_module("src.data.loaders:OnlineDataset")
+
+	def get_action(self, state, eps=None, sample=True):
+		action_random = super().get_action(state)
+		if eps is None and not hasattr(self, "losses"): return action_random
+		eps = self.eps if eps is None else eps
+		action_greedy = self.network.get_action(np.array(state), eps)
+		action = np.clip((1-eps)*action_greedy + eps*action_random, -1, 1)
+		return action
+
+	def partition(self, x):
+		if self.config.NUM_STEPS is None:
+			return x[None,...]
+		num_splits = x.shape[0]//self.config.NUM_STEPS
+		if num_splits == 0:
+			arr = np.zeros([self.config.NUM_STEPS, *x.shape[1:]])
+			arr[-x.shape[0]:] = x
+			num_splits = 1
+			x = arr
+		arr = x[:num_splits*self.config.NUM_STEPS].reshape(num_splits, self.config.NUM_STEPS, *x.shape[1:])
+		return arr
+
+	def train(self, state, action, next_state, reward, done):
+		self.time = getattr(self, "time", 0) + 1
+		if not hasattr(self, "buffers"): self.buffers = [[] for _ in done]
+		for buffer, s, a, ns, r, d in zip(self.buffers, state, action, next_state, reward, done):
+			buffer.append((s, a, s if d else ns, r, d))
+			if not d: continue
+			states, actions, next_states, rewards, dones = map(lambda x: self.to_tensor(x)[None], zip(*buffer))
+			buffer.clear()
+			values = self.network.envmodel.network.reward(actions, states, next_states)[0]
+			rewards = self.compute_gae(0*values[-1], rewards.transpose(0,1), dones.transpose(0,1), values)[0].transpose(0,1)
+			states, actions, next_states, rewards, dones = map(lambda x: x.cpu().numpy(), [states, actions, next_states, rewards, dones])
+			self.replay_buffer.extend(list(zip(states, actions, next_states, rewards, dones)), shuffle=False)
+		if len(self.replay_buffer) > self.config.REPLAY_BATCH_SIZE and self.time % self.config.TRAIN_EVERY == 0:
+			self.losses = []
+			samples = list(self.replay_buffer.sample(self.config.REPLAY_BATCH_SIZE, dtype=None)[0])
+			dataset = self.dataset(self.config, samples, seq_len=self.config.MPC.HORIZON)
+			loader = torch.utils.data.DataLoader(dataset, batch_size=self.config.BATCH_SIZE, shuffle=True)
+			pbar = tqdm.tqdm(loader)
+			for states, actions, next_states, rewards, dones in pbar:
+				self.losses.append(self.network.optimize(states, actions, next_states, rewards, dones))
+				pbar.set_postfix_str(f"Loss: {self.losses[-1]:.4f}")
+			self.network.envmodel.network.schedule(np.mean(self.losses))
+		self.eps = (self.time%self.config.TRAIN_EVERY)/self.config.TRAIN_EVERY if hasattr(self, "losses") else 1
+		self.stats.mean(len=len(self.replay_buffer))
+
+
+Step:       0, Reward:    27.000 [   8.775], Avg:    27.000 (1.000) <0-00:00:00> ({'r_t':     1.0000, 'eps':     1.0000, 'len':   0.00e+00, 'lr':     0.0001, 'eps_e':     1.0000, 'lr_e':     0.0001})
+Step:    1000, Reward:    11.750 [   2.046], Avg:    19.375 (1.000) <0-00:00:03> ({'r_t':  1000.0000, 'eps':     1.0000, 'len':   151.1190, 'lr':     0.0001, 'eps_e':     1.0000, 'lr_e':     0.0001})
+Step:    2000, Reward:    11.250 [   2.586], Avg:    16.667 (1.000) <0-00:00:06> ({'r_t':  1000.0000, 'eps':     1.0000, 'len':   456.9170, 'lr':     0.0001, 'eps_e':     1.0000, 'lr_e':     0.0001})
+Step:    3000, Reward:    10.500 [   1.500], Avg:    15.125 (1.000) <0-00:00:08> ({'r_t':  1000.0000, 'eps':     1.0000, 'len':   760.4370, 'lr':     0.0001, 'eps_e':     1.0000, 'lr_e':     0.0001})
+Step:    4000, Reward:    14.000 [   3.674], Avg:    14.900 (1.000) <0-00:00:11> ({'r_t':  1000.0000, 'eps':     1.0000, 'len':  1034.2490, 'lr':     0.0001, 'eps_e':     1.0000, 'lr_e':     0.0001})
+Step:    5000, Reward:    11.500 [   0.500], Avg:    14.333 (1.000) <0-00:00:14> ({'r_t':  1000.0000, 'eps':     1.0000, 'len':  1334.8920, 'lr':     0.0001, 'eps_e':     1.0000, 'lr_e':     0.0001})
+Step:    6000, Reward:    15.000 [   4.062], Avg:    14.429 (1.000) <0-00:00:17> ({'r_t':  1000.0000, 'eps':     1.0000, 'len':  1630.5650, 'lr':     0.0001, 'eps_e':     1.0000, 'lr_e':     0.0001})
+Step:    7000, Reward:    14.750 [   4.437], Avg:    14.469 (1.000) <0-00:00:21> ({'r_t':  1000.0000, 'eps':     1.0000, 'len':  1931.8320, 'lr':     0.0001, 'eps_e':     1.0000, 'lr_e':     0.0001})
+Step:    8000, Reward:    13.750 [   3.767], Avg:    14.389 (1.000) <0-00:00:24> ({'r_t':  1000.0000, 'eps':     1.0000, 'len':  2221.3920, 'lr':     0.0001, 'eps_e':     1.0000, 'lr_e':     0.0001})
+Step:    9000, Reward:    16.500 [   9.605], Avg:    14.600 (1.000) <0-00:00:28> ({'r_t':  1000.0000, 'eps':     1.0000, 'len':  2512.8920, 'lr':     0.0001, 'eps_e':     1.0000, 'lr_e':     0.0001})
+Step:   10000, Reward:    13.750 [   3.491], Avg:    14.523 (1.000) <0-00:00:31> ({'r_t':  1000.0000, 'eps':     1.0000, 'len':  2826.2590, 'lr':     0.0001, 'eps_e':     1.0000, 'lr_e':     0.0001})
+Step:   11000, Reward:    13.750 [   4.206], Avg:    14.458 (1.000) <0-00:00:34> ({'r_t':  1000.0000, 'eps':     1.0000, 'len':  3121.0070, 'lr':     0.0001, 'eps_e':     1.0000, 'lr_e':     0.0001})
+Step:   12000, Reward:    12.750 [   2.278], Avg:    14.327 (1.000) <0-00:00:36> ({'r_t':  1000.0000, 'eps':     1.0000, 'len':  3418.7470, 'lr':     0.0001, 'eps_e':     1.0000, 'lr_e':     0.0001})
+Step:   13000, Reward:    12.500 [   1.118], Avg:    14.196 (1.000) <0-00:00:39> ({'r_t':  1000.0000, 'eps':     1.0000, 'len':  3706.7970, 'lr':     0.0001, 'eps_e':     1.0000, 'lr_e':     0.0001})
+Step:   14000, Reward:    12.750 [   2.278], Avg:    14.100 (1.000) <0-00:00:41> ({'r_t':  1000.0000, 'eps':     1.0000, 'len':  3998.3710, 'lr':     0.0001, 'eps_e':     1.0000, 'lr_e':     0.0001})
+Step:   15000, Reward:    15.750 [   5.403], Avg:    14.203 (1.000) <0-00:00:44> ({'r_t':  1000.0000, 'eps':     1.0000, 'len':  4285.8840, 'lr':     0.0001, 'eps_e':     1.0000, 'lr_e':     0.0001})
+Step:   16000, Reward:    13.000 [   2.739], Avg:    14.132 (1.000) <0-00:00:47> ({'r_t':  1000.0000, 'eps':     1.0000, 'len':  4579.2920, 'lr':     0.0001, 'eps_e':     1.0000, 'lr_e':     0.0001})
+Step:   17000, Reward:    13.250 [   3.269], Avg:    14.083 (1.000) <0-00:00:50> ({'r_t':  1000.0000, 'eps':     1.0000, 'len':  4883.0170, 'lr':     0.0001, 'eps_e':     1.0000, 'lr_e':     0.0001})
+Step:   18000, Reward:    11.750 [   3.031], Avg:    13.961 (1.000) <0-00:00:53> ({'r_t':  1000.0000, 'eps':     1.0000, 'len':  5178.6610, 'lr':     0.0001, 'eps_e':     1.0000, 'lr_e':     0.0001})
+Step:   19000, Reward:    13.250 [   1.090], Avg:    13.925 (1.000) <0-00:00:56> ({'r_t':  1000.0000, 'eps':     1.0000, 'len':  5475.3790, 'lr':     0.0001, 'eps_e':     1.0000, 'lr_e':     0.0001})
+Step:   20000, Reward:    10.000 [   0.707], Avg:    13.738 (0.000) <0-00:01:03> ({'r_t':  1000.0000, 'eps':     0.0002, 'len':  5763.8650, 'dyn_loss':     2.1312, 'dot_loss':     0.3412, 'ddot_loss':     0.2280, 'rew_loss':    24.0201, 'lr':     0.0001, 'eps_e':     0.0002, 'lr_e':     0.0001})
+Step:   21000, Reward:    10.500 [   1.803], Avg:    13.591 (0.200) <0-00:02:10> ({'r_t':  1000.0000, 'eps':     0.2002, 'len':  6098.3290, 'lr':     0.0001, 'eps_e':     0.2002, 'lr_e':     0.0001})
+Step:   22000, Reward:    10.250 [   1.299], Avg:    13.446 (0.400) <0-00:02:50> ({'r_t':  1000.0000, 'eps':     0.4002, 'len':  6487.3110, 'lr':     0.0001, 'eps_e':     0.4002, 'lr_e':     0.0001})
+Step:   23000, Reward:    11.500 [   1.118], Avg:    13.365 (0.600) <0-00:03:21> ({'r_t':  1000.0000, 'eps':     0.6002, 'len':  6857.7650, 'lr':     0.0001, 'eps_e':     0.6002, 'lr_e':     0.0001})
+Step:   24000, Reward:     9.500 [   0.500], Avg:    13.210 (0.800) <0-00:03:46> ({'r_t':  1000.0000, 'eps':     0.8002, 'len':  7157.1590, 'lr':     0.0001, 'eps_e':     0.8002, 'lr_e':     0.0001})
+Step:   25000, Reward:    51.750 [  14.703], Avg:    14.692 (0.000) <0-00:04:06> ({'r_t':  1000.0000, 'eps':     0.0002, 'len':  7451.4770, 'dyn_loss':     0.5865, 'dot_loss':     0.1694, 'ddot_loss':     0.1795, 'rew_loss':    11.3192, 'lr':     0.0001, 'eps_e':     0.0002, 'lr_e':     0.0001})
+Step:   26000, Reward:    31.250 [   7.395], Avg:    15.306 (0.200) <0-00:05:13> ({'r_t':  1000.0000, 'eps':     0.2002, 'len':  7642.7080, 'lr':     0.0001, 'eps_e':     0.2002, 'lr_e':     0.0001})
+Step:   27000, Reward:    60.250 [  19.588], Avg:    16.911 (0.400) <0-00:06:08> ({'r_t':  1000.0000, 'eps':     0.4002, 'len':  7736.1080, 'lr':     0.0001, 'eps_e':     0.4002, 'lr_e':     0.0001})
+Step:   28000, Reward:    36.750 [  15.738], Avg:    17.595 (0.600) <0-00:06:51> ({'r_t':  1000.0000, 'eps':     0.6002, 'len':  7863.3980, 'lr':     0.0001, 'eps_e':     0.6002, 'lr_e':     0.0001})
+Step:   29000, Reward:    41.250 [  19.829], Avg:    18.383 (0.800) <0-00:07:19> ({'r_t':  1000.0000, 'eps':     0.8002, 'len':  8065.9410, 'lr':     0.0001, 'eps_e':     0.8002, 'lr_e':     0.0001})
+Step:   30000, Reward:    51.250 [  11.233], Avg:    19.444 (0.000) <0-00:07:35> ({'r_t':  1000.0000, 'eps':     0.0002, 'len':  8335.0230, 'dyn_loss':     0.3960, 'dot_loss':     0.1301, 'ddot_loss':     0.1759, 'rew_loss':    21.5576, 'lr':     0.0001, 'eps_e':     0.0002, 'lr_e':     0.0001})
+Step:   31000, Reward:    59.500 [  35.401], Avg:    20.695 (0.200) <0-00:08:33> ({'r_t':  1000.0000, 'eps':     0.2002, 'len':  8521.6230, 'lr':     0.0001, 'eps_e':     0.2002, 'lr_e':     0.0001})
+Step:   32000, Reward:    50.500 [  14.841], Avg:    21.598 (0.400) <0-00:09:28> ({'r_t':  1000.0000, 'eps':     0.4002, 'len':  8612.6880, 'lr':     0.0001, 'eps_e':     0.4002, 'lr_e':     0.0001})
+Step:   33000, Reward:    35.000 [   5.523], Avg:    21.993 (0.600) <0-00:10:10> ({'r_t':  1000.0000, 'eps':     0.6002, 'len':  8727.9440, 'lr':     0.0001, 'eps_e':     0.6002, 'lr_e':     0.0001})
+Step:   34000, Reward:    31.000 [  11.769], Avg:    22.250 (0.800) <0-00:10:38> ({'r_t':  1000.0000, 'eps':     0.8002, 'len':  8907.4780, 'lr':     0.0001, 'eps_e':     0.8002, 'lr_e':     0.0001})
+Step:   35000, Reward:    61.250 [  34.303], Avg:    23.333 (0.000) <0-00:11:02> ({'r_t':  1000.0000, 'eps':     0.0002, 'len':  9159.1030, 'dyn_loss':     0.3029, 'dot_loss':     0.1088, 'ddot_loss':     0.1738, 'rew_loss':    29.5059, 'lr':     0.0001, 'eps_e':     0.0002, 'lr_e':     0.0001})
+Step:   36000, Reward:    48.750 [  14.359], Avg:    24.020 (0.200) <0-00:12:12> ({'r_t':  1000.0000, 'eps':     0.2002, 'len':  9334.0730, 'lr':     0.0001, 'eps_e':     0.2002, 'lr_e':     0.0001})
+Step:   37000, Reward:    57.250 [  19.370], Avg:    24.895 (0.400) <0-00:12:55> ({'r_t':  1000.0000, 'eps':     0.4002, 'len':  9423.3370, 'lr':     0.0001, 'eps_e':     0.4002, 'lr_e':     0.0001})
+Step:   38000, Reward:    49.000 [   4.637], Avg:    25.513 (0.600) <0-00:13:27> ({'r_t':  1000.0000, 'eps':     0.6002, 'len':  9552.4700, 'lr':     0.0001, 'eps_e':     0.6002, 'lr_e':     0.0001})
+Step:   39000, Reward:    47.250 [   7.661], Avg:    26.056 (0.800) <0-00:13:55> ({'r_t':  1000.0000, 'eps':     0.8002, 'len':  9739.4780, 'lr':     0.0001, 'eps_e':     0.8002, 'lr_e':     0.0001})
+Step:   40000, Reward:    49.250 [  22.106], Avg:    26.622 (0.000) <0-00:14:18> ({'r_t':  1000.0000, 'eps':     0.0002, 'len':  9994.8830, 'dyn_loss':     0.2504, 'dot_loss':     0.0957, 'ddot_loss':     0.1718, 'rew_loss':    34.2174, 'lr':     0.0001, 'eps_e':     0.0002, 'lr_e':     0.0001})
+Step:   41000, Reward:    65.000 [  21.772], Avg:    27.536 (0.200) <0-00:15:29> ({'r_t':  1000.0000, 'eps':     0.2002, 'len': 10173.4650, 'lr':     0.0001, 'eps_e':     0.2002, 'lr_e':     0.0001})
+Step:   42000, Reward:    52.500 [  17.095], Avg:    28.116 (0.400) <0-00:16:24> ({'r_t':  1000.0000, 'eps':     0.4002, 'len': 10248.5870, 'lr':     0.0001, 'eps_e':     0.4002, 'lr_e':     0.0001})
+Step:   43000, Reward:    48.750 [   6.796], Avg:    28.585 (0.600) <0-00:17:06> ({'r_t':  1000.0000, 'eps':     0.6002, 'len': 10368.9140, 'lr':     0.0001, 'eps_e':     0.6002, 'lr_e':     0.0001})
+Step:   44000, Reward:    42.750 [  12.194], Avg:    28.900 (0.800) <0-00:17:32> ({'r_t':  1000.0000, 'eps':     0.8002, 'len': 10559.2280, 'lr':     0.0001, 'eps_e':     0.8002, 'lr_e':     0.0001})
+Step:   45000, Reward:    71.500 [  19.112], Avg:    29.826 (0.000) <0-00:17:51> ({'r_t':  1000.0000, 'eps':     0.0002, 'len': 10828.8690, 'dyn_loss':     0.2158, 'dot_loss':     0.0870, 'ddot_loss':     0.1686, 'rew_loss':    35.9752, 'lr':     0.0001, 'eps_e':     0.0002, 'lr_e':     0.0001})
+Step:   46000, Reward:    44.500 [  18.768], Avg:    30.138 (0.200) <0-00:18:46> ({'r_t':  1000.0000, 'eps':     0.2002, 'len': 11020.7340, 'lr':     0.0001, 'eps_e':     0.2002, 'lr_e':     0.0001})
+Step:   47000, Reward:    41.000 [   9.110], Avg:    30.365 (0.400) <0-00:19:40> ({'r_t':  1000.0000, 'eps':     0.4002, 'len': 11104.6350, 'lr':     0.0001, 'eps_e':     0.4002, 'lr_e':     0.0001})
+Step:   48000, Reward:    64.250 [  16.177], Avg:    31.056 (0.600) <0-00:20:25> ({'r_t':  1000.0000, 'eps':     0.6002, 'len': 11209.2220, 'lr':     0.0001, 'eps_e':     0.6002, 'lr_e':     0.0001})
+Step:   49000, Reward:    43.250 [  14.498], Avg:    31.300 (0.800) <0-00:20:53> ({'r_t':  1000.0000, 'eps':     0.8002, 'len': 11385.9470, 'lr':     0.0001, 'eps_e':     0.8002, 'lr_e':     0.0001})
+Step:   50000, Reward:    61.500 [   5.362], Avg:    31.892 (0.000) <0-00:21:16> ({'r_t':  1000.0000, 'eps':     0.0002, 'len': 11639.8910, 'dyn_loss':     0.1967, 'dot_loss':     0.0813, 'ddot_loss':     0.1652, 'rew_loss':    37.2136, 'lr':     0.0001, 'eps_e':     0.0002, 'lr_e':     0.0001})
+Step:   51000, Reward:    73.000 [  26.029], Avg:    32.683 (0.200) <0-00:22:27> ({'r_t':  1000.0000, 'eps':     0.2002, 'len': 11816.1200, 'lr':     0.0001, 'eps_e':     0.2002, 'lr_e':     0.0001})
+Step:   52000, Reward:    75.500 [  24.439], Avg:    33.491 (0.400) <0-00:23:09> ({'r_t':  1000.0000, 'eps':     0.4002, 'len': 11890.1750, 'lr':     0.0001, 'eps_e':     0.4002, 'lr_e':     0.0001})
+Step:   53000, Reward:    61.750 [  28.926], Avg:    34.014 (0.600) <0-00:23:44> ({'r_t':  1000.0000, 'eps':     0.6002, 'len': 12014.7680, 'lr':     0.0001, 'eps_e':     0.6002, 'lr_e':     0.0001})
+Step:   54000, Reward:    55.500 [  11.500], Avg:    34.405 (0.800) <0-00:24:14> ({'r_t':  1000.0000, 'eps':     0.8002, 'len': 12200.3160, 'lr':     0.0001, 'eps_e':     0.8002, 'lr_e':     0.0001})
+Step:   55000, Reward:   119.250 [  55.472], Avg:    35.920 (0.000) <0-00:24:45> ({'r_t':  1000.0000, 'eps':     0.0002, 'len': 12449.1940, 'dyn_loss':     0.1841, 'dot_loss':     0.0780, 'ddot_loss':     0.1640, 'rew_loss':    40.8885, 'lr':     0.0001, 'eps_e':     0.0002, 'lr_e':     0.0001})
+Step:   56000, Reward:   128.250 [  49.530], Avg:    37.539 (0.200) <0-00:25:59> ({'r_t':  1000.0000, 'eps':     0.2002, 'len': 12615.5720, 'lr':     0.0001, 'eps_e':     0.2002, 'lr_e':     0.0001})
+Step:   57000, Reward:   139.250 [  37.339], Avg:    39.293 (0.400) <0-00:27:02> ({'r_t':  1000.0000, 'eps':     0.4002, 'len': 12658.8350, 'lr':     0.0001, 'eps_e':     0.4002, 'lr_e':     0.0001})
+Step:   58000, Reward:   141.000 [  28.749], Avg:    41.017 (0.600) <0-00:27:48> ({'r_t':  1000.0000, 'eps':     0.6002, 'len': 12755.3920, 'lr':     0.0001, 'eps_e':     0.6002, 'lr_e':     0.0001})
+Step:   59000, Reward:   112.500 [  27.870], Avg:    42.208 (0.800) <0-00:28:14> ({'r_t':  1000.0000, 'eps':     0.8002, 'len': 12933.6190, 'lr':     0.0001, 'eps_e':     0.8002, 'lr_e':     0.0001})
+Step:   60000, Reward:   126.750 [  53.653], Avg:    43.594 (0.000) <0-00:28:40> ({'r_t':  1000.0000, 'eps':     0.0002, 'len': 13182.2780, 'dyn_loss':     0.1789, 'dot_loss':     0.0760, 'ddot_loss':     0.1636, 'rew_loss':    43.2064, 'lr':     0.0001, 'eps_e':     0.0002, 'lr_e':     0.0001})
+Step:   61000, Reward:   146.250 [  40.140], Avg:    45.250 (0.200) <0-00:29:55> ({'r_t':  1000.0000, 'eps':     0.2002, 'len': 13340.1220, 'lr':     0.0001, 'eps_e':     0.2002, 'lr_e':     0.0001})
+Step:   62000, Reward:   141.250 [  40.388], Avg:    46.774 (0.400) <0-00:30:57> ({'r_t':  1000.0000, 'eps':     0.4002, 'len': 13382.6770, 'lr':     0.0001, 'eps_e':     0.4002, 'lr_e':     0.0001})
+Step:   63000, Reward:   147.000 [  45.371], Avg:    48.340 (0.600) <0-00:31:48> ({'r_t':  1000.0000, 'eps':     0.6002, 'len': 13475.4860, 'lr':     0.0001, 'eps_e':     0.6002, 'lr_e':     0.0001})
+Step:   64000, Reward:   112.250 [  44.735], Avg:    49.323 (0.800) <0-00:32:26> ({'r_t':  1000.0000, 'eps':     0.8002, 'len': 13650.0990, 'lr':     0.0001, 'eps_e':     0.8002, 'lr_e':     0.0001})
+Step:   65000, Reward:    96.500 [  24.026], Avg:    50.038 (0.000) <0-00:32:51> ({'r_t':  1000.0000, 'eps':     0.0002, 'len': 13907.7640, 'dyn_loss':     0.1664, 'dot_loss':     0.0714, 'ddot_loss':     0.1562, 'rew_loss':    46.2067, 'lr':     0.0001, 'eps_e':     0.0002, 'lr_e':     0.0001})
+Step:   66000, Reward:   154.500 [  43.603], Avg:    51.597 (0.200) <0-00:33:48> ({'r_t':  1000.0000, 'eps':     0.2002, 'len': 14072.7960, 'lr':     0.0001, 'eps_e':     0.2002, 'lr_e':     0.0001})
+Step:   67000, Reward:   124.000 [  38.033], Avg:    52.662 (0.400) <0-00:34:51> ({'r_t':  1000.0000, 'eps':     0.4002, 'len': 14108.4370, 'lr':     0.0001, 'eps_e':     0.4002, 'lr_e':     0.0001})
+Step:   68000, Reward:   151.750 [  11.777], Avg:    54.098 (0.600) <0-00:35:41> ({'r_t':  1000.0000, 'eps':     0.6002, 'len': 14200.6620, 'lr':     0.0001, 'eps_e':     0.6002, 'lr_e':     0.0001})
+Step:   69000, Reward:   109.250 [  54.103], Avg:    54.886 (0.800) <0-00:36:17> ({'r_t':  1000.0000, 'eps':     0.8002, 'len': 14382.8770, 'lr':     0.0001, 'eps_e':     0.8002, 'lr_e':     0.0001})
+Step:   70000, Reward:   163.750 [  25.469], Avg:    56.419 (0.000) <0-00:36:52> ({'r_t':  1000.0000, 'eps':     0.0002, 'len': 14628.1650, 'dyn_loss':     0.1619, 'dot_loss':     0.0696, 'ddot_loss':     0.1544, 'rew_loss':    52.2526, 'lr':     0.0001, 'eps_e':     0.0002, 'lr_e':     0.0001})
+Step:   71000, Reward:   144.250 [  41.136], Avg:    57.639 (0.200) <0-00:38:00> ({'r_t':  1000.0000, 'eps':     0.2002, 'len': 14776.0740, 'lr':     0.0001, 'eps_e':     0.2002, 'lr_e':     0.0001})
+Step:   72000, Reward:    91.250 [  44.251], Avg:    58.099 (0.400) <0-00:38:47> ({'r_t':  1000.0000, 'eps':     0.4002, 'len': 14814.2080, 'lr':     0.0001, 'eps_e':     0.4002, 'lr_e':     0.0001})
+Step:   73000, Reward:   180.250 [  16.037], Avg:    59.750 (0.600) <0-00:39:36> ({'r_t':  1000.0000, 'eps':     0.6002, 'len': 14911.5480, 'lr':     0.0001, 'eps_e':     0.6002, 'lr_e':     0.0001})
+Step:   74000, Reward:   145.000 [  25.288], Avg:    60.887 (0.800) <0-00:40:13> ({'r_t':  1000.0000, 'eps':     0.8002, 'len': 15085.8390, 'lr':     0.0001, 'eps_e':     0.8002, 'lr_e':     0.0001})
+Step:   75000, Reward:   133.250 [  25.743], Avg:    61.839 (0.000) <0-00:40:46> ({'r_t':  1000.0000, 'eps':     0.0002, 'len': 15344.9060, 'dyn_loss':     0.1551, 'dot_loss':     0.0648, 'ddot_loss':     0.1442, 'rew_loss':    54.6619, 'lr':     0.0001, 'eps_e':     0.0002, 'lr_e':     0.0001})
+Step:   76000, Reward:   136.750 [  31.838], Avg:    62.812 (0.200) <0-00:41:58> ({'r_t':  1000.0000, 'eps':     0.2002, 'len': 15495.5440, 'lr':     0.0001, 'eps_e':     0.2002, 'lr_e':     0.0001})
+Step:   77000, Reward:   130.000 [  34.446], Avg:    63.673 (0.400) <0-00:42:58> ({'r_t':  1000.0000, 'eps':     0.4002, 'len': 15538.8520, 'lr':     0.0001, 'eps_e':     0.4002, 'lr_e':     0.0001})
+Step:   78000, Reward:   112.500 [  23.457], Avg:    64.291 (0.600) <0-00:43:34> ({'r_t':  1000.0000, 'eps':     0.6002, 'len': 15640.9090, 'lr':     0.0001, 'eps_e':     0.6002, 'lr_e':     0.0001})
+Step:   79000, Reward:   130.000 [  58.626], Avg:    65.112 (0.800) <0-00:44:04> ({'r_t':  1000.0000, 'eps':     0.8002, 'len': 15822.2330, 'lr':     0.0001, 'eps_e':     0.8002, 'lr_e':     0.0001})
+Step:   80000, Reward:   142.500 [  32.292], Avg:    66.068 (0.000) <0-00:44:38> ({'r_t':  1000.0000, 'eps':     0.0002, 'len': 16077.4090, 'dyn_loss':     0.1486, 'dot_loss':     0.0595, 'ddot_loss':     0.1323, 'rew_loss':    57.3196, 'lr':   9.80e-05, 'eps_e':     0.0002, 'lr_e':   9.80e-05})
+Step:   81000, Reward:   188.750 [  12.814], Avg:    67.564 (0.200) <0-00:45:56> ({'r_t':  1000.0000, 'eps':     0.2002, 'len': 16242.0140, 'lr':   9.80e-05, 'eps_e':     0.2002, 'lr_e':   9.80e-05})
+Step:   82000, Reward:   128.500 [  30.079], Avg:    68.298 (0.400) <0-00:46:59> ({'r_t':  1000.0000, 'eps':     0.4002, 'len': 16280.1580, 'lr':   9.80e-05, 'eps_e':     0.4002, 'lr_e':   9.80e-05})
+Step:   83000, Reward:   153.250 [  45.615], Avg:    69.310 (0.600) <0-00:47:52> ({'r_t':  1000.0000, 'eps':     0.6002, 'len': 16370.0340, 'lr':   9.80e-05, 'eps_e':     0.6002, 'lr_e':   9.80e-05})
+Step:   84000, Reward:   145.000 [  61.847], Avg:    70.200 (0.800) <0-00:48:22> ({'r_t':  1000.0000, 'eps':     0.8002, 'len': 16555.3620, 'lr':   9.80e-05, 'eps_e':     0.8002, 'lr_e':   9.80e-05})
+Step:   85000, Reward:   135.750 [  74.130], Avg:    70.962 (0.000) <0-00:48:50> ({'r_t':  1000.0000, 'eps':     0.0002, 'len': 16825.5050, 'dyn_loss':     0.1426, 'dot_loss':     0.0521, 'ddot_loss':     0.1135, 'rew_loss':    56.1560, 'lr':   9.80e-05, 'eps_e':     0.0002, 'lr_e':   9.80e-05})
+Step:   86000, Reward:   146.250 [  36.072], Avg:    71.828 (0.200) <0-00:50:00> ({'r_t':  1000.0000, 'eps':     0.2002, 'len': 16986.3570, 'lr':   9.80e-05, 'eps_e':     0.2002, 'lr_e':   9.80e-05})
+Step:   87000, Reward:   140.250 [  60.210], Avg:    72.605 (0.400) <0-00:51:05> ({'r_t':  1000.0000, 'eps':     0.4002, 'len': 17027.0000, 'lr':   9.80e-05, 'eps_e':     0.4002, 'lr_e':   9.80e-05})
+Step:   88000, Reward:   172.250 [  33.767], Avg:    73.725 (0.600) <0-00:51:53> ({'r_t':  1000.0000, 'eps':     0.6002, 'len': 17109.4360, 'lr':   9.80e-05, 'eps_e':     0.6002, 'lr_e':   9.80e-05})
+Step:   89000, Reward:   148.250 [  32.790], Avg:    74.553 (0.800) <0-00:52:33> ({'r_t':  1000.0000, 'eps':     0.8002, 'len': 17277.1670, 'lr':   9.80e-05, 'eps_e':     0.8002, 'lr_e':   9.80e-05})
+Step:   90000, Reward:   119.000 [  46.276], Avg:    75.041 (0.000) <0-00:53:03> ({'r_t':  1000.0000, 'eps':     0.0002, 'len': 17517.1310, 'dyn_loss':     0.1381, 'dot_loss':     0.0471, 'ddot_loss':     0.0996, 'rew_loss':    56.6014, 'lr':   9.80e-05, 'eps_e':     0.0002, 'lr_e':   9.80e-05})
+Step:   91000, Reward:   146.000 [  52.024], Avg:    75.812 (0.200) <0-00:54:04> ({'r_t':  1000.0000, 'eps':     0.2002, 'len': 17662.4080, 'lr':   9.80e-05, 'eps_e':     0.2002, 'lr_e':   9.80e-05})
+Step:   92000, Reward:   179.500 [  20.500], Avg:    76.927 (0.400) <0-00:55:03> ({'r_t':  1000.0000, 'eps':     0.4002, 'len': 17697.1430, 'lr':   9.80e-05, 'eps_e':     0.4002, 'lr_e':   9.80e-05})
+Step:   93000, Reward:   193.750 [  10.825], Avg:    78.170 (0.600) <0-00:55:55> ({'r_t':  1000.0000, 'eps':     0.6002, 'len': 17780.9040, 'lr':   9.80e-05, 'eps_e':     0.6002, 'lr_e':   9.80e-05})
+Step:   94000, Reward:   172.250 [  29.786], Avg:    79.161 (0.800) <0-00:56:35> ({'r_t':  1000.0000, 'eps':     0.8002, 'len': 17960.4870, 'lr':   9.80e-05, 'eps_e':     0.8002, 'lr_e':   9.80e-05})
+Step:   95000, Reward:   106.250 [  21.417], Avg:    79.443 (0.000) <0-00:57:03> ({'r_t':  1000.0000, 'eps':     0.0002, 'len': 18220.3560, 'dyn_loss':     0.1338, 'dot_loss':     0.0439, 'ddot_loss':     0.0912, 'rew_loss':    64.3229, 'lr':   9.80e-05, 'eps_e':     0.0002, 'lr_e':   9.80e-05})
+Step:   96000, Reward:   120.500 [  15.108], Avg:    79.866 (0.200) <0-00:58:18> ({'r_t':  1000.0000, 'eps':     0.2002, 'len': 18381.7220, 'lr':   9.80e-05, 'eps_e':     0.2002, 'lr_e':   9.80e-05})
+Step:   97000, Reward:    89.750 [  36.176], Avg:    79.967 (0.400) <0-00:59:04> ({'r_t':  1000.0000, 'eps':     0.4002, 'len': 18423.5350, 'lr':   9.80e-05, 'eps_e':     0.4002, 'lr_e':   9.80e-05})
+Step:   98000, Reward:   115.500 [  44.303], Avg:    80.326 (0.600) <0-00:59:43> ({'r_t':  1000.0000, 'eps':     0.6002, 'len': 18505.6750, 'lr':   9.80e-05, 'eps_e':     0.6002, 'lr_e':   9.80e-05})
+Step:   99000, Reward:   132.750 [  64.449], Avg:    80.850 (0.800) <0-01:00:22> ({'r_t':  1000.0000, 'eps':     0.8002, 'len': 18673.2230, 'lr':   9.80e-05, 'eps_e':     0.8002, 'lr_e':   9.80e-05})
+Step:  100000, Reward:   178.500 [  24.632], Avg:    81.817 (0.000) <0-01:00:57> ({'r_t':  1000.0000, 'eps':     0.0002, 'len': 18921.4890, 'dyn_loss':     0.1312, 'dot_loss':     0.0410, 'ddot_loss':     0.0832, 'rew_loss':    63.6558, 'lr':   9.80e-05, 'eps_e':     0.0002, 'lr_e':   9.80e-05})

@@ -145,10 +145,12 @@ class PTAgent(RandomAgent):
 		self.buffer = []
 
 	def to_tensor(self, arr):
+		if isinstance(arr, torch.Tensor): return arr.to(self.network.device)
 		if isinstance(arr, np.ndarray): return torch.tensor(arr, requires_grad=False).float().to(self.network.device)
 		return self.to_tensor(np.array(arr)).to(self.network.device)
 
 	def compute_gae(self, last_value, rewards, dones, values):
+		last_value, rewards, dones, values = map(self.to_tensor, [last_value, rewards, dones, values])
 		with torch.no_grad():
 			gae = 0
 			gamma, lamda = self.config.DISCOUNT_RATE, self.config.ADVANTAGE_DECAY

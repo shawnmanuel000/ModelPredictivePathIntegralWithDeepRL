@@ -71,3 +71,14 @@ def dict_update(d, u):
 	for k,v in u.items():
 		d[k] = dict_update(d.get(k,{}),v) if isinstance(v, collections.Mapping) else v
 	return d
+
+def partition(self, x, size=None):
+	if size is None: return x[None,...]
+	num_splits = x.shape[0]//size
+	if num_splits == 0:
+		arr = np.zeros([size, *x.shape[1:]])
+		arr[-x.shape[0]:] = x
+		num_splits = 1
+		x = arr
+	arr = x[:num_splits*size].reshape(num_splits, size, *x.shape[1:])
+	return arr

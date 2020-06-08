@@ -70,26 +70,17 @@ class MPPIAgent(PTAgent):
 		action = np.clip((1-eps)*action_greedy + eps*action_random, -1, 1)
 		return action
 
-	def partition(self, x):
-		if self.config.NUM_STEPS is None:
-			return x[None,...]
-		num_splits = x.shape[0]//self.config.NUM_STEPS
-		if num_splits == 0:
-			arr = np.zeros([self.config.NUM_STEPS, *x.shape[1:]])
-			arr[-x.shape[0]:] = x
-			num_splits = 1
-			x = arr
-		arr = x[:num_splits*self.config.NUM_STEPS].reshape(num_splits, self.config.NUM_STEPS, *x.shape[1:])
-		return arr
-
 	def train(self, state, action, next_state, reward, done):
 		self.time = getattr(self, "time", 0) + 1
 		if not hasattr(self, "buffers"): self.buffers = [[] for _ in done]
 		for buffer, s, a, ns, r, d in zip(self.buffers, state, action, next_state, reward, done):
 			buffer.append((s, a, s if d else ns, r, d))
 			if not d: continue
-			states, actions, next_states, rewards, dones = map(lambda x: np.stack(x)[None], zip(*buffer))
+			states, actions, next_states, rewards, dones = map(lambda x: self.to_tensor(x)[None], zip(*buffer))
 			buffer.clear()
+			values = self.network.envmodel.network.reward(actions, states, next_states)[0]
+			rewards = self.compute_gae(0*values[-1], rewards.transpose(0,1), dones.transpose(0,1), values)[0].transpose(0,1)
+			states, actions, next_states, rewards, dones = map(lambda x: x.cpu().numpy(), [states, actions, next_states, rewards, dones])
 			self.replay_buffer.extend(list(zip(states, actions, next_states, rewards, dones)), shuffle=False)
 		if len(self.replay_buffer) > self.config.REPLAY_BATCH_SIZE and self.time % self.config.TRAIN_EVERY == 0:
 			self.losses = []
@@ -101,5 +92,5 @@ class MPPIAgent(PTAgent):
 				self.losses.append(self.network.optimize(states, actions, next_states, rewards, dones))
 				pbar.set_postfix_str(f"Loss: {self.losses[-1]:.4f}")
 			self.network.envmodel.network.schedule(np.mean(self.losses))
-		self.eps = (self.time%self.config.TRAIN_EVERY)/self.config.TRAIN_EVERY if hasattr(self, "losses") else 1
+		self.eps = (self.time%self.config.EPS_CYCLE)/self.config.EPS_CYCLE if hasattr(self, "losses") else 1
 		self.stats.mean(len=len(self.replay_buffer))
