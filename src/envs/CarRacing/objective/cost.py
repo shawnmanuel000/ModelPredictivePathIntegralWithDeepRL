@@ -37,8 +37,8 @@ class CostModel():
 		point = np.clip(point, minref, maxref)
 		index = np.round((point-minref)/self.res).astype(np.int32)
 		zindex = np.round(index[...,2]*self.res/(self.max_point[2] - self.min_point[2])).astype(np.int32)
-		cost = self.cost_map[index[...,0],index[...,1],zindex]
-		return np.tanh(cost/4)**2 if transform else cost
+		cost = self.cost_map[index[...,0],index[...,1],zindex if len(self.cost_map.shape)>2 else None] 
+		return np.tanh(cost/8)**2 if transform else cost
 
 	def load_cost_map(self, cost_name, res=0.1, buffer=50):
 		cost_file = os.path.join(map_dir, f"{cost_name}.npz")

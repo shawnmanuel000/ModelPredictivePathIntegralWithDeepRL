@@ -79,7 +79,9 @@ model_configs = {
 
 env_model_configs = {
 	env_grps["gym_cct"]: {
-		"ddpg": net_config.clone(),
+		"ddpg": net_config.clone(
+			EPS_DECAY = 0.98,             	# The rate at which eps decays from EPS_MAX to EPS_MIN
+		),
 		"ddqn": net_config.clone(),
 		"sac": net_config.clone(),
 		"mppi": net_config.clone(
@@ -88,7 +90,9 @@ env_model_configs = {
 		),
 	},
 	env_grps["gym_b2d"]: {
-		"ddpg": net_config.clone(),
+		"ddpg": net_config.clone(
+			EPS_DECAY = 0.99,             	# The rate at which eps decays from EPS_MAX to EPS_MIN
+		),
 		"ddqn": net_config.clone(),
 		"sac": net_config.clone(),
 		"mppi": net_config.clone(
