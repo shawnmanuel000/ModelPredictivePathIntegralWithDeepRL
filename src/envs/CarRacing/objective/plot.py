@@ -24,7 +24,7 @@ def plot_track(track):
 	ax.set_zlim3d(-100, 100)
 	plt.savefig(f"{plot_dir}/Track3D", bounding_box="tight")
 
-def plot_cost_map(cmodel):
+def plot_cost_map3D(cmodel):
 	plt.figure()
 	ax = plt.axes(projection='3d')
 	XX,YY = np.meshgrid(cmodel.X, cmodel.Y)
@@ -34,6 +34,20 @@ def plot_cost_map(cmodel):
 	ax.set_xlabel("X")
 	ax.set_ylabel("Y")
 	ax.set_zlim3d(0, 2)
+
+def plot_cost_map(cmodel):
+	plt.figure()
+	XX,YY,ZZ = np.meshgrid(cmodel.X, cmodel.Y, [8])
+	# ZZ = 8*np.ones_like(XX)
+	grid = np.concatenate([XX,YY,ZZ], -1)
+	cost = cmodel.get_point_cost(grid, transform=True)
+	XX, YY, cost = [x[...,0] for x in [XX, YY, cost]]
+	plt.pcolormesh(XX, YY, cost, cmap='RdYlGn_r')
+	plt.colorbar()
+	plt.title("Position to Deviation Cost Map")
+	plt.xlabel("X (m)")
+	plt.ylabel("Y (m)")
+	plt.savefig(f"{plot_dir}/Cost2D.png", dpi=500, bounding_box="tight")
 
 def plot_track_map(track):
 	plt.figure()
@@ -65,11 +79,12 @@ def animate_path(track):
 		ax.cla()
 
 if __name__ == "__main__":
-	cost_model = CostModel()
+	cost_model = CostModel(cost_name="cost_map2Ddense")
 	track = cost_model.track
-	plot_track2D(track)
-	plot_track(track)
+	# plot_track2D(track)
+	# plot_track(track)
 	plot_cost_map(cost_model)
+	# plot_cost_map3D(cost_model)
 	# plot_track_map(track)
 	# animate_path(track)
 	# plt.show()

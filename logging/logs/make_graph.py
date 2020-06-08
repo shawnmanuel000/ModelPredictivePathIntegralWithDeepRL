@@ -16,7 +16,7 @@ envs = importlib.util.module_from_spec(spec)
 sys.modules[spec.name] = envs
 spec.loader.exec_module(envs)
 
-models = ["rand", "ddpg", "ppo", "sac", "ddqn"]
+models = ["rand", "ddpg", "ppo", "sac", "mppi"]
 lighter_cols = ["#EEEEEE", "#44DFFF", "#FF4493", "#BDFF4F", "#FFED44"]
 light_cols = ["#CCCCCC", "#00BFFF", "#FF1493", "#9DFF2F", "#FFED00"]
 dark_cols = ["#777777", "#0000CD", "#FF0000", "#008000", "#FFA500"]
@@ -126,6 +126,5 @@ def get_env_names():
 	return sorted(env_names)
 	
 if __name__ == "__main__":
-	index = -1
 	for env_name in get_env_names(): 
 		graph_logs(env_name, False)
