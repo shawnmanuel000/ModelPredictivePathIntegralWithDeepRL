@@ -44,7 +44,7 @@ def read_log(path):
 	steps = []
 	rewards = []
 	rolling = []
-	averages = deque(maxlen=100)
+	averages = deque(maxlen=50)
 	fields_list = []
 	with open(path, "r") as f:
 		lines = [line for line in f if re.match(r"^Step:", line)]

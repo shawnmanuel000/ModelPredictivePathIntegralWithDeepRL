@@ -6,7 +6,7 @@
 #SBATCH -N 1
 #SBATCH -p gpu
 #SBATCH --gres=gpu:volta:1
-#SBATCH --time=1-00:00:00
+#SBATCH --time=4-00:00:00
 
 # Initialize the module command first
 source /etc/profile
