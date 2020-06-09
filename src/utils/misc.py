@@ -61,7 +61,7 @@ def rollout(env, agent, eps=None, render=False, sample=False, time_sleep=None, p
 			if time_sleep: time.sleep(time_sleep)
 			env_action, a = agent.get_env_action(env, state, eps, sample)[0:2]
 			state, reward, ndone, _ = env.step(env_action)
-			if print_action: print(reward, env_action, a)
+			if print_action: print(f"Reward: {reward}, Env_a: {env_action}, Action: {a}")
 			reward = np.equal(done,False).astype(np.float32)*reward if done is not None else reward
 			done = np.array(ndone) if done is None else np.logical_or(done, ndone)
 			total_reward = reward if total_reward is None else total_reward + reward

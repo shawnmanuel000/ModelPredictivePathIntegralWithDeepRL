@@ -61,9 +61,9 @@ class Track():
 	def get_progress(self, src, dst):
 		start = self.get_nearest(src)
 		fin = self.get_nearest(dst)
-		offset = int(0.2*len(self.track))
+		offset = int(0.8*len(self.track))
 		progress = (offset + fin - start)%len(self.track) - offset
-		return progress
+		return np.clip(progress, -5, 5)
 
 	def load_point_map(self, map_name, res=1, buffer=50):
 		point_file = os.path.join(map_dir, f"{map_name}.npz")

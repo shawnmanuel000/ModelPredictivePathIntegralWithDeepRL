@@ -61,10 +61,12 @@ model_configs = {
 		EPS_DECAY = 0.998,             	# The rate at which eps decays from EPS_MAX to EPS_MIN
 	),
 	"mppi": net_config.clone(
+		DISCOUNT_RATE = 0.9,			# The discount rate to use in the Bellman Equation
+		ADVANTAGE_DECAY = 0.9,			# The discount factor for the cumulative GAE calculation
 		MAX_BUFFER_SIZE = 100000,    	# Sets the maximum length of the replay buffer
 		REPLAY_BATCH_SIZE = 10000,  	# How many experience tuples to sample from the buffer for each train step
 		TRAIN_EVERY = 10000,   			# Number of iterations to sample batches for training
-		BATCH_SIZE = 250,				# Number of samples to train on for each train step
+		BATCH_SIZE = 500,				# Number of samples to train on for each train step
 		NUM_STEPS = None,  				# The number of steps to collect experience in sequence for each GAE calculation
 		ENV_MODEL = "dfrntl",
 		MPC = Config(
