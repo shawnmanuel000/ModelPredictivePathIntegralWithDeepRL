@@ -1,0 +1,942 @@
+Model: <class 'src.models.pytorch.agents.ppo.PPOAgent'>, Env: CartPole-v0, Date: 08/06/2020 02:36:35
+CPU: 20 Core, 0.0GHz, 377.59 GB, Linux-4.14.175-llgrid-10ms-x86_64-with-debian-buster-sid
+GPU 0: Tesla V100-PCIE-32GB, 32.51 GB (Driver: 440.33.01)
+GPU 1: Tesla V100-PCIE-32GB, 32.51 GB (Driver: 440.33.01)
+Git URL: https://github.com/shawnmanuel000/ModelPredictivePathIntegralWithDeepRL.git
+Hash: dfadcfaa5da451b9a2ea3569848592f6da9848be
+Branch: master
+
+config: 
+   TRIAL_AT = 1000
+   SAVE_AT = 1
+   SEED = 0
+   REG_LAMBDA = 1e-06
+   LEARN_RATE = 0.0001
+   DISCOUNT_RATE = 0.99
+   ADVANTAGE_DECAY = 0.95
+   INPUT_LAYER = 512
+   ACTOR_HIDDEN = 256
+   CRITIC_HIDDEN = 1024
+   EPS_MAX = 1.0
+   EPS_MIN = 0.1
+   EPS_DECAY = 0.998
+   NUM_STEPS = 500
+   MAX_BUFFER_SIZE = 1000000
+   REPLAY_BATCH_SIZE = 32
+   TARGET_UPDATE_RATE = 0.0004
+   BATCH_SIZE = 32
+   PPO_EPOCHS = 2
+   ENTROPY_WEIGHT = 0.01
+   CLIP_PARAM = 0.05
+   dynamics_size = 4
+   state_size = (4,)
+   action_size = [2]
+   env_name = CartPole-v0
+   rank = 0
+   size = 17
+   split = 17
+   model = ppo
+   framework = pt
+   train_prop = 1.0
+   tcp_ports = []
+   tcp_rank = 0
+   num_envs = 1
+   nsteps = 500000
+   render = False
+   trial = False
+   icm = False
+   rs = False,
+num_envs: 16,
+envs: <src.utils.envs.EnvManager object at 0x7f1548615f60> 
+	env = <GymEnv<TimeLimit<CartPoleEnv<CartPole-v0>>>> 
+		env = <TimeLimit<CartPoleEnv<CartPole-v0>>> 
+			env = <CartPoleEnv<CartPole-v0>> 
+				gravity = 9.8
+				masscart = 1.0
+				masspole = 0.1
+				total_mass = 1.1
+				length = 0.5
+				polemass_length = 0.05
+				force_mag = 10.0
+				tau = 0.02
+				kinematics_integrator = euler
+				theta_threshold_radians = 0.20943951023931953
+				x_threshold = 2.4
+				action_space = Discrete(2) 
+					n = 2
+					shape = ()
+					dtype = int64
+					np_random = RandomState(MT19937)
+				observation_space = Box(4,) 
+					dtype = float32
+					shape = (4,)
+					low = [-4.800e+00 -3.403e+38 -4.189e-01 -3.403e+38]
+					high = [ 4.800e+00  3.403e+38  4.189e-01  3.403e+38]
+					bounded_below = [ True  True  True  True]
+					bounded_above = [ True  True  True  True]
+					np_random = RandomState(MT19937)
+				np_random = RandomState(MT19937)
+				viewer = None
+				state = None
+				steps_beyond_done = None
+				spec = EnvSpec(CartPole-v0) 
+					id = CartPole-v0
+					entry_point = gym.envs.classic_control:CartPoleEnv
+					reward_threshold = 195.0
+					nondeterministic = False
+					max_episode_steps = 200
+				verbose = 0
+			action_space = Discrete(2) 
+				n = 2
+				shape = ()
+				dtype = int64
+				np_random = RandomState(MT19937)
+			observation_space = Box(4,) 
+				dtype = float32
+				shape = (4,)
+				low = [-4.800e+00 -3.403e+38 -4.189e-01 -3.403e+38]
+				high = [ 4.800e+00  3.403e+38  4.189e-01  3.403e+38]
+				bounded_below = [ True  True  True  True]
+				bounded_above = [ True  True  True  True]
+				np_random = RandomState(MT19937)
+			reward_range = (-inf, inf)
+			metadata = {'render.modes': ['human', 'rgb_array'], 'video.frames_per_second': 50}
+		action_space = Discrete(2) 
+			n = 2
+			shape = ()
+			dtype = int64
+			np_random = RandomState(MT19937)
+		observation_space = Box(4,) 
+			dtype = float32
+			shape = (4,)
+			low = [-4.800e+00 -3.403e+38 -4.189e-01 -3.403e+38]
+			high = [ 4.800e+00  3.403e+38  4.189e-01  3.403e+38]
+			bounded_below = [ True  True  True  True]
+			bounded_above = [ True  True  True  True]
+			np_random = RandomState(MT19937)
+		reward_range = (-inf, inf)
+		metadata = {'render.modes': ['human', 'rgb_array'], 'video.frames_per_second': 50}
+		preprocess = <src.envs.wrappers.RawPreprocess object at 0x7f154862cb70> 
+			observation_space = Box(4,) 
+				dtype = float32
+				shape = (4,)
+				low = [-4.800e+00 -3.403e+38 -4.189e-01 -3.403e+38]
+				high = [ 4.800e+00  3.403e+38  4.189e-01  3.403e+38]
+				bounded_below = [ True  True  True  True]
+				bounded_above = [ True  True  True  True]
+				np_random = RandomState(MT19937)
+	state_size = (4,)
+	action_size = [2]
+	action_space = Discrete(2) 
+		n = 2
+		shape = ()
+		dtype = int64
+		np_random = RandomState(MT19937)
+	server_ports = <list len=16>
+	conn = <src.utils.multiprocess.MPIConnection object at 0x7f15485b4240> 
+		root = 0
+		rank = 0
+		cluster = <list len=16>
+	num_envs = 16
+	max_steps = 200,
+agent: <src.models.wrappers.ParallelAgent object at 0x7f15485b4278> 
+	icm = None
+	stack = <src.models.wrappers.RawState object at 0x7f15485c59b0> 
+		state_size = (4,)
+	agent = <src.models.pytorch.agents.ppo.PPOAgent object at 0x7f15485d3dd8> 
+		noise_process = <src.utils.rand.BrownianNoise object at 0x7f15485d3e10> 
+			size = [2]
+			dt = 0.2
+			action = [-0.938  0.768]
+			daction_dt = [ 0.253 -0.080]
+		discrete = True
+		action_size = [2]
+		state_size = (4,)
+		config = <src.utils.config.Config object at 0x7f1548903c18> 
+			TRIAL_AT = 1000
+			SAVE_AT = 1
+			SEED = 0
+			REG_LAMBDA = 1e-06
+			LEARN_RATE = 0.0001
+			DISCOUNT_RATE = 0.99
+			ADVANTAGE_DECAY = 0.95
+			INPUT_LAYER = 512
+			ACTOR_HIDDEN = 256
+			CRITIC_HIDDEN = 1024
+			EPS_MAX = 1.0
+			EPS_MIN = 0.1
+			EPS_DECAY = 0.998
+			NUM_STEPS = 500
+			MAX_BUFFER_SIZE = 1000000
+			REPLAY_BATCH_SIZE = 32
+			TARGET_UPDATE_RATE = 0.0004
+			BATCH_SIZE = 32
+			PPO_EPOCHS = 2
+			ENTROPY_WEIGHT = 0.01
+			CLIP_PARAM = 0.05
+			dynamics_size = 4
+			state_size = (4,)
+			action_size = [2]
+			env_name = CartPole-v0
+			rank = 0
+			size = 17
+			split = 17
+			model = ppo
+			framework = pt
+			train_prop = 1.0
+			tcp_ports = []
+			tcp_rank = 0
+			num_envs = 1
+			nsteps = 500000
+			render = False
+			trial = False
+			icm = False
+			rs = False
+		stats = <src.utils.logger.Stats object at 0x7f15485d3e48> 
+			mean_dict = {}
+			sum_dict = {}
+		eps = 1.0
+		network = PPONetwork(
+			  (actor_local): PPOActor(
+			    (layer1): Linear(in_features=4, out_features=512, bias=True)
+			    (layer2): Linear(in_features=512, out_features=256, bias=True)
+			    (layer3): Linear(in_features=256, out_features=256, bias=True)
+			    (action_mu): Linear(in_features=256, out_features=2, bias=True)
+			  )
+			  (actor_target): PPOActor(
+			    (layer1): Linear(in_features=4, out_features=512, bias=True)
+			    (layer2): Linear(in_features=512, out_features=256, bias=True)
+			    (layer3): Linear(in_features=256, out_features=256, bias=True)
+			    (action_mu): Linear(in_features=256, out_features=2, bias=True)
+			  )
+			  (critic_local): PPOCritic(
+			    (layer1): Linear(in_features=4, out_features=512, bias=True)
+			    (layer2): Linear(in_features=512, out_features=1024, bias=True)
+			    (layer3): Linear(in_features=1024, out_features=1024, bias=True)
+			    (value): Linear(in_features=1024, out_features=1, bias=True)
+			  )
+			  (critic_target): PPOCritic(
+			    (layer1): Linear(in_features=4, out_features=512, bias=True)
+			    (layer2): Linear(in_features=512, out_features=1024, bias=True)
+			    (layer3): Linear(in_features=1024, out_features=1024, bias=True)
+			    (value): Linear(in_features=1024, out_features=1, bias=True)
+			  )
+			) 
+			training = True
+			tau = 0.0004
+			name = ppo
+			stats = <src.utils.logger.Stats object at 0x7f15485d3eb8> 
+				mean_dict = {}
+				sum_dict = {}
+			config = <src.utils.config.Config object at 0x7f1548903c18> 
+				TRIAL_AT = 1000
+				SAVE_AT = 1
+				SEED = 0
+				REG_LAMBDA = 1e-06
+				LEARN_RATE = 0.0001
+				DISCOUNT_RATE = 0.99
+				ADVANTAGE_DECAY = 0.95
+				INPUT_LAYER = 512
+				ACTOR_HIDDEN = 256
+				CRITIC_HIDDEN = 1024
+				EPS_MAX = 1.0
+				EPS_MIN = 0.1
+				EPS_DECAY = 0.998
+				NUM_STEPS = 500
+				MAX_BUFFER_SIZE = 1000000
+				REPLAY_BATCH_SIZE = 32
+				TARGET_UPDATE_RATE = 0.0004
+				BATCH_SIZE = 32
+				PPO_EPOCHS = 2
+				ENTROPY_WEIGHT = 0.01
+				CLIP_PARAM = 0.05
+				dynamics_size = 4
+				state_size = (4,)
+				action_size = [2]
+				env_name = CartPole-v0
+				rank = 0
+				size = 17
+				split = 17
+				model = ppo
+				framework = pt
+				train_prop = 1.0
+				tcp_ports = []
+				tcp_rank = 0
+				num_envs = 1
+				nsteps = 500000
+				render = False
+				trial = False
+				icm = False
+				rs = False
+			device = cuda
+			src = ['class PPOActor(torch.nn.Module):\n\tdef __init__(self, state_size, action_size, config, use_discrete=False):\n\t\tsuper().__init__()\n\t\tinput_layer, actor_hidden = config.INPUT_LAYER, config.ACTOR_HIDDEN\n\t\tself.discrete = use_discrete and type(action_size) != tuple\n\t\tself.layer1 = torch.nn.Linear(state_size[-1], input_layer) if len(state_size)!=3 else Conv(state_size, input_layer)\n\t\tself.layer2 = torch.nn.Linear(input_layer, actor_hidden)\n\t\tself.layer3 = torch.nn.Linear(actor_hidden, actor_hidden)\n\t\tself.action_mu = torch.nn.Linear(actor_hidden, action_size[-1])\n\t\tself.action_sig = torch.nn.Parameter(torch.zeros(action_size[-1]))\n\t\tself.apply(lambda m: torch.nn.init.xavier_normal_(m.weight) if type(m) in [torch.nn.Conv2d, torch.nn.Linear] else None)\n\t\tself.dist = lambda m,s: torch.distributions.Categorical(m.softmax(-1)) if self.discrete else torch.distributions.Normal(m,s)\n\t\t\n\tdef forward(self, state, action_in=None, sample=True):\n\t\tstate = self.layer1(state).relu()\n\t\tstate = self.layer2(state).relu()\n\t\tstate = self.layer3(state).relu()\n\t\taction_mu = self.action_mu(state)\n\t\taction_sig = self.action_sig.exp().expand_as(action_mu)\n\t\tdist = self.dist(action_mu, action_sig)\n\t\taction = dist.sample() if action_in is None else action_in.argmax(-1) if self.discrete else action_in\n\t\taction_out = one_hot_from_indices(action, action_mu.size(-1)) if self.discrete else action\n\t\tlog_prob = dist.log_prob(action)\n\t\tentropy = dist.entropy()\n\t\treturn action_out, log_prob, entropy\n', 'class PPOCritic(torch.nn.Module):\n\tdef __init__(self, state_size, action_size, config):\n\t\tsuper().__init__()\n\t\tinput_layer, critic_hidden = config.INPUT_LAYER, config.CRITIC_HIDDEN\n\t\tself.layer1 = torch.nn.Linear(state_size[-1], input_layer) if len(state_size)!=3 else Conv(state_size, input_layer)\n\t\tself.layer2 = torch.nn.Linear(input_layer, critic_hidden)\n\t\tself.layer3 = torch.nn.Linear(critic_hidden, critic_hidden)\n\t\tself.value = torch.nn.Linear(critic_hidden, 1)\n\t\tself.apply(lambda m: torch.nn.init.xavier_normal_(m.weight) if type(m) in [torch.nn.Conv2d, torch.nn.Linear] else None)\n\n\tdef forward(self, state):\n\t\tstate = self.layer1(state).relu()\n\t\tstate = self.layer2(state).relu()\n\t\tstate = self.layer3(state).relu()\n\t\tvalue = self.value(state)\n\t\treturn value\n']
+			actor_optimizer = Adam (
+			Parameter Group 0
+			    amsgrad: False
+			    betas: (0.9, 0.999)
+			    eps: 1e-08
+			    lr: 0.0001
+			    weight_decay: 1e-06
+			)
+			critic_optimizer = Adam (
+			Parameter Group 0
+			    amsgrad: False
+			    betas: (0.9, 0.999)
+			    eps: 1e-08
+			    lr: 0.0001
+			    weight_decay: 1e-06
+			)
+		replay_buffer = <src.utils.rand.ReplayBuffer object at 0x7f15485d54a8> 
+			buffer = deque([], maxlen=1000000)
+		buffer = []
+	noise_process = <src.utils.rand.BrownianNoise object at 0x7f15485d54e0> 
+		size = [2]
+		dt = 0.2
+		action = [-0.158 -0.555]
+		daction_dt = [ 0.192  1.131]
+	discrete = True
+	action_size = [2]
+	state_size = (4,)
+	config = <src.utils.config.Config object at 0x7f1548903c18> 
+		TRIAL_AT = 1000
+		SAVE_AT = 1
+		SEED = 0
+		REG_LAMBDA = 1e-06
+		LEARN_RATE = 0.0001
+		DISCOUNT_RATE = 0.99
+		ADVANTAGE_DECAY = 0.95
+		INPUT_LAYER = 512
+		ACTOR_HIDDEN = 256
+		CRITIC_HIDDEN = 1024
+		EPS_MAX = 1.0
+		EPS_MIN = 0.1
+		EPS_DECAY = 0.998
+		NUM_STEPS = 500
+		MAX_BUFFER_SIZE = 1000000
+		REPLAY_BATCH_SIZE = 32
+		TARGET_UPDATE_RATE = 0.0004
+		BATCH_SIZE = 32
+		PPO_EPOCHS = 2
+		ENTROPY_WEIGHT = 0.01
+		CLIP_PARAM = 0.05
+		dynamics_size = 4
+		state_size = (4,)
+		action_size = [2]
+		env_name = CartPole-v0
+		rank = 0
+		size = 17
+		split = 17
+		model = ppo
+		framework = pt
+		train_prop = 1.0
+		tcp_ports = []
+		tcp_rank = 0
+		num_envs = 1
+		nsteps = 500000
+		render = False
+		trial = False
+		icm = False
+		rs = False
+	stats = <src.utils.logger.Stats object at 0x7f15485d5518> 
+		mean_dict = {}
+		sum_dict = {},
+conn: None,
+
+import torch
+import numpy as np
+from .base import PTACNetwork, PTAgent, Conv, one_hot_from_indices
+from src.utils.rand import ReplayBuffer, PrioritizedReplayBuffer
+
+class PPOActor(torch.nn.Module):
+	def __init__(self, state_size, action_size, config, use_discrete=False):
+		super().__init__()
+		input_layer, actor_hidden = config.INPUT_LAYER, config.ACTOR_HIDDEN
+		self.discrete = use_discrete and type(action_size) != tuple
+		self.layer1 = torch.nn.Linear(state_size[-1], input_layer) if len(state_size)!=3 else Conv(state_size, input_layer)
+		self.layer2 = torch.nn.Linear(input_layer, actor_hidden)
+		self.layer3 = torch.nn.Linear(actor_hidden, actor_hidden)
+		self.action_mu = torch.nn.Linear(actor_hidden, action_size[-1])
+		self.action_sig = torch.nn.Parameter(torch.zeros(action_size[-1]))
+		self.apply(lambda m: torch.nn.init.xavier_normal_(m.weight) if type(m) in [torch.nn.Conv2d, torch.nn.Linear] else None)
+		self.dist = lambda m,s: torch.distributions.Categorical(m.softmax(-1)) if self.discrete else torch.distributions.Normal(m,s)
+		
+	def forward(self, state, action_in=None, sample=True):
+		state = self.layer1(state).relu()
+		state = self.layer2(state).relu()
+		state = self.layer3(state).relu()
+		action_mu = self.action_mu(state)
+		action_sig = self.action_sig.exp().expand_as(action_mu)
+		dist = self.dist(action_mu, action_sig)
+		action = dist.sample() if action_in is None else action_in.argmax(-1) if self.discrete else action_in
+		action_out = one_hot_from_indices(action, action_mu.size(-1)) if self.discrete else action
+		log_prob = dist.log_prob(action)
+		entropy = dist.entropy()
+		return action_out, log_prob, entropy
+
+class PPOCritic(torch.nn.Module):
+	def __init__(self, state_size, action_size, config):
+		super().__init__()
+		input_layer, critic_hidden = config.INPUT_LAYER, config.CRITIC_HIDDEN
+		self.layer1 = torch.nn.Linear(state_size[-1], input_layer) if len(state_size)!=3 else Conv(state_size, input_layer)
+		self.layer2 = torch.nn.Linear(input_layer, critic_hidden)
+		self.layer3 = torch.nn.Linear(critic_hidden, critic_hidden)
+		self.value = torch.nn.Linear(critic_hidden, 1)
+		self.apply(lambda m: torch.nn.init.xavier_normal_(m.weight) if type(m) in [torch.nn.Conv2d, torch.nn.Linear] else None)
+
+	def forward(self, state):
+		state = self.layer1(state).relu()
+		state = self.layer2(state).relu()
+		state = self.layer3(state).relu()
+		value = self.value(state)
+		return value
+
+class PPONetwork(PTACNetwork):
+	def __init__(self, state_size, action_size, config, actor=PPOActor, critic=PPOCritic, gpu=True, load=None, name="ppo"):
+		super().__init__(state_size, action_size, config, actor=actor, critic=critic, gpu=gpu, load=load, name=name)
+
+	def get_action_probs(self, state, action_in=None, grad=False, numpy=False, sample=True):
+		with torch.enable_grad() if grad else torch.no_grad():
+			action, log_prob, entropy = self.actor_local(state.to(self.device), action_in, sample)
+			action_or_entropy = action if action_in is None else entropy.mean()
+			return (x.cpu().numpy() if numpy else x for x in [action_or_entropy, log_prob])
+
+	def get_value(self, state, grad=False, numpy=False):
+		with torch.enable_grad() if grad else torch.no_grad():
+			return self.critic_local(state.to(self.device)).cpu().numpy() if numpy else self.critic_local(state.to(self.device))
+
+	def optimize(self, states, actions, old_log_probs, targets, advantages, config):
+		values = self.get_value(states, grad=True)
+		critic_loss = (values - targets).pow(2).mean()
+		self.step(self.critic_optimizer, critic_loss)
+
+		entropy, new_log_probs = self.get_action_probs(states, actions, grad=True)
+		ratio = (new_log_probs - old_log_probs).exp()
+		ratio_clipped = torch.clamp(ratio, 1.0-config.CLIP_PARAM, 1.0+config.CLIP_PARAM)
+		actor_loss = -(torch.min(ratio*advantages, ratio_clipped*advantages) + config.ENTROPY_WEIGHT*entropy).mean()
+		self.step(self.actor_optimizer, actor_loss)
+		self.stats.mean(critic_loss=critic_loss, actor_loss=actor_loss)
+
+class PPOAgent(PTAgent):
+	def __init__(self, state_size, action_size, config, gpu=True, load=None):
+		super().__init__(state_size, action_size, config, PPONetwork, gpu=gpu, load=load)
+
+	def get_action(self, state, eps=None, sample=True):
+		self.action, self.log_prob = self.network.get_action_probs(self.to_tensor(state), numpy=True, sample=sample)
+		return np.tanh(self.action)
+
+	def train(self, state, action, next_state, reward, done):
+		self.buffer.append((state, self.action, self.log_prob, reward, done))
+		if np.any(done[0]) or len(self.buffer) >= self.config.NUM_STEPS:
+			states, actions, log_probs, rewards, dones = map(self.to_tensor, zip(*self.buffer))
+			self.buffer.clear()
+			states = torch.cat([states, self.to_tensor(next_state).unsqueeze(0)], dim=0)
+			values = self.network.get_value(states)
+			targets, advantages = self.compute_gae(values[-1], rewards.unsqueeze(-1), dones.unsqueeze(-1), values[:-1])
+			states, actions, log_probs, targets, advantages = [x.view(x.size(0)*x.size(1), *x.size()[2:]) for x in (states[:-1], actions, log_probs, targets, advantages)]
+			self.replay_buffer.clear().extend(list(zip(states, actions, log_probs, targets, advantages)), shuffle=True)
+			for _ in range((len(self.replay_buffer)*self.config.PPO_EPOCHS)//self.config.BATCH_SIZE):
+				state, action, log_prob, target, advantage = self.replay_buffer.next_batch(self.config.BATCH_SIZE, torch.stack)[0]
+				self.network.optimize(state, action, log_prob, target, advantage, config=self.config)
+				
+
+Step:       0, Reward:    23.625 [  11.396], Avg:    23.625 (1.000) <0-00:00:00> ({'r_t':     1.0000, 'eps':     1.0000, 'eps_e':     1.0000})
+Step:    1000, Reward:    76.312 [  43.214], Avg:    49.969 (1.000) <0-00:00:08> ({'r_t':  1000.0000, 'eps':     1.0000, 'critic_loss':    58.5644, 'actor_loss':    -0.6215, 'eps_e':     1.0000})
+Step:    2000, Reward:   162.688 [  57.415], Avg:    87.542 (1.000) <0-00:00:17> ({'r_t':  1000.0000, 'eps':     1.0000, 'critic_loss':    59.8327, 'actor_loss':    -2.0221, 'eps_e':     1.0000})
+Step:    3000, Reward:   182.938 [  29.005], Avg:   111.391 (1.000) <0-00:00:26> ({'r_t':  1000.0000, 'eps':     1.0000, 'critic_loss':    64.1130, 'actor_loss':    -1.2681, 'eps_e':     1.0000})
+Step:    4000, Reward:   191.562 [  16.252], Avg:   127.425 (1.000) <0-00:00:35> ({'r_t':  1000.0000, 'eps':     1.0000, 'critic_loss':    71.0811, 'actor_loss':    -0.2109, 'eps_e':     1.0000})
+Step:    5000, Reward:   193.875 [  23.722], Avg:   138.500 (1.000) <0-00:00:43> ({'r_t':  1000.0000, 'eps':     1.0000, 'critic_loss':    78.8128, 'actor_loss':     0.5427, 'eps_e':     1.0000})
+Step:    6000, Reward:   188.688 [  43.813], Avg:   145.670 (1.000) <0-00:00:52> ({'r_t':  1000.0000, 'eps':     1.0000, 'critic_loss':    78.2785, 'actor_loss':     0.2392, 'eps_e':     1.0000})
+Step:    7000, Reward:   200.000 [   0.000], Avg:   152.461 (1.000) <0-00:01:01> ({'r_t':  1000.0000, 'eps':     1.0000, 'critic_loss':   104.8890, 'actor_loss':     0.6148, 'eps_e':     1.0000})
+Step:    8000, Reward:   193.188 [  26.385], Avg:   156.986 (1.000) <0-00:01:10> ({'r_t':  1000.0000, 'eps':     1.0000, 'critic_loss':    88.4622, 'actor_loss':    -0.3693, 'eps_e':     1.0000})
+Step:    9000, Reward:   200.000 [   0.000], Avg:   161.287 (1.000) <0-00:01:19> ({'r_t':  1000.0000, 'eps':     1.0000, 'critic_loss':   107.6215, 'actor_loss':     0.2800, 'eps_e':     1.0000})
+Step:   10000, Reward:   200.000 [   0.000], Avg:   164.807 (1.000) <0-00:01:28> ({'r_t':  1000.0000, 'eps':     1.0000, 'critic_loss':   129.4772, 'actor_loss':     0.3951, 'eps_e':     1.0000})
+Step:   11000, Reward:   200.000 [   0.000], Avg:   167.740 (1.000) <0-00:01:37> ({'r_t':  1000.0000, 'eps':     1.0000, 'critic_loss':   118.3925, 'actor_loss':    -0.0788, 'eps_e':     1.0000})
+Step:   12000, Reward:   200.000 [   0.000], Avg:   170.221 (1.000) <0-00:01:46> ({'r_t':  1000.0000, 'eps':     1.0000, 'critic_loss':   119.3365, 'actor_loss':    -0.1572, 'eps_e':     1.0000})
+Step:   13000, Reward:   200.000 [   0.000], Avg:   172.348 (1.000) <0-00:01:56> ({'r_t':  1000.0000, 'eps':     1.0000, 'critic_loss':   137.0892, 'actor_loss':    -0.0943, 'eps_e':     1.0000})
+Step:   14000, Reward:   200.000 [   0.000], Avg:   174.192 (1.000) <0-00:02:06> ({'r_t':  1000.0000, 'eps':     1.0000, 'critic_loss':   112.1880, 'actor_loss':    -0.5311, 'eps_e':     1.0000})
+Step:   15000, Reward:   200.000 [   0.000], Avg:   175.805 (1.000) <0-00:02:16> ({'r_t':  1000.0000, 'eps':     1.0000, 'critic_loss':   134.6760, 'actor_loss':     0.1100, 'eps_e':     1.0000})
+Step:   16000, Reward:   200.000 [   0.000], Avg:   177.228 (1.000) <0-00:02:27> ({'r_t':  1000.0000, 'eps':     1.0000, 'critic_loss':   121.7080, 'actor_loss':     0.3600, 'eps_e':     1.0000})
+Step:   17000, Reward:   200.000 [   0.000], Avg:   178.493 (1.000) <0-00:02:36> ({'r_t':  1000.0000, 'eps':     1.0000, 'critic_loss':   157.7403, 'actor_loss':     1.3886, 'eps_e':     1.0000})
+Step:   18000, Reward:   200.000 [   0.000], Avg:   179.625 (1.000) <0-00:02:45> ({'r_t':  1000.0000, 'eps':     1.0000, 'critic_loss':   147.4982, 'actor_loss':    -0.0355, 'eps_e':     1.0000})
+Step:   19000, Reward:   200.000 [   0.000], Avg:   180.644 (1.000) <0-00:02:53> ({'r_t':  1000.0000, 'eps':     1.0000, 'critic_loss':   115.0182, 'actor_loss':    -0.7669, 'eps_e':     1.0000})
+Step:   20000, Reward:   200.000 [   0.000], Avg:   181.565 (1.000) <0-00:03:02> ({'r_t':  1000.0000, 'eps':     1.0000, 'critic_loss':    94.5129, 'actor_loss':    -1.2750, 'eps_e':     1.0000})
+Step:   21000, Reward:   200.000 [   0.000], Avg:   182.403 (1.000) <0-00:03:11> ({'r_t':  1000.0000, 'eps':     1.0000, 'critic_loss':   151.2341, 'actor_loss':     0.0724, 'eps_e':     1.0000})
+Step:   22000, Reward:   200.000 [   0.000], Avg:   183.168 (1.000) <0-00:03:20> ({'r_t':  1000.0000, 'eps':     1.0000, 'critic_loss':   135.9075, 'actor_loss':    -0.8889, 'eps_e':     1.0000})
+Step:   23000, Reward:   200.000 [   0.000], Avg:   183.870 (1.000) <0-00:03:29> ({'r_t':  1000.0000, 'eps':     1.0000, 'critic_loss':   146.9252, 'actor_loss':    -0.4411, 'eps_e':     1.0000})
+Step:   24000, Reward:   200.000 [   0.000], Avg:   184.515 (1.000) <0-00:03:38> ({'r_t':  1000.0000, 'eps':     1.0000, 'critic_loss':   149.4615, 'actor_loss':     0.0264, 'eps_e':     1.0000})
+Step:   25000, Reward:   200.000 [   0.000], Avg:   185.111 (1.000) <0-00:03:47> ({'r_t':  1000.0000, 'eps':     1.0000, 'critic_loss':   142.3829, 'actor_loss':     0.3605, 'eps_e':     1.0000})
+Step:   26000, Reward:   200.000 [   0.000], Avg:   185.662 (1.000) <0-00:03:56> ({'r_t':  1000.0000, 'eps':     1.0000, 'critic_loss':   165.3006, 'actor_loss':     0.4676, 'eps_e':     1.0000})
+Step:   27000, Reward:   200.000 [   0.000], Avg:   186.174 (1.000) <0-00:04:04> ({'r_t':  1000.0000, 'eps':     1.0000, 'critic_loss':   149.8697, 'actor_loss':     0.0632, 'eps_e':     1.0000})
+Step:   28000, Reward:   200.000 [   0.000], Avg:   186.651 (1.000) <0-00:04:13> ({'r_t':  1000.0000, 'eps':     1.0000, 'critic_loss':   104.9405, 'actor_loss':    -0.5910, 'eps_e':     1.0000})
+Step:   29000, Reward:   200.000 [   0.000], Avg:   187.096 (1.000) <0-00:04:23> ({'r_t':  1000.0000, 'eps':     1.0000, 'critic_loss':   100.0763, 'actor_loss':    -0.6475, 'eps_e':     1.0000})
+Step:   30000, Reward:   200.000 [   0.000], Avg:   187.512 (1.000) <0-00:04:33> ({'r_t':  1000.0000, 'eps':     1.0000, 'critic_loss':   168.0932, 'actor_loss':     1.8574, 'eps_e':     1.0000})
+Step:   31000, Reward:   200.000 [   0.000], Avg:   187.902 (1.000) <0-00:04:43> ({'r_t':  1000.0000, 'eps':     1.0000, 'critic_loss':   174.5372, 'actor_loss':     1.2095, 'eps_e':     1.0000})
+Step:   32000, Reward:   200.000 [   0.000], Avg:   188.269 (1.000) <0-00:04:54> ({'r_t':  1000.0000, 'eps':     1.0000, 'critic_loss':   156.7278, 'actor_loss':     0.7079, 'eps_e':     1.0000})
+Step:   33000, Reward:   200.000 [   0.000], Avg:   188.614 (1.000) <0-00:05:04> ({'r_t':  1000.0000, 'eps':     1.0000, 'critic_loss':   163.4203, 'actor_loss':     0.0484, 'eps_e':     1.0000})
+Step:   34000, Reward:   200.000 [   0.000], Avg:   188.939 (1.000) <0-00:05:12> ({'r_t':  1000.0000, 'eps':     1.0000, 'critic_loss':   164.9007, 'actor_loss':     0.0806, 'eps_e':     1.0000})
+Step:   35000, Reward:   200.000 [   0.000], Avg:   189.247 (1.000) <0-00:05:21> ({'r_t':  1000.0000, 'eps':     1.0000, 'critic_loss':   133.3848, 'actor_loss':    -0.2428, 'eps_e':     1.0000})
+Step:   36000, Reward:   200.000 [   0.000], Avg:   189.537 (1.000) <0-00:05:30> ({'r_t':  1000.0000, 'eps':     1.0000, 'critic_loss':   156.5312, 'actor_loss':     0.6011, 'eps_e':     1.0000})
+Step:   37000, Reward:   200.000 [   0.000], Avg:   189.812 (1.000) <0-00:05:39> ({'r_t':  1000.0000, 'eps':     1.0000, 'critic_loss':   184.1925, 'actor_loss':     0.9967, 'eps_e':     1.0000})
+Step:   38000, Reward:   200.000 [   0.000], Avg:   190.074 (1.000) <0-00:05:48> ({'r_t':  1000.0000, 'eps':     1.0000, 'critic_loss':   147.6872, 'actor_loss':     0.0016, 'eps_e':     1.0000})
+Step:   39000, Reward:   200.000 [   0.000], Avg:   190.322 (1.000) <0-00:05:57> ({'r_t':  1000.0000, 'eps':     1.0000, 'critic_loss':   146.1309, 'actor_loss':    -0.1679, 'eps_e':     1.0000})
+Step:   40000, Reward:   200.000 [   0.000], Avg:   190.558 (1.000) <0-00:06:06> ({'r_t':  1000.0000, 'eps':     1.0000, 'critic_loss':   162.6789, 'actor_loss':     0.0163, 'eps_e':     1.0000})
+Step:   41000, Reward:   200.000 [   0.000], Avg:   190.783 (1.000) <0-00:06:15> ({'r_t':  1000.0000, 'eps':     1.0000, 'critic_loss':   158.4994, 'actor_loss':    -0.0360, 'eps_e':     1.0000})
+Step:   42000, Reward:   200.000 [   0.000], Avg:   190.997 (1.000) <0-00:06:23> ({'r_t':  1000.0000, 'eps':     1.0000, 'critic_loss':   146.3714, 'actor_loss':     0.1670, 'eps_e':     1.0000})
+Step:   43000, Reward:   200.000 [   0.000], Avg:   191.202 (1.000) <0-00:06:32> ({'r_t':  1000.0000, 'eps':     1.0000, 'critic_loss':   139.4195, 'actor_loss':    -0.3864, 'eps_e':     1.0000})
+Step:   44000, Reward:   200.000 [   0.000], Avg:   191.397 (1.000) <0-00:06:42> ({'r_t':  1000.0000, 'eps':     1.0000, 'critic_loss':   145.8736, 'actor_loss':    -0.5290, 'eps_e':     1.0000})
+Step:   45000, Reward:   200.000 [   0.000], Avg:   191.584 (1.000) <0-00:06:52> ({'r_t':  1000.0000, 'eps':     1.0000, 'critic_loss':   159.2144, 'actor_loss':    -0.4326, 'eps_e':     1.0000})
+Step:   46000, Reward:   200.000 [   0.000], Avg:   191.763 (1.000) <0-00:07:02> ({'r_t':  1000.0000, 'eps':     1.0000, 'critic_loss':   157.9626, 'actor_loss':    -0.1519, 'eps_e':     1.0000})
+Step:   47000, Reward:   200.000 [   0.000], Avg:   191.935 (1.000) <0-00:07:12> ({'r_t':  1000.0000, 'eps':     1.0000, 'critic_loss':   157.3496, 'actor_loss':    -0.0762, 'eps_e':     1.0000})
+Step:   48000, Reward:   200.000 [   0.000], Avg:   192.099 (1.000) <0-00:07:23> ({'r_t':  1000.0000, 'eps':     1.0000, 'critic_loss':   160.7443, 'actor_loss':    -0.1225, 'eps_e':     1.0000})
+Step:   49000, Reward:   200.000 [   0.000], Avg:   192.257 (1.000) <0-00:07:31> ({'r_t':  1000.0000, 'eps':     1.0000, 'critic_loss':   167.2716, 'actor_loss':     0.1314, 'eps_e':     1.0000})
+Step:   50000, Reward:   200.000 [   0.000], Avg:   192.409 (1.000) <0-00:07:40> ({'r_t':  1000.0000, 'eps':     1.0000, 'critic_loss':   157.2615, 'actor_loss':     0.0393, 'eps_e':     1.0000})
+Step:   51000, Reward:   200.000 [   0.000], Avg:   192.555 (1.000) <0-00:07:49> ({'r_t':  1000.0000, 'eps':     1.0000, 'critic_loss':   165.2053, 'actor_loss':     0.3398, 'eps_e':     1.0000})
+Step:   52000, Reward:   200.000 [   0.000], Avg:   192.696 (1.000) <0-00:07:58> ({'r_t':  1000.0000, 'eps':     1.0000, 'critic_loss':   170.4700, 'actor_loss':     0.1498, 'eps_e':     1.0000})
+Step:   53000, Reward:   200.000 [   0.000], Avg:   192.831 (1.000) <0-00:08:07> ({'r_t':  1000.0000, 'eps':     1.0000, 'critic_loss':   172.5553, 'actor_loss':     0.5260, 'eps_e':     1.0000})
+Step:   54000, Reward:   200.000 [   0.000], Avg:   192.961 (1.000) <0-00:08:16> ({'r_t':  1000.0000, 'eps':     1.0000, 'critic_loss':   173.1477, 'actor_loss':     0.5599, 'eps_e':     1.0000})
+Step:   55000, Reward:   200.000 [   0.000], Avg:   193.087 (1.000) <0-00:08:25> ({'r_t':  1000.0000, 'eps':     1.0000, 'critic_loss':   160.0495, 'actor_loss':    -0.0541, 'eps_e':     1.0000})
+Step:   56000, Reward:   200.000 [   0.000], Avg:   193.208 (1.000) <0-00:08:34> ({'r_t':  1000.0000, 'eps':     1.0000, 'critic_loss':   172.9929, 'actor_loss':     0.4384, 'eps_e':     1.0000})
+Step:   57000, Reward:   200.000 [   0.000], Avg:   193.325 (1.000) <0-00:08:43> ({'r_t':  1000.0000, 'eps':     1.0000, 'critic_loss':   165.8318, 'actor_loss':     0.0614, 'eps_e':     1.0000})
+Step:   58000, Reward:   200.000 [   0.000], Avg:   193.439 (1.000) <0-00:08:52> ({'r_t':  1000.0000, 'eps':     1.0000, 'critic_loss':   148.8644, 'actor_loss':    -0.1217, 'eps_e':     1.0000})
+Step:   59000, Reward:   200.000 [   0.000], Avg:   193.548 (1.000) <0-00:09:02> ({'r_t':  1000.0000, 'eps':     1.0000, 'critic_loss':   145.5984, 'actor_loss':    -0.2515, 'eps_e':     1.0000})
+Step:   60000, Reward:   200.000 [   0.000], Avg:   193.654 (1.000) <0-00:09:12> ({'r_t':  1000.0000, 'eps':     1.0000, 'critic_loss':   121.4365, 'actor_loss':    -0.6209, 'eps_e':     1.0000})
+Step:   61000, Reward:   200.000 [   0.000], Avg:   193.756 (1.000) <0-00:09:22> ({'r_t':  1000.0000, 'eps':     1.0000, 'critic_loss':   148.8217, 'actor_loss':     0.5332, 'eps_e':     1.0000})
+Step:   62000, Reward:   200.000 [   0.000], Avg:   193.855 (1.000) <0-00:09:33> ({'r_t':  1000.0000, 'eps':     1.0000, 'critic_loss':   107.3917, 'actor_loss':    -0.4814, 'eps_e':     1.0000})
+Step:   63000, Reward:   200.000 [   0.000], Avg:   193.951 (1.000) <0-00:09:42> ({'r_t':  1000.0000, 'eps':     1.0000, 'critic_loss':   141.3665, 'actor_loss':     0.4217, 'eps_e':     1.0000})
+Step:   64000, Reward:   200.000 [   0.000], Avg:   194.044 (1.000) <0-00:09:50> ({'r_t':  1000.0000, 'eps':     1.0000, 'critic_loss':   160.4374, 'actor_loss':     0.5288, 'eps_e':     1.0000})
+Step:   65000, Reward:   200.000 [   0.000], Avg:   194.134 (1.000) <0-00:09:59> ({'r_t':  1000.0000, 'eps':     1.0000, 'critic_loss':   151.2663, 'actor_loss':     0.0220, 'eps_e':     1.0000})
+Step:   66000, Reward:   200.000 [   0.000], Avg:   194.222 (1.000) <0-00:10:08> ({'r_t':  1000.0000, 'eps':     1.0000, 'critic_loss':   148.7386, 'actor_loss':    -0.3773, 'eps_e':     1.0000})
+Step:   67000, Reward:   200.000 [   0.000], Avg:   194.307 (1.000) <0-00:10:16> ({'r_t':  1000.0000, 'eps':     1.0000, 'critic_loss':   142.1179, 'actor_loss':    -0.4391, 'eps_e':     1.0000})
+Step:   68000, Reward:   200.000 [   0.000], Avg:   194.389 (1.000) <0-00:10:25> ({'r_t':  1000.0000, 'eps':     1.0000, 'critic_loss':   164.0002, 'actor_loss':    -0.0473, 'eps_e':     1.0000})
+Step:   69000, Reward:   200.000 [   0.000], Avg:   194.470 (1.000) <0-00:10:34> ({'r_t':  1000.0000, 'eps':     1.0000, 'critic_loss':   157.7791, 'actor_loss':    -0.1836, 'eps_e':     1.0000})
+Step:   70000, Reward:   200.000 [   0.000], Avg:   194.548 (1.000) <0-00:10:43> ({'r_t':  1000.0000, 'eps':     1.0000, 'critic_loss':   158.2138, 'actor_loss':    -0.3312, 'eps_e':     1.0000})
+Step:   71000, Reward:   200.000 [   0.000], Avg:   194.623 (1.000) <0-00:10:53> ({'r_t':  1000.0000, 'eps':     1.0000, 'critic_loss':   164.8149, 'actor_loss':     0.1246, 'eps_e':     1.0000})
+Step:   72000, Reward:   200.000 [   0.000], Avg:   194.697 (1.000) <0-00:11:03> ({'r_t':  1000.0000, 'eps':     1.0000, 'critic_loss':   179.5106, 'actor_loss':     0.8191, 'eps_e':     1.0000})
+Step:   73000, Reward:   200.000 [   0.000], Avg:   194.769 (1.000) <0-00:11:13> ({'r_t':  1000.0000, 'eps':     1.0000, 'critic_loss':   165.3839, 'actor_loss':     0.3610, 'eps_e':     1.0000})
+Step:   74000, Reward:   200.000 [   0.000], Avg:   194.838 (1.000) <0-00:11:23> ({'r_t':  1000.0000, 'eps':     1.0000, 'critic_loss':   172.3866, 'actor_loss':     0.3901, 'eps_e':     1.0000})
+Step:   75000, Reward:   200.000 [   0.000], Avg:   194.906 (1.000) <0-00:11:33> ({'r_t':  1000.0000, 'eps':     1.0000, 'critic_loss':   166.7185, 'actor_loss':     0.1362, 'eps_e':     1.0000})
+Step:   76000, Reward:   200.000 [   0.000], Avg:   194.972 (1.000) <0-00:11:42> ({'r_t':  1000.0000, 'eps':     1.0000, 'critic_loss':   168.8973, 'actor_loss':     0.3413, 'eps_e':     1.0000})
+Step:   77000, Reward:   200.000 [   0.000], Avg:   195.037 (1.000) <0-00:11:51> ({'r_t':  1000.0000, 'eps':     1.0000, 'critic_loss':   170.1530, 'actor_loss':     0.5866, 'eps_e':     1.0000})
+Step:   78000, Reward:   200.000 [   0.000], Avg:   195.100 (1.000) <0-00:12:00> ({'r_t':  1000.0000, 'eps':     1.0000, 'critic_loss':   165.8846, 'actor_loss':     0.2354, 'eps_e':     1.0000})
+Step:   79000, Reward:   200.000 [   0.000], Avg:   195.161 (1.000) <0-00:12:09> ({'r_t':  1000.0000, 'eps':     1.0000, 'critic_loss':   174.8853, 'actor_loss':     0.7297, 'eps_e':     1.0000})
+Step:   80000, Reward:   200.000 [   0.000], Avg:   195.221 (1.000) <0-00:12:18> ({'r_t':  1000.0000, 'eps':     1.0000, 'critic_loss':   175.3453, 'actor_loss':     0.5710, 'eps_e':     1.0000})
+Step:   81000, Reward:   200.000 [   0.000], Avg:   195.279 (1.000) <0-00:12:27> ({'r_t':  1000.0000, 'eps':     1.0000, 'critic_loss':   159.5640, 'actor_loss':     0.1898, 'eps_e':     1.0000})
+Step:   82000, Reward:   200.000 [   0.000], Avg:   195.336 (1.000) <0-00:12:36> ({'r_t':  1000.0000, 'eps':     1.0000, 'critic_loss':   161.2085, 'actor_loss':    -0.0154, 'eps_e':     1.0000})
+Step:   83000, Reward:   200.000 [   0.000], Avg:   195.391 (1.000) <0-00:12:46> ({'r_t':  1000.0000, 'eps':     1.0000, 'critic_loss':   167.2832, 'actor_loss':     0.2366, 'eps_e':     1.0000})
+Step:   84000, Reward:   200.000 [   0.000], Avg:   195.446 (1.000) <0-00:12:57> ({'r_t':  1000.0000, 'eps':     1.0000, 'critic_loss':   150.8613, 'actor_loss':    -0.4022, 'eps_e':     1.0000})
+Step:   85000, Reward:   200.000 [   0.000], Avg:   195.499 (1.000) <0-00:13:07> ({'r_t':  1000.0000, 'eps':     1.0000, 'critic_loss':   141.0927, 'actor_loss':    -0.3832, 'eps_e':     1.0000})
+Step:   86000, Reward:   200.000 [   0.000], Avg:   195.550 (1.000) <0-00:13:17> ({'r_t':  1000.0000, 'eps':     1.0000, 'critic_loss':   139.0577, 'actor_loss':    -0.1784, 'eps_e':     1.0000})
+Step:   87000, Reward:   200.000 [   0.000], Avg:   195.601 (1.000) <0-00:13:26> ({'r_t':  1000.0000, 'eps':     1.0000, 'critic_loss':   147.6516, 'actor_loss':     0.5835, 'eps_e':     1.0000})
+Step:   88000, Reward:   200.000 [   0.000], Avg:   195.650 (1.000) <0-00:13:35> ({'r_t':  1000.0000, 'eps':     1.0000, 'critic_loss':   121.4345, 'actor_loss':    -0.1960, 'eps_e':     1.0000})
+Step:   89000, Reward:   200.000 [   0.000], Avg:   195.699 (1.000) <0-00:13:43> ({'r_t':  1000.0000, 'eps':     1.0000, 'critic_loss':   133.9295, 'actor_loss':    -0.1005, 'eps_e':     1.0000})
+Step:   90000, Reward:   200.000 [   0.000], Avg:   195.746 (1.000) <0-00:13:53> ({'r_t':  1000.0000, 'eps':     1.0000, 'critic_loss':   164.6455, 'actor_loss':    -0.1204, 'eps_e':     1.0000})
+Step:   91000, Reward:   200.000 [   0.000], Avg:   195.792 (1.000) <0-00:14:02> ({'r_t':  1000.0000, 'eps':     1.0000, 'critic_loss':   161.9998, 'actor_loss':    -0.2894, 'eps_e':     1.0000})
+Step:   92000, Reward:   200.000 [   0.000], Avg:   195.837 (1.000) <0-00:14:11> ({'r_t':  1000.0000, 'eps':     1.0000, 'critic_loss':   167.7164, 'actor_loss':     0.1391, 'eps_e':     1.0000})
+Step:   93000, Reward:   200.000 [   0.000], Avg:   195.882 (1.000) <0-00:14:21> ({'r_t':  1000.0000, 'eps':     1.0000, 'critic_loss':   159.0282, 'actor_loss':     0.2357, 'eps_e':     1.0000})
+Step:   94000, Reward:   200.000 [   0.000], Avg:   195.925 (1.000) <0-00:14:32> ({'r_t':  1000.0000, 'eps':     1.0000, 'critic_loss':   172.4841, 'actor_loss':     0.0960, 'eps_e':     1.0000})
+Step:   95000, Reward:   200.000 [   0.000], Avg:   195.967 (1.000) <0-00:14:42> ({'r_t':  1000.0000, 'eps':     1.0000, 'critic_loss':   165.6731, 'actor_loss':     0.1666, 'eps_e':     1.0000})
+Step:   96000, Reward:   200.000 [   0.000], Avg:   196.009 (1.000) <0-00:14:52> ({'r_t':  1000.0000, 'eps':     1.0000, 'critic_loss':   135.7534, 'actor_loss':    -0.2283, 'eps_e':     1.0000})
+Step:   97000, Reward:   200.000 [   0.000], Avg:   196.050 (1.000) <0-00:15:01> ({'r_t':  1000.0000, 'eps':     1.0000, 'critic_loss':   169.3158, 'actor_loss':     0.6516, 'eps_e':     1.0000})
+Step:   98000, Reward:   200.000 [   0.000], Avg:   196.090 (1.000) <0-00:15:09> ({'r_t':  1000.0000, 'eps':     1.0000, 'critic_loss':   167.6622, 'actor_loss':     0.1635, 'eps_e':     1.0000})
+Step:   99000, Reward:   200.000 [   0.000], Avg:   196.129 (1.000) <0-00:15:18> ({'r_t':  1000.0000, 'eps':     1.0000, 'critic_loss':   147.2202, 'actor_loss':    -0.0991, 'eps_e':     1.0000})
+Step:  100000, Reward:   200.000 [   0.000], Avg:   196.167 (1.000) <0-00:15:28> ({'r_t':  1000.0000, 'eps':     1.0000, 'critic_loss':   139.6962, 'actor_loss':    -0.4245, 'eps_e':     1.0000})
+Step:  101000, Reward:   200.000 [   0.000], Avg:   196.205 (1.000) <0-00:15:38> ({'r_t':  1000.0000, 'eps':     1.0000, 'critic_loss':   119.5618, 'actor_loss':    -0.4656, 'eps_e':     1.0000})
+Step:  102000, Reward:   200.000 [   0.000], Avg:   196.242 (1.000) <0-00:15:48> ({'r_t':  1000.0000, 'eps':     1.0000, 'critic_loss':   139.6651, 'actor_loss':     0.0602, 'eps_e':     1.0000})
+Step:  103000, Reward:   200.000 [   0.000], Avg:   196.278 (1.000) <0-00:15:58> ({'r_t':  1000.0000, 'eps':     1.0000, 'critic_loss':   145.8262, 'actor_loss':     0.4693, 'eps_e':     1.0000})
+Step:  104000, Reward:   200.000 [   0.000], Avg:   196.313 (1.000) <0-00:16:08> ({'r_t':  1000.0000, 'eps':     1.0000, 'critic_loss':   118.7038, 'actor_loss':    -0.3499, 'eps_e':     1.0000})
+Step:  105000, Reward:   200.000 [   0.000], Avg:   196.348 (1.000) <0-00:16:18> ({'r_t':  1000.0000, 'eps':     1.0000, 'critic_loss':   110.9376, 'actor_loss':    -0.4158, 'eps_e':     1.0000})
+Step:  106000, Reward:   200.000 [   0.000], Avg:   196.382 (1.000) <0-00:16:27> ({'r_t':  1000.0000, 'eps':     1.0000, 'critic_loss':   176.6295, 'actor_loss':     0.8687, 'eps_e':     1.0000})
+Step:  107000, Reward:   200.000 [   0.000], Avg:   196.416 (1.000) <0-00:16:35> ({'r_t':  1000.0000, 'eps':     1.0000, 'critic_loss':   177.6215, 'actor_loss':     0.4149, 'eps_e':     1.0000})
+Step:  108000, Reward:   200.000 [   0.000], Avg:   196.448 (1.000) <0-00:16:44> ({'r_t':  1000.0000, 'eps':     1.0000, 'critic_loss':   172.4603, 'actor_loss':     0.3211, 'eps_e':     1.0000})
+Step:  109000, Reward:   200.000 [   0.000], Avg:   196.481 (1.000) <0-00:16:53> ({'r_t':  1000.0000, 'eps':     1.0000, 'critic_loss':   169.3173, 'actor_loss':     0.1867, 'eps_e':     1.0000})
+Step:  110000, Reward:   200.000 [   0.000], Avg:   196.512 (1.000) <0-00:17:02> ({'r_t':  1000.0000, 'eps':     1.0000, 'critic_loss':   154.8314, 'actor_loss':    -0.4182, 'eps_e':     1.0000})
+Step:  111000, Reward:   200.000 [   0.000], Avg:   196.544 (1.000) <0-00:17:11> ({'r_t':  1000.0000, 'eps':     1.0000, 'critic_loss':   150.8540, 'actor_loss':    -0.2154, 'eps_e':     1.0000})
+Step:  112000, Reward:   200.000 [   0.000], Avg:   196.574 (1.000) <0-00:17:19> ({'r_t':  1000.0000, 'eps':     1.0000, 'critic_loss':   149.9350, 'actor_loss':    -0.2621, 'eps_e':     1.0000})
+Step:  113000, Reward:   200.000 [   0.000], Avg:   196.604 (1.000) <0-00:17:28> ({'r_t':  1000.0000, 'eps':     1.0000, 'critic_loss':   128.6158, 'actor_loss':    -0.1294, 'eps_e':     1.0000})
+Step:  114000, Reward:   200.000 [   0.000], Avg:   196.634 (1.000) <0-00:17:37> ({'r_t':  1000.0000, 'eps':     1.0000, 'critic_loss':   123.2092, 'actor_loss':     0.5613, 'eps_e':     1.0000})
+Step:  115000, Reward:   200.000 [   0.000], Avg:   196.663 (1.000) <0-00:17:46> ({'r_t':  1000.0000, 'eps':     1.0000, 'critic_loss':   115.8179, 'actor_loss':     0.2550, 'eps_e':     1.0000})
+Step:  116000, Reward:   200.000 [   0.000], Avg:   196.691 (1.000) <0-00:17:54> ({'r_t':  1000.0000, 'eps':     1.0000, 'critic_loss':   153.6015, 'actor_loss':     0.4783, 'eps_e':     1.0000})
+Step:  117000, Reward:   200.000 [   0.000], Avg:   196.719 (1.000) <0-00:18:03> ({'r_t':  1000.0000, 'eps':     1.0000, 'critic_loss':   185.8480, 'actor_loss':     0.9571, 'eps_e':     1.0000})
+Step:  118000, Reward:   200.000 [   0.000], Avg:   196.747 (1.000) <0-00:18:12> ({'r_t':  1000.0000, 'eps':     1.0000, 'critic_loss':   166.9093, 'actor_loss':     0.1518, 'eps_e':     1.0000})
+Step:  119000, Reward:   200.000 [   0.000], Avg:   196.774 (1.000) <0-00:18:21> ({'r_t':  1000.0000, 'eps':     1.0000, 'critic_loss':   165.2115, 'actor_loss':    -0.1943, 'eps_e':     1.0000})
+Step:  120000, Reward:   200.000 [   0.000], Avg:   196.801 (1.000) <0-00:18:30> ({'r_t':  1000.0000, 'eps':     1.0000, 'critic_loss':   163.7174, 'actor_loss':     0.0747, 'eps_e':     1.0000})
+Step:  121000, Reward:   200.000 [   0.000], Avg:   196.827 (1.000) <0-00:18:39> ({'r_t':  1000.0000, 'eps':     1.0000, 'critic_loss':   164.8238, 'actor_loss':     0.0871, 'eps_e':     1.0000})
+Step:  122000, Reward:   200.000 [   0.000], Avg:   196.853 (1.000) <0-00:18:49> ({'r_t':  1000.0000, 'eps':     1.0000, 'critic_loss':   159.7507, 'actor_loss':    -0.3346, 'eps_e':     1.0000})
+Step:  123000, Reward:   200.000 [   0.000], Avg:   196.878 (1.000) <0-00:18:59> ({'r_t':  1000.0000, 'eps':     1.0000, 'critic_loss':   150.3977, 'actor_loss':     0.0838, 'eps_e':     1.0000})
+Step:  124000, Reward:   200.000 [   0.000], Avg:   196.903 (1.000) <0-00:19:09> ({'r_t':  1000.0000, 'eps':     1.0000, 'critic_loss':   130.6343, 'actor_loss':    -0.0464, 'eps_e':     1.0000})
+Step:  125000, Reward:   200.000 [   0.000], Avg:   196.928 (1.000) <0-00:19:19> ({'r_t':  1000.0000, 'eps':     1.0000, 'critic_loss':   124.9083, 'actor_loss':     0.0577, 'eps_e':     1.0000})
+Step:  126000, Reward:   200.000 [   0.000], Avg:   196.952 (1.000) <0-00:19:29> ({'r_t':  1000.0000, 'eps':     1.0000, 'critic_loss':   146.1613, 'actor_loss':     0.7246, 'eps_e':     1.0000})
+Step:  127000, Reward:   200.000 [   0.000], Avg:   196.976 (1.000) <0-00:19:37> ({'r_t':  1000.0000, 'eps':     1.0000, 'critic_loss':   153.8778, 'actor_loss':    -0.0382, 'eps_e':     1.0000})
+Step:  128000, Reward:   200.000 [   0.000], Avg:   196.999 (1.000) <0-00:19:46> ({'r_t':  1000.0000, 'eps':     1.0000, 'critic_loss':   161.8071, 'actor_loss':    -0.0745, 'eps_e':     1.0000})
+Step:  129000, Reward:   200.000 [   0.000], Avg:   197.022 (1.000) <0-00:19:55> ({'r_t':  1000.0000, 'eps':     1.0000, 'critic_loss':   156.7256, 'actor_loss':    -0.4737, 'eps_e':     1.0000})
+Step:  130000, Reward:   200.000 [   0.000], Avg:   197.045 (1.000) <0-00:20:04> ({'r_t':  1000.0000, 'eps':     1.0000, 'critic_loss':   164.1001, 'actor_loss':    -0.2137, 'eps_e':     1.0000})
+Step:  131000, Reward:   200.000 [   0.000], Avg:   197.067 (1.000) <0-00:20:13> ({'r_t':  1000.0000, 'eps':     1.0000, 'critic_loss':   162.8596, 'actor_loss':     0.0075, 'eps_e':     1.0000})
+Step:  132000, Reward:   200.000 [   0.000], Avg:   197.089 (1.000) <0-00:20:21> ({'r_t':  1000.0000, 'eps':     1.0000, 'critic_loss':   163.0464, 'actor_loss':     0.3940, 'eps_e':     1.0000})
+Step:  133000, Reward:   200.000 [   0.000], Avg:   197.111 (1.000) <0-00:20:30> ({'r_t':  1000.0000, 'eps':     1.0000, 'critic_loss':   171.2150, 'actor_loss':     0.3608, 'eps_e':     1.0000})
+Step:  134000, Reward:   200.000 [   0.000], Avg:   197.132 (1.000) <0-00:20:39> ({'r_t':  1000.0000, 'eps':     1.0000, 'critic_loss':   159.8142, 'actor_loss':     0.0941, 'eps_e':     1.0000})
+Step:  135000, Reward:   200.000 [   0.000], Avg:   197.153 (1.000) <0-00:20:48> ({'r_t':  1000.0000, 'eps':     1.0000, 'critic_loss':   169.8405, 'actor_loss':     0.0788, 'eps_e':     1.0000})
+Step:  136000, Reward:   200.000 [   0.000], Avg:   197.174 (1.000) <0-00:20:57> ({'r_t':  1000.0000, 'eps':     1.0000, 'critic_loss':   165.2637, 'actor_loss':    -0.1148, 'eps_e':     1.0000})
+Step:  137000, Reward:   200.000 [   0.000], Avg:   197.195 (1.000) <0-00:21:05> ({'r_t':  1000.0000, 'eps':     1.0000, 'critic_loss':   162.0067, 'actor_loss':    -0.3002, 'eps_e':     1.0000})
+Step:  138000, Reward:   200.000 [   0.000], Avg:   197.215 (1.000) <0-00:21:14> ({'r_t':  1000.0000, 'eps':     1.0000, 'critic_loss':   159.1235, 'actor_loss':    -0.1892, 'eps_e':     1.0000})
+Step:  139000, Reward:   200.000 [   0.000], Avg:   197.235 (1.000) <0-00:21:23> ({'r_t':  1000.0000, 'eps':     1.0000, 'critic_loss':   168.6042, 'actor_loss':     0.5461, 'eps_e':     1.0000})
+Step:  140000, Reward:   200.000 [   0.000], Avg:   197.254 (1.000) <0-00:21:32> ({'r_t':  1000.0000, 'eps':     1.0000, 'critic_loss':   135.0267, 'actor_loss':    -0.1444, 'eps_e':     1.0000})
+Step:  141000, Reward:   200.000 [   0.000], Avg:   197.274 (1.000) <0-00:21:42> ({'r_t':  1000.0000, 'eps':     1.0000, 'critic_loss':   162.0234, 'actor_loss':     0.0381, 'eps_e':     1.0000})
+Step:  142000, Reward:   200.000 [   0.000], Avg:   197.293 (1.000) <0-00:21:52> ({'r_t':  1000.0000, 'eps':     1.0000, 'critic_loss':   171.8721, 'actor_loss':     0.1405, 'eps_e':     1.0000})
+Step:  143000, Reward:   200.000 [   0.000], Avg:   197.312 (1.000) <0-00:22:02> ({'r_t':  1000.0000, 'eps':     1.0000, 'critic_loss':   154.8778, 'actor_loss':    -0.0388, 'eps_e':     1.0000})
+Step:  144000, Reward:   200.000 [   0.000], Avg:   197.330 (1.000) <0-00:22:12> ({'r_t':  1000.0000, 'eps':     1.0000, 'critic_loss':   151.8178, 'actor_loss':    -0.0429, 'eps_e':     1.0000})
+Step:  145000, Reward:   200.000 [   0.000], Avg:   197.348 (1.000) <0-00:22:22> ({'r_t':  1000.0000, 'eps':     1.0000, 'critic_loss':   126.1906, 'actor_loss':    -0.5626, 'eps_e':     1.0000})
+Step:  146000, Reward:   200.000 [   0.000], Avg:   197.366 (1.000) <0-00:22:30> ({'r_t':  1000.0000, 'eps':     1.0000, 'critic_loss':   136.2672, 'actor_loss':     0.1327, 'eps_e':     1.0000})
+Step:  147000, Reward:   200.000 [   0.000], Avg:   197.384 (1.000) <0-00:22:39> ({'r_t':  1000.0000, 'eps':     1.0000, 'critic_loss':   149.8653, 'actor_loss':     0.2633, 'eps_e':     1.0000})
+Step:  148000, Reward:   200.000 [   0.000], Avg:   197.402 (1.000) <0-00:22:48> ({'r_t':  1000.0000, 'eps':     1.0000, 'critic_loss':   163.7221, 'actor_loss':     0.2283, 'eps_e':     1.0000})
+Step:  149000, Reward:   200.000 [   0.000], Avg:   197.419 (1.000) <0-00:22:56> ({'r_t':  1000.0000, 'eps':     1.0000, 'critic_loss':   156.7644, 'actor_loss':     0.2776, 'eps_e':     1.0000})
+Step:  150000, Reward:   200.000 [   0.000], Avg:   197.436 (1.000) <0-00:23:05> ({'r_t':  1000.0000, 'eps':     1.0000, 'critic_loss':   166.1065, 'actor_loss':     0.3508, 'eps_e':     1.0000})
+Step:  151000, Reward:   200.000 [   0.000], Avg:   197.453 (1.000) <0-00:23:14> ({'r_t':  1000.0000, 'eps':     1.0000, 'critic_loss':   169.5424, 'actor_loss':     0.3535, 'eps_e':     1.0000})
+Step:  152000, Reward:   200.000 [   0.000], Avg:   197.470 (1.000) <0-00:23:23> ({'r_t':  1000.0000, 'eps':     1.0000, 'critic_loss':   177.9942, 'actor_loss':     0.4444, 'eps_e':     1.0000})
+Step:  153000, Reward:   200.000 [   0.000], Avg:   197.486 (1.000) <0-00:23:32> ({'r_t':  1000.0000, 'eps':     1.0000, 'critic_loss':   163.8925, 'actor_loss':    -0.1265, 'eps_e':     1.0000})
+Step:  154000, Reward:   200.000 [   0.000], Avg:   197.502 (1.000) <0-00:23:40> ({'r_t':  1000.0000, 'eps':     1.0000, 'critic_loss':   152.8146, 'actor_loss':    -0.3032, 'eps_e':     1.0000})
+Step:  155000, Reward:   200.000 [   0.000], Avg:   197.518 (1.000) <0-00:23:49> ({'r_t':  1000.0000, 'eps':     1.0000, 'critic_loss':   154.2679, 'actor_loss':    -0.1908, 'eps_e':     1.0000})
+Step:  156000, Reward:   200.000 [   0.000], Avg:   197.534 (1.000) <0-00:23:58> ({'r_t':  1000.0000, 'eps':     1.0000, 'critic_loss':   173.2429, 'actor_loss':     0.1419, 'eps_e':     1.0000})
+Step:  157000, Reward:   196.688 [  12.829], Avg:   197.529 (1.000) <0-00:24:07> ({'r_t':  1000.0000, 'eps':     1.0000, 'critic_loss':   166.2715, 'actor_loss':     0.6975, 'eps_e':     1.0000})
+Step:  158000, Reward:   200.000 [   0.000], Avg:   197.544 (1.000) <0-00:24:16> ({'r_t':  1000.0000, 'eps':     1.0000, 'critic_loss':   152.8930, 'actor_loss':     0.1486, 'eps_e':     1.0000})
+Step:  159000, Reward:   200.000 [   0.000], Avg:   197.560 (1.000) <0-00:24:25> ({'r_t':  1000.0000, 'eps':     1.0000, 'critic_loss':   152.9259, 'actor_loss':    -0.0718, 'eps_e':     1.0000})
+Step:  160000, Reward:   200.000 [   0.000], Avg:   197.575 (1.000) <0-00:24:35> ({'r_t':  1000.0000, 'eps':     1.0000, 'critic_loss':   165.7774, 'actor_loss':    -0.0052, 'eps_e':     1.0000})
+Step:  161000, Reward:   200.000 [   0.000], Avg:   197.590 (1.000) <0-00:24:46> ({'r_t':  1000.0000, 'eps':     1.0000, 'critic_loss':   172.2996, 'actor_loss':     0.3480, 'eps_e':     1.0000})
+Step:  162000, Reward:   200.000 [   0.000], Avg:   197.605 (1.000) <0-00:24:56> ({'r_t':  1000.0000, 'eps':     1.0000, 'critic_loss':   152.4346, 'actor_loss':    -0.1972, 'eps_e':     1.0000})
+Step:  163000, Reward:   200.000 [   0.000], Avg:   197.619 (1.000) <0-00:25:06> ({'r_t':  1000.0000, 'eps':     1.0000, 'critic_loss':   158.2732, 'actor_loss':    -0.2475, 'eps_e':     1.0000})
+Step:  164000, Reward:   200.000 [   0.000], Avg:   197.634 (1.000) <0-00:25:14> ({'r_t':  1000.0000, 'eps':     1.0000, 'critic_loss':   166.0891, 'actor_loss':     0.1336, 'eps_e':     1.0000})
+Step:  165000, Reward:   200.000 [   0.000], Avg:   197.648 (1.000) <0-00:25:23> ({'r_t':  1000.0000, 'eps':     1.0000, 'critic_loss':   158.8382, 'actor_loss':    -0.0549, 'eps_e':     1.0000})
+Step:  166000, Reward:   200.000 [   0.000], Avg:   197.662 (1.000) <0-00:25:32> ({'r_t':  1000.0000, 'eps':     1.0000, 'critic_loss':   164.4363, 'actor_loss':    -0.0281, 'eps_e':     1.0000})
+Step:  167000, Reward:   200.000 [   0.000], Avg:   197.676 (1.000) <0-00:25:40> ({'r_t':  1000.0000, 'eps':     1.0000, 'critic_loss':   159.9680, 'actor_loss':    -0.0092, 'eps_e':     1.0000})
+Step:  168000, Reward:   200.000 [   0.000], Avg:   197.690 (1.000) <0-00:25:49> ({'r_t':  1000.0000, 'eps':     1.0000, 'critic_loss':   166.9671, 'actor_loss':    -0.0244, 'eps_e':     1.0000})
+Step:  169000, Reward:   200.000 [   0.000], Avg:   197.703 (1.000) <0-00:25:58> ({'r_t':  1000.0000, 'eps':     1.0000, 'critic_loss':   166.0334, 'actor_loss':     0.0047, 'eps_e':     1.0000})
+Step:  170000, Reward:   200.000 [   0.000], Avg:   197.717 (1.000) <0-00:26:07> ({'r_t':  1000.0000, 'eps':     1.0000, 'critic_loss':   146.4675, 'actor_loss':    -0.3098, 'eps_e':     1.0000})
+Step:  171000, Reward:   200.000 [   0.000], Avg:   197.730 (1.000) <0-00:26:16> ({'r_t':  1000.0000, 'eps':     1.0000, 'critic_loss':   161.2604, 'actor_loss':    -0.0578, 'eps_e':     1.0000})
+Step:  172000, Reward:   200.000 [   0.000], Avg:   197.743 (1.000) <0-00:26:25> ({'r_t':  1000.0000, 'eps':     1.0000, 'critic_loss':   164.3806, 'actor_loss':     0.0074, 'eps_e':     1.0000})
+Step:  173000, Reward:   196.812 [  12.345], Avg:   197.738 (1.000) <0-00:26:33> ({'r_t':  1000.0000, 'eps':     1.0000, 'critic_loss':   166.2472, 'actor_loss':     0.3971, 'eps_e':     1.0000})
+Step:  174000, Reward:   200.000 [   0.000], Avg:   197.751 (1.000) <0-00:26:42> ({'r_t':  1000.0000, 'eps':     1.0000, 'critic_loss':   146.1595, 'actor_loss':     0.6555, 'eps_e':     1.0000})
+Step:  175000, Reward:   193.375 [  25.659], Avg:   197.726 (1.000) <0-00:26:51> ({'r_t':  1000.0000, 'eps':     1.0000, 'critic_loss':   179.2267, 'actor_loss':     1.1783, 'eps_e':     1.0000})
+Step:  176000, Reward:   198.812 [   4.599], Avg:   197.732 (1.000) <0-00:27:01> ({'r_t':  1000.0000, 'eps':     1.0000, 'critic_loss':   168.9997, 'actor_loss':     0.2007, 'eps_e':     1.0000})
+Step:  177000, Reward:   198.562 [   5.567], Avg:   197.737 (1.000) <0-00:27:11> ({'r_t':  1000.0000, 'eps':     1.0000, 'critic_loss':   156.1376, 'actor_loss':     0.2611, 'eps_e':     1.0000})
+Step:  178000, Reward:   200.000 [   0.000], Avg:   197.749 (1.000) <0-00:27:21> ({'r_t':  1000.0000, 'eps':     1.0000, 'critic_loss':   159.0354, 'actor_loss':     0.1746, 'eps_e':     1.0000})
+Step:  179000, Reward:   200.000 [   0.000], Avg:   197.762 (1.000) <0-00:27:31> ({'r_t':  1000.0000, 'eps':     1.0000, 'critic_loss':   171.9706, 'actor_loss':     0.6776, 'eps_e':     1.0000})
+Step:  180000, Reward:   197.812 [   8.472], Avg:   197.762 (1.000) <0-00:27:40> ({'r_t':  1000.0000, 'eps':     1.0000, 'critic_loss':   158.5973, 'actor_loss':     0.1912, 'eps_e':     1.0000})
+Step:  181000, Reward:   200.000 [   0.000], Avg:   197.774 (1.000) <0-00:27:49> ({'r_t':  1000.0000, 'eps':     1.0000, 'critic_loss':   171.4758, 'actor_loss':     0.5105, 'eps_e':     1.0000})
+Step:  182000, Reward:   200.000 [   0.000], Avg:   197.787 (1.000) <0-00:27:58> ({'r_t':  1000.0000, 'eps':     1.0000, 'critic_loss':   156.4919, 'actor_loss':    -0.0307, 'eps_e':     1.0000})
+Step:  183000, Reward:   200.000 [   0.000], Avg:   197.799 (1.000) <0-00:28:07> ({'r_t':  1000.0000, 'eps':     1.0000, 'critic_loss':   167.6512, 'actor_loss':    -0.0505, 'eps_e':     1.0000})
+Step:  184000, Reward:   200.000 [   0.000], Avg:   197.810 (1.000) <0-00:28:16> ({'r_t':  1000.0000, 'eps':     1.0000, 'critic_loss':   158.6600, 'actor_loss':    -0.2149, 'eps_e':     1.0000})
+Step:  185000, Reward:   200.000 [   0.000], Avg:   197.822 (1.000) <0-00:28:25> ({'r_t':  1000.0000, 'eps':     1.0000, 'critic_loss':   167.3478, 'actor_loss':     0.0858, 'eps_e':     1.0000})
+Step:  186000, Reward:   200.000 [   0.000], Avg:   197.834 (1.000) <0-00:28:33> ({'r_t':  1000.0000, 'eps':     1.0000, 'critic_loss':   154.5935, 'actor_loss':    -0.4688, 'eps_e':     1.0000})
+Step:  187000, Reward:   200.000 [   0.000], Avg:   197.845 (1.000) <0-00:28:42> ({'r_t':  1000.0000, 'eps':     1.0000, 'critic_loss':   162.5541, 'actor_loss':     0.0257, 'eps_e':     1.0000})
+Step:  188000, Reward:   200.000 [   0.000], Avg:   197.857 (1.000) <0-00:28:51> ({'r_t':  1000.0000, 'eps':     1.0000, 'critic_loss':   172.7903, 'actor_loss':     0.0259, 'eps_e':     1.0000})
+Step:  189000, Reward:   200.000 [   0.000], Avg:   197.868 (1.000) <0-00:29:00> ({'r_t':  1000.0000, 'eps':     1.0000, 'critic_loss':   166.5797, 'actor_loss':    -0.1288, 'eps_e':     1.0000})
+Step:  190000, Reward:   190.188 [  38.004], Avg:   197.828 (1.000) <0-00:29:09> ({'r_t':  1000.0000, 'eps':     1.0000, 'critic_loss':   173.7144, 'actor_loss':     0.0485, 'eps_e':     1.0000})
+Step:  191000, Reward:   200.000 [   0.000], Avg:   197.839 (1.000) <0-00:29:19> ({'r_t':  1000.0000, 'eps':     1.0000, 'critic_loss':   164.4763, 'actor_loss':    -0.1366, 'eps_e':     1.0000})
+Step:  192000, Reward:   200.000 [   0.000], Avg:   197.850 (1.000) <0-00:29:29> ({'r_t':  1000.0000, 'eps':     1.0000, 'critic_loss':   152.4153, 'actor_loss':    -0.5465, 'eps_e':     1.0000})
+Step:  193000, Reward:   188.562 [  44.297], Avg:   197.803 (1.000) <0-00:29:39> ({'r_t':  1000.0000, 'eps':     1.0000, 'critic_loss':   158.1606, 'actor_loss':    -0.2642, 'eps_e':     1.0000})
+Step:  194000, Reward:   200.000 [   0.000], Avg:   197.814 (1.000) <0-00:29:49> ({'r_t':  1000.0000, 'eps':     1.0000, 'critic_loss':   141.5550, 'actor_loss':    -0.7294, 'eps_e':     1.0000})
+Step:  195000, Reward:   200.000 [   0.000], Avg:   197.825 (1.000) <0-00:29:59> ({'r_t':  1000.0000, 'eps':     1.0000, 'critic_loss':   144.0091, 'actor_loss':    -0.2987, 'eps_e':     1.0000})
+Step:  196000, Reward:   200.000 [   0.000], Avg:   197.836 (1.000) <0-00:30:07> ({'r_t':  1000.0000, 'eps':     1.0000, 'critic_loss':   135.8062, 'actor_loss':    -0.2002, 'eps_e':     1.0000})
+Step:  197000, Reward:   200.000 [   0.000], Avg:   197.847 (1.000) <0-00:30:16> ({'r_t':  1000.0000, 'eps':     1.0000, 'critic_loss':   168.5547, 'actor_loss':     0.5014, 'eps_e':     1.0000})
+Step:  198000, Reward:   200.000 [   0.000], Avg:   197.858 (1.000) <0-00:30:25> ({'r_t':  1000.0000, 'eps':     1.0000, 'critic_loss':   179.0912, 'actor_loss':     0.3996, 'eps_e':     1.0000})
+Step:  199000, Reward:   200.000 [   0.000], Avg:   197.868 (1.000) <0-00:30:34> ({'r_t':  1000.0000, 'eps':     1.0000, 'critic_loss':   171.6749, 'actor_loss':     0.2245, 'eps_e':     1.0000})
+Step:  200000, Reward:   200.000 [   0.000], Avg:   197.879 (1.000) <0-00:30:43> ({'r_t':  1000.0000, 'eps':     1.0000, 'critic_loss':   177.1066, 'actor_loss':    -0.0813, 'eps_e':     1.0000})
+Step:  201000, Reward:   200.000 [   0.000], Avg:   197.890 (1.000) <0-00:30:51> ({'r_t':  1000.0000, 'eps':     1.0000, 'critic_loss':   172.1470, 'actor_loss':    -0.1165, 'eps_e':     1.0000})
+Step:  202000, Reward:   200.000 [   0.000], Avg:   197.900 (1.000) <0-00:31:00> ({'r_t':  1000.0000, 'eps':     1.0000, 'critic_loss':   167.2362, 'actor_loss':    -0.2621, 'eps_e':     1.0000})
+Step:  203000, Reward:   200.000 [   0.000], Avg:   197.910 (1.000) <0-00:31:09> ({'r_t':  1000.0000, 'eps':     1.0000, 'critic_loss':   171.4861, 'actor_loss':    -0.0812, 'eps_e':     1.0000})
+Step:  204000, Reward:   200.000 [   0.000], Avg:   197.920 (1.000) <0-00:31:18> ({'r_t':  1000.0000, 'eps':     1.0000, 'critic_loss':   173.8723, 'actor_loss':     0.0121, 'eps_e':     1.0000})
+Step:  205000, Reward:   194.438 [  21.543], Avg:   197.904 (1.000) <0-00:31:27> ({'r_t':  1000.0000, 'eps':     1.0000, 'critic_loss':   174.6777, 'actor_loss':    -0.0827, 'eps_e':     1.0000})
+Step:  206000, Reward:   200.000 [   0.000], Avg:   197.914 (1.000) <0-00:31:38> ({'r_t':  1000.0000, 'eps':     1.0000, 'critic_loss':   165.5253, 'actor_loss':    -0.2428, 'eps_e':     1.0000})
+Step:  207000, Reward:   200.000 [   0.000], Avg:   197.924 (1.000) <0-00:31:48> ({'r_t':  1000.0000, 'eps':     1.0000, 'critic_loss':   158.7140, 'actor_loss':    -0.4186, 'eps_e':     1.0000})
+Step:  208000, Reward:   200.000 [   0.000], Avg:   197.934 (1.000) <0-00:31:58> ({'r_t':  1000.0000, 'eps':     1.0000, 'critic_loss':   166.0885, 'actor_loss':    -0.1572, 'eps_e':     1.0000})
+Step:  209000, Reward:   200.000 [   0.000], Avg:   197.943 (1.000) <0-00:32:08> ({'r_t':  1000.0000, 'eps':     1.0000, 'critic_loss':   171.9059, 'actor_loss':     0.1785, 'eps_e':     1.0000})
+Step:  210000, Reward:   200.000 [   0.000], Avg:   197.953 (1.000) <0-00:32:17> ({'r_t':  1000.0000, 'eps':     1.0000, 'critic_loss':   171.8687, 'actor_loss':     0.0985, 'eps_e':     1.0000})
+Step:  211000, Reward:   200.000 [   0.000], Avg:   197.963 (1.000) <0-00:32:25> ({'r_t':  1000.0000, 'eps':     1.0000, 'critic_loss':   169.7112, 'actor_loss':    -0.1584, 'eps_e':     1.0000})
+Step:  212000, Reward:   200.000 [   0.000], Avg:   197.972 (1.000) <0-00:32:34> ({'r_t':  1000.0000, 'eps':     1.0000, 'critic_loss':   163.3918, 'actor_loss':    -0.1691, 'eps_e':     1.0000})
+Step:  213000, Reward:   200.000 [   0.000], Avg:   197.982 (1.000) <0-00:32:43> ({'r_t':  1000.0000, 'eps':     1.0000, 'critic_loss':   181.1926, 'actor_loss':     0.4224, 'eps_e':     1.0000})
+Step:  214000, Reward:   200.000 [   0.000], Avg:   197.991 (1.000) <0-00:32:52> ({'r_t':  1000.0000, 'eps':     1.0000, 'critic_loss':   180.9212, 'actor_loss':     0.4781, 'eps_e':     1.0000})
+Step:  215000, Reward:   200.000 [   0.000], Avg:   198.001 (1.000) <0-00:33:01> ({'r_t':  1000.0000, 'eps':     1.0000, 'critic_loss':   170.4914, 'actor_loss':    -0.0496, 'eps_e':     1.0000})
+Step:  216000, Reward:   200.000 [   0.000], Avg:   198.010 (1.000) <0-00:33:09> ({'r_t':  1000.0000, 'eps':     1.0000, 'critic_loss':   172.0282, 'actor_loss':     0.1278, 'eps_e':     1.0000})
+Step:  217000, Reward:   200.000 [   0.000], Avg:   198.019 (1.000) <0-00:33:18> ({'r_t':  1000.0000, 'eps':     1.0000, 'critic_loss':   164.9277, 'actor_loss':     0.2074, 'eps_e':     1.0000})
+Step:  218000, Reward:   200.000 [   0.000], Avg:   198.028 (1.000) <0-00:33:28> ({'r_t':  1000.0000, 'eps':     1.0000, 'critic_loss':   164.4937, 'actor_loss':     0.3043, 'eps_e':     1.0000})
+Step:  219000, Reward:   200.000 [   0.000], Avg:   198.037 (1.000) <0-00:33:39> ({'r_t':  1000.0000, 'eps':     1.0000, 'critic_loss':   166.0146, 'actor_loss':    -0.0391, 'eps_e':     1.0000})
+Step:  220000, Reward:   200.000 [   0.000], Avg:   198.046 (1.000) <0-00:33:49> ({'r_t':  1000.0000, 'eps':     1.0000, 'critic_loss':   157.5986, 'actor_loss':    -0.0142, 'eps_e':     1.0000})
+Step:  221000, Reward:   194.875 [  19.849], Avg:   198.032 (1.000) <0-00:33:59> ({'r_t':  1000.0000, 'eps':     1.0000, 'critic_loss':   179.1497, 'actor_loss':     0.4582, 'eps_e':     1.0000})
+Step:  222000, Reward:   186.812 [  36.037], Avg:   197.981 (1.000) <0-00:34:08> ({'r_t':  1000.0000, 'eps':     1.0000, 'critic_loss':   178.3043, 'actor_loss':     0.5149, 'eps_e':     1.0000})
+Step:  223000, Reward:   200.000 [   0.000], Avg:   197.990 (1.000) <0-00:34:17> ({'r_t':  1000.0000, 'eps':     1.0000, 'critic_loss':   162.5088, 'actor_loss':     0.0275, 'eps_e':     1.0000})
+Step:  224000, Reward:   200.000 [   0.000], Avg:   197.999 (1.000) <0-00:34:26> ({'r_t':  1000.0000, 'eps':     1.0000, 'critic_loss':   167.2130, 'actor_loss':    -0.1998, 'eps_e':     1.0000})
+Step:  225000, Reward:   200.000 [   0.000], Avg:   198.008 (1.000) <0-00:34:34> ({'r_t':  1000.0000, 'eps':     1.0000, 'critic_loss':   162.1011, 'actor_loss':    -0.2513, 'eps_e':     1.0000})
+Step:  226000, Reward:   200.000 [   0.000], Avg:   198.017 (1.000) <0-00:34:43> ({'r_t':  1000.0000, 'eps':     1.0000, 'critic_loss':   182.2066, 'actor_loss':     0.4816, 'eps_e':     1.0000})
+Step:  227000, Reward:   191.250 [  33.889], Avg:   197.987 (1.000) <0-00:34:52> ({'r_t':  1000.0000, 'eps':     1.0000, 'critic_loss':   170.9614, 'actor_loss':    -0.0046, 'eps_e':     1.0000})
+Step:  228000, Reward:   200.000 [   0.000], Avg:   197.996 (1.000) <0-00:35:01> ({'r_t':  1000.0000, 'eps':     1.0000, 'critic_loss':   167.1363, 'actor_loss':     0.0016, 'eps_e':     1.0000})
+Step:  229000, Reward:   200.000 [   0.000], Avg:   198.005 (1.000) <0-00:35:11> ({'r_t':  1000.0000, 'eps':     1.0000, 'critic_loss':   165.6507, 'actor_loss':    -0.1785, 'eps_e':     1.0000})
+Step:  230000, Reward:   200.000 [   0.000], Avg:   198.013 (1.000) <0-00:35:22> ({'r_t':  1000.0000, 'eps':     1.0000, 'critic_loss':   164.6206, 'actor_loss':    -0.1910, 'eps_e':     1.0000})
+Step:  231000, Reward:   200.000 [   0.000], Avg:   198.022 (1.000) <0-00:35:31> ({'r_t':  1000.0000, 'eps':     1.0000, 'critic_loss':   165.8853, 'actor_loss':    -0.0060, 'eps_e':     1.0000})
+Step:  232000, Reward:   199.062 [   3.631], Avg:   198.026 (1.000) <0-00:35:41> ({'r_t':  1000.0000, 'eps':     1.0000, 'critic_loss':   163.5714, 'actor_loss':    -0.1763, 'eps_e':     1.0000})
+Step:  233000, Reward:   200.000 [   0.000], Avg:   198.035 (1.000) <0-00:35:51> ({'r_t':  1000.0000, 'eps':     1.0000, 'critic_loss':   144.1703, 'actor_loss':     0.0074, 'eps_e':     1.0000})
+Step:  234000, Reward:   200.000 [   0.000], Avg:   198.043 (1.000) <0-00:36:00> ({'r_t':  1000.0000, 'eps':     1.0000, 'critic_loss':   145.4995, 'actor_loss':    -0.0450, 'eps_e':     1.0000})
+Step:  235000, Reward:   200.000 [   0.000], Avg:   198.051 (1.000) <0-00:36:09> ({'r_t':  1000.0000, 'eps':     1.0000, 'critic_loss':   150.3933, 'actor_loss':     0.0188, 'eps_e':     1.0000})
+Step:  236000, Reward:   200.000 [   0.000], Avg:   198.060 (1.000) <0-00:36:17> ({'r_t':  1000.0000, 'eps':     1.0000, 'critic_loss':   146.3025, 'actor_loss':    -0.7259, 'eps_e':     1.0000})
+Step:  237000, Reward:   200.000 [   0.000], Avg:   198.068 (1.000) <0-00:36:27> ({'r_t':  1000.0000, 'eps':     1.0000, 'critic_loss':   165.2514, 'actor_loss':     0.2374, 'eps_e':     1.0000})
+Step:  238000, Reward:   200.000 [   0.000], Avg:   198.076 (1.000) <0-00:36:36> ({'r_t':  1000.0000, 'eps':     1.0000, 'critic_loss':   163.1349, 'actor_loss':    -0.0916, 'eps_e':     1.0000})
+Step:  239000, Reward:   200.000 [   0.000], Avg:   198.084 (1.000) <0-00:36:45> ({'r_t':  1000.0000, 'eps':     1.0000, 'critic_loss':   166.4058, 'actor_loss':    -0.0727, 'eps_e':     1.0000})
+Step:  240000, Reward:   200.000 [   0.000], Avg:   198.092 (1.000) <0-00:36:55> ({'r_t':  1000.0000, 'eps':     1.0000, 'critic_loss':   167.5501, 'actor_loss':    -0.0699, 'eps_e':     1.0000})
+Step:  241000, Reward:   197.125 [  11.135], Avg:   198.088 (1.000) <0-00:37:05> ({'r_t':  1000.0000, 'eps':     1.0000, 'critic_loss':   165.5071, 'actor_loss':    -0.1373, 'eps_e':     1.0000})
+Step:  242000, Reward:   189.750 [  39.698], Avg:   198.053 (1.000) <0-00:37:15> ({'r_t':  1000.0000, 'eps':     1.0000, 'critic_loss':   158.3544, 'actor_loss':    -0.4857, 'eps_e':     1.0000})
+Step:  243000, Reward:   200.000 [   0.000], Avg:   198.061 (1.000) <0-00:37:25> ({'r_t':  1000.0000, 'eps':     1.0000, 'critic_loss':   159.2127, 'actor_loss':    -0.3997, 'eps_e':     1.0000})
+Step:  244000, Reward:   200.000 [   0.000], Avg:   198.069 (1.000) <0-00:37:34> ({'r_t':  1000.0000, 'eps':     1.0000, 'critic_loss':   160.0403, 'actor_loss':    -0.4458, 'eps_e':     1.0000})
+Step:  245000, Reward:   200.000 [   0.000], Avg:   198.077 (1.000) <0-00:37:43> ({'r_t':  1000.0000, 'eps':     1.0000, 'critic_loss':   169.8751, 'actor_loss':     0.1315, 'eps_e':     1.0000})
+Step:  246000, Reward:   200.000 [   0.000], Avg:   198.085 (1.000) <0-00:37:52> ({'r_t':  1000.0000, 'eps':     1.0000, 'critic_loss':   162.2678, 'actor_loss':     0.1504, 'eps_e':     1.0000})
+Step:  247000, Reward:   200.000 [   0.000], Avg:   198.093 (1.000) <0-00:38:01> ({'r_t':  1000.0000, 'eps':     1.0000, 'critic_loss':   165.4684, 'actor_loss':     0.1278, 'eps_e':     1.0000})
+Step:  248000, Reward:   200.000 [   0.000], Avg:   198.100 (1.000) <0-00:38:10> ({'r_t':  1000.0000, 'eps':     1.0000, 'critic_loss':   169.9194, 'actor_loss':     0.1310, 'eps_e':     1.0000})
+Step:  249000, Reward:   200.000 [   0.000], Avg:   198.108 (1.000) <0-00:38:20> ({'r_t':  1000.0000, 'eps':     1.0000, 'critic_loss':   175.9083, 'actor_loss':     0.5000, 'eps_e':     1.0000})
+Step:  250000, Reward:   200.000 [   0.000], Avg:   198.116 (1.000) <0-00:38:31> ({'r_t':  1000.0000, 'eps':     1.0000, 'critic_loss':   165.9788, 'actor_loss':     0.2511, 'eps_e':     1.0000})
+Step:  251000, Reward:   200.000 [   0.000], Avg:   198.123 (1.000) <0-00:38:41> ({'r_t':  1000.0000, 'eps':     1.0000, 'critic_loss':   166.3781, 'actor_loss':     0.0119, 'eps_e':     1.0000})
+Step:  252000, Reward:   200.000 [   0.000], Avg:   198.130 (1.000) <0-00:38:50> ({'r_t':  1000.0000, 'eps':     1.0000, 'critic_loss':   171.7491, 'actor_loss':     0.0194, 'eps_e':     1.0000})
+Step:  253000, Reward:   200.000 [   0.000], Avg:   198.138 (1.000) <0-00:38:59> ({'r_t':  1000.0000, 'eps':     1.0000, 'critic_loss':   164.4973, 'actor_loss':    -0.1282, 'eps_e':     1.0000})
+Step:  254000, Reward:   200.000 [   0.000], Avg:   198.145 (1.000) <0-00:39:08> ({'r_t':  1000.0000, 'eps':     1.0000, 'critic_loss':   166.3045, 'actor_loss':    -0.2949, 'eps_e':     1.0000})
+Step:  255000, Reward:   200.000 [   0.000], Avg:   198.152 (1.000) <0-00:39:17> ({'r_t':  1000.0000, 'eps':     1.0000, 'critic_loss':   176.7267, 'actor_loss':     0.2079, 'eps_e':     1.0000})
+Step:  256000, Reward:   200.000 [   0.000], Avg:   198.160 (1.000) <0-00:39:25> ({'r_t':  1000.0000, 'eps':     1.0000, 'critic_loss':   174.2275, 'actor_loss':     0.1227, 'eps_e':     1.0000})
+Step:  257000, Reward:   200.000 [   0.000], Avg:   198.167 (1.000) <0-00:39:34> ({'r_t':  1000.0000, 'eps':     1.0000, 'critic_loss':   181.5021, 'actor_loss':     0.5189, 'eps_e':     1.0000})
+Step:  258000, Reward:   200.000 [   0.000], Avg:   198.174 (1.000) <0-00:39:43> ({'r_t':  1000.0000, 'eps':     1.0000, 'critic_loss':   176.5096, 'actor_loss':     0.2865, 'eps_e':     1.0000})
+Step:  259000, Reward:   200.000 [   0.000], Avg:   198.181 (1.000) <0-00:39:51> ({'r_t':  1000.0000, 'eps':     1.0000, 'critic_loss':   181.0051, 'actor_loss':     0.3721, 'eps_e':     1.0000})
+Step:  260000, Reward:   200.000 [   0.000], Avg:   198.188 (1.000) <0-00:40:00> ({'r_t':  1000.0000, 'eps':     1.0000, 'critic_loss':   177.1224, 'actor_loss':     0.2235, 'eps_e':     1.0000})
+Step:  261000, Reward:   200.000 [   0.000], Avg:   198.195 (1.000) <0-00:40:09> ({'r_t':  1000.0000, 'eps':     1.0000, 'critic_loss':   154.8123, 'actor_loss':     0.1574, 'eps_e':     1.0000})
+Step:  262000, Reward:   200.000 [   0.000], Avg:   198.202 (1.000) <0-00:40:17> ({'r_t':  1000.0000, 'eps':     1.0000, 'critic_loss':   178.5977, 'actor_loss':     0.3916, 'eps_e':     1.0000})
+Step:  263000, Reward:   200.000 [   0.000], Avg:   198.208 (1.000) <0-00:40:26> ({'r_t':  1000.0000, 'eps':     1.0000, 'critic_loss':   176.5715, 'actor_loss':     0.2840, 'eps_e':     1.0000})
+Step:  264000, Reward:   200.000 [   0.000], Avg:   198.215 (1.000) <0-00:40:35> ({'r_t':  1000.0000, 'eps':     1.0000, 'critic_loss':   173.4825, 'actor_loss':     0.3191, 'eps_e':     1.0000})
+Step:  265000, Reward:   192.375 [  29.531], Avg:   198.193 (1.000) <0-00:40:44> ({'r_t':  1000.0000, 'eps':     1.0000, 'critic_loss':   171.1079, 'actor_loss':     0.1157, 'eps_e':     1.0000})
+Step:  266000, Reward:   200.000 [   0.000], Avg:   198.200 (1.000) <0-00:40:52> ({'r_t':  1000.0000, 'eps':     1.0000, 'critic_loss':   171.6906, 'actor_loss':     0.0085, 'eps_e':     1.0000})
+Step:  267000, Reward:   200.000 [   0.000], Avg:   198.207 (1.000) <0-00:41:01> ({'r_t':  1000.0000, 'eps':     1.0000, 'critic_loss':   171.8887, 'actor_loss':    -0.0141, 'eps_e':     1.0000})
+Step:  268000, Reward:   200.000 [   0.000], Avg:   198.213 (1.000) <0-00:41:10> ({'r_t':  1000.0000, 'eps':     1.0000, 'critic_loss':   168.4768, 'actor_loss':    -0.1823, 'eps_e':     1.0000})
+Step:  269000, Reward:   200.000 [   0.000], Avg:   198.220 (1.000) <0-00:41:20> ({'r_t':  1000.0000, 'eps':     1.0000, 'critic_loss':   165.2176, 'actor_loss':    -0.2457, 'eps_e':     1.0000})
+Step:  270000, Reward:   192.000 [  30.984], Avg:   198.197 (1.000) <0-00:41:29> ({'r_t':  1000.0000, 'eps':     1.0000, 'critic_loss':   170.8931, 'actor_loss':    -0.0054, 'eps_e':     1.0000})
+Step:  271000, Reward:   200.000 [   0.000], Avg:   198.204 (1.000) <0-00:41:39> ({'r_t':  1000.0000, 'eps':     1.0000, 'critic_loss':   161.6296, 'actor_loss':    -0.4335, 'eps_e':     1.0000})
+Step:  272000, Reward:   200.000 [   0.000], Avg:   198.210 (1.000) <0-00:41:50> ({'r_t':  1000.0000, 'eps':     1.0000, 'critic_loss':   163.3869, 'actor_loss':    -0.1510, 'eps_e':     1.0000})
+Step:  273000, Reward:   200.000 [   0.000], Avg:   198.217 (1.000) <0-00:41:59> ({'r_t':  1000.0000, 'eps':     1.0000, 'critic_loss':   153.1134, 'actor_loss':    -0.1801, 'eps_e':     1.0000})
+Step:  274000, Reward:   200.000 [   0.000], Avg:   198.223 (1.000) <0-00:42:08> ({'r_t':  1000.0000, 'eps':     1.0000, 'critic_loss':   154.7644, 'actor_loss':    -0.0316, 'eps_e':     1.0000})
+Step:  275000, Reward:   200.000 [   0.000], Avg:   198.230 (1.000) <0-00:42:17> ({'r_t':  1000.0000, 'eps':     1.0000, 'critic_loss':   155.6994, 'actor_loss':    -0.0974, 'eps_e':     1.0000})
+Step:  276000, Reward:   200.000 [   0.000], Avg:   198.236 (1.000) <0-00:42:25> ({'r_t':  1000.0000, 'eps':     1.0000, 'critic_loss':   168.9178, 'actor_loss':     0.0179, 'eps_e':     1.0000})
+Step:  277000, Reward:   200.000 [   0.000], Avg:   198.242 (1.000) <0-00:42:34> ({'r_t':  1000.0000, 'eps':     1.0000, 'critic_loss':   172.7246, 'actor_loss':     0.0353, 'eps_e':     1.0000})
+Step:  278000, Reward:   200.000 [   0.000], Avg:   198.249 (1.000) <0-00:42:43> ({'r_t':  1000.0000, 'eps':     1.0000, 'critic_loss':   175.3713, 'actor_loss':     0.3143, 'eps_e':     1.0000})
+Step:  279000, Reward:   200.000 [   0.000], Avg:   198.255 (1.000) <0-00:42:52> ({'r_t':  1000.0000, 'eps':     1.0000, 'critic_loss':   166.0680, 'actor_loss':     0.1000, 'eps_e':     1.0000})
+Step:  280000, Reward:   200.000 [   0.000], Avg:   198.261 (1.000) <0-00:43:00> ({'r_t':  1000.0000, 'eps':     1.0000, 'critic_loss':   163.1268, 'actor_loss':     0.0446, 'eps_e':     1.0000})
+Step:  281000, Reward:   200.000 [   0.000], Avg:   198.267 (1.000) <0-00:43:09> ({'r_t':  1000.0000, 'eps':     1.0000, 'critic_loss':   179.9932, 'actor_loss':     0.3674, 'eps_e':     1.0000})
+Step:  282000, Reward:   200.000 [   0.000], Avg:   198.273 (1.000) <0-00:43:18> ({'r_t':  1000.0000, 'eps':     1.0000, 'critic_loss':   167.3938, 'actor_loss':    -0.1652, 'eps_e':     1.0000})
+Step:  283000, Reward:   200.000 [   0.000], Avg:   198.279 (1.000) <0-00:43:26> ({'r_t':  1000.0000, 'eps':     1.0000, 'critic_loss':   170.1484, 'actor_loss':    -0.0191, 'eps_e':     1.0000})
+Step:  284000, Reward:   200.000 [   0.000], Avg:   198.286 (1.000) <0-00:43:35> ({'r_t':  1000.0000, 'eps':     1.0000, 'critic_loss':   178.6076, 'actor_loss':     0.4201, 'eps_e':     1.0000})
+Step:  285000, Reward:   200.000 [   0.000], Avg:   198.292 (1.000) <0-00:43:44> ({'r_t':  1000.0000, 'eps':     1.0000, 'critic_loss':   170.5723, 'actor_loss':    -0.0868, 'eps_e':     1.0000})
+Step:  286000, Reward:   200.000 [   0.000], Avg:   198.297 (1.000) <0-00:43:53> ({'r_t':  1000.0000, 'eps':     1.0000, 'critic_loss':   160.1427, 'actor_loss':    -0.4740, 'eps_e':     1.0000})
+Step:  287000, Reward:   200.000 [   0.000], Avg:   198.303 (1.000) <0-00:44:01> ({'r_t':  1000.0000, 'eps':     1.0000, 'critic_loss':   172.4748, 'actor_loss':     0.0304, 'eps_e':     1.0000})
+Step:  288000, Reward:   200.000 [   0.000], Avg:   198.309 (1.000) <0-00:44:11> ({'r_t':  1000.0000, 'eps':     1.0000, 'critic_loss':   164.0708, 'actor_loss':    -0.3393, 'eps_e':     1.0000})
+Step:  289000, Reward:   200.000 [   0.000], Avg:   198.315 (1.000) <0-00:44:21> ({'r_t':  1000.0000, 'eps':     1.0000, 'critic_loss':   172.7215, 'actor_loss':    -0.0332, 'eps_e':     1.0000})
+Step:  290000, Reward:   200.000 [   0.000], Avg:   198.321 (1.000) <0-00:44:31> ({'r_t':  1000.0000, 'eps':     1.0000, 'critic_loss':   171.7802, 'actor_loss':     0.2817, 'eps_e':     1.0000})
+Step:  291000, Reward:   200.000 [   0.000], Avg:   198.327 (1.000) <0-00:44:41> ({'r_t':  1000.0000, 'eps':     1.0000, 'critic_loss':   163.2852, 'actor_loss':     0.2657, 'eps_e':     1.0000})
+Step:  292000, Reward:   200.000 [   0.000], Avg:   198.332 (1.000) <0-00:44:51> ({'r_t':  1000.0000, 'eps':     1.0000, 'critic_loss':   164.6870, 'actor_loss':    -0.0935, 'eps_e':     1.0000})
+Step:  293000, Reward:   200.000 [   0.000], Avg:   198.338 (1.000) <0-00:44:59> ({'r_t':  1000.0000, 'eps':     1.0000, 'critic_loss':   177.0750, 'actor_loss':     0.2023, 'eps_e':     1.0000})
+Step:  294000, Reward:   200.000 [   0.000], Avg:   198.344 (1.000) <0-00:45:08> ({'r_t':  1000.0000, 'eps':     1.0000, 'critic_loss':   170.2154, 'actor_loss':     0.1192, 'eps_e':     1.0000})
+Step:  295000, Reward:   200.000 [   0.000], Avg:   198.349 (1.000) <0-00:45:17> ({'r_t':  1000.0000, 'eps':     1.0000, 'critic_loss':   172.8112, 'actor_loss':     0.0531, 'eps_e':     1.0000})
+Step:  296000, Reward:   200.000 [   0.000], Avg:   198.355 (1.000) <0-00:45:26> ({'r_t':  1000.0000, 'eps':     1.0000, 'critic_loss':   178.0105, 'actor_loss':     0.3316, 'eps_e':     1.0000})
+Step:  297000, Reward:   200.000 [   0.000], Avg:   198.360 (1.000) <0-00:45:34> ({'r_t':  1000.0000, 'eps':     1.0000, 'critic_loss':   163.7028, 'actor_loss':    -0.5193, 'eps_e':     1.0000})
+Step:  298000, Reward:   200.000 [   0.000], Avg:   198.366 (1.000) <0-00:45:43> ({'r_t':  1000.0000, 'eps':     1.0000, 'critic_loss':   166.5713, 'actor_loss':    -0.2765, 'eps_e':     1.0000})
+Step:  299000, Reward:   200.000 [   0.000], Avg:   198.371 (1.000) <0-00:45:52> ({'r_t':  1000.0000, 'eps':     1.0000, 'critic_loss':   166.8608, 'actor_loss':    -0.2480, 'eps_e':     1.0000})
+Step:  300000, Reward:   200.000 [   0.000], Avg:   198.377 (1.000) <0-00:46:00> ({'r_t':  1000.0000, 'eps':     1.0000, 'critic_loss':   161.7920, 'actor_loss':    -0.4025, 'eps_e':     1.0000})
+Step:  301000, Reward:   200.000 [   0.000], Avg:   198.382 (1.000) <0-00:46:09> ({'r_t':  1000.0000, 'eps':     1.0000, 'critic_loss':   157.1337, 'actor_loss':    -0.3845, 'eps_e':     1.0000})
+Step:  302000, Reward:   200.000 [   0.000], Avg:   198.387 (1.000) <0-00:46:18> ({'r_t':  1000.0000, 'eps':     1.0000, 'critic_loss':   170.0286, 'actor_loss':    -0.0909, 'eps_e':     1.0000})
+Step:  303000, Reward:   200.000 [   0.000], Avg:   198.393 (1.000) <0-00:46:27> ({'r_t':  1000.0000, 'eps':     1.0000, 'critic_loss':   169.8797, 'actor_loss':    -0.0544, 'eps_e':     1.0000})
+Step:  304000, Reward:   200.000 [   0.000], Avg:   198.398 (1.000) <0-00:46:35> ({'r_t':  1000.0000, 'eps':     1.0000, 'critic_loss':   161.0733, 'actor_loss':    -0.0034, 'eps_e':     1.0000})
+Step:  305000, Reward:   200.000 [   0.000], Avg:   198.403 (1.000) <0-00:46:44> ({'r_t':  1000.0000, 'eps':     1.0000, 'critic_loss':   158.3402, 'actor_loss':    -0.3898, 'eps_e':     1.0000})
+Step:  306000, Reward:   200.000 [   0.000], Avg:   198.408 (1.000) <0-00:46:53> ({'r_t':  1000.0000, 'eps':     1.0000, 'critic_loss':   178.9083, 'actor_loss':     0.4119, 'eps_e':     1.0000})
+Step:  307000, Reward:   200.000 [   0.000], Avg:   198.414 (1.000) <0-00:47:03> ({'r_t':  1000.0000, 'eps':     1.0000, 'critic_loss':   173.1880, 'actor_loss':     0.2174, 'eps_e':     1.0000})
+Step:  308000, Reward:   200.000 [   0.000], Avg:   198.419 (1.000) <0-00:47:13> ({'r_t':  1000.0000, 'eps':     1.0000, 'critic_loss':   181.8493, 'actor_loss':     0.4114, 'eps_e':     1.0000})
+Step:  309000, Reward:   200.000 [   0.000], Avg:   198.424 (1.000) <0-00:47:23> ({'r_t':  1000.0000, 'eps':     1.0000, 'critic_loss':   184.4048, 'actor_loss':     0.6041, 'eps_e':     1.0000})
+Step:  310000, Reward:   200.000 [   0.000], Avg:   198.429 (1.000) <0-00:47:33> ({'r_t':  1000.0000, 'eps':     1.0000, 'critic_loss':   178.4749, 'actor_loss':     0.4057, 'eps_e':     1.0000})
+Step:  311000, Reward:   200.000 [   0.000], Avg:   198.434 (1.000) <0-00:47:42> ({'r_t':  1000.0000, 'eps':     1.0000, 'critic_loss':   173.8299, 'actor_loss':     0.2421, 'eps_e':     1.0000})
+Step:  312000, Reward:   200.000 [   0.000], Avg:   198.439 (1.000) <0-00:47:51> ({'r_t':  1000.0000, 'eps':     1.0000, 'critic_loss':   169.2304, 'actor_loss':    -0.0433, 'eps_e':     1.0000})
+Step:  313000, Reward:   200.000 [   0.000], Avg:   198.444 (1.000) <0-00:47:59> ({'r_t':  1000.0000, 'eps':     1.0000, 'critic_loss':   178.1739, 'actor_loss':     0.2069, 'eps_e':     1.0000})
+Step:  314000, Reward:   200.000 [   0.000], Avg:   198.449 (1.000) <0-00:48:08> ({'r_t':  1000.0000, 'eps':     1.0000, 'critic_loss':   173.7049, 'actor_loss':    -0.0223, 'eps_e':     1.0000})
+Step:  315000, Reward:   200.000 [   0.000], Avg:   198.454 (1.000) <0-00:48:17> ({'r_t':  1000.0000, 'eps':     1.0000, 'critic_loss':   171.9525, 'actor_loss':    -0.0256, 'eps_e':     1.0000})
+Step:  316000, Reward:   200.000 [   0.000], Avg:   198.459 (1.000) <0-00:48:25> ({'r_t':  1000.0000, 'eps':     1.0000, 'critic_loss':   171.9176, 'actor_loss':    -0.0308, 'eps_e':     1.0000})
+Step:  317000, Reward:   200.000 [   0.000], Avg:   198.463 (1.000) <0-00:48:34> ({'r_t':  1000.0000, 'eps':     1.0000, 'critic_loss':   163.5931, 'actor_loss':    -0.3830, 'eps_e':     1.0000})
+Step:  318000, Reward:   200.000 [   0.000], Avg:   198.468 (1.000) <0-00:48:43> ({'r_t':  1000.0000, 'eps':     1.0000, 'critic_loss':   170.0133, 'actor_loss':     0.0280, 'eps_e':     1.0000})
+Step:  319000, Reward:   200.000 [   0.000], Avg:   198.473 (1.000) <0-00:48:52> ({'r_t':  1000.0000, 'eps':     1.0000, 'critic_loss':   162.3034, 'actor_loss':    -0.1242, 'eps_e':     1.0000})
+Step:  320000, Reward:   200.000 [   0.000], Avg:   198.478 (1.000) <0-00:49:01> ({'r_t':  1000.0000, 'eps':     1.0000, 'critic_loss':   168.5143, 'actor_loss':    -0.1544, 'eps_e':     1.0000})
+Step:  321000, Reward:   200.000 [   0.000], Avg:   198.483 (1.000) <0-00:49:09> ({'r_t':  1000.0000, 'eps':     1.0000, 'critic_loss':   173.1639, 'actor_loss':     0.0947, 'eps_e':     1.0000})
+Step:  322000, Reward:   200.000 [   0.000], Avg:   198.487 (1.000) <0-00:49:18> ({'r_t':  1000.0000, 'eps':     1.0000, 'critic_loss':   165.5790, 'actor_loss':    -0.2225, 'eps_e':     1.0000})
+Step:  323000, Reward:   200.000 [   0.000], Avg:   198.492 (1.000) <0-00:49:28> ({'r_t':  1000.0000, 'eps':     1.0000, 'critic_loss':   163.0502, 'actor_loss':    -0.2842, 'eps_e':     1.0000})
+Step:  324000, Reward:   200.000 [   0.000], Avg:   198.497 (1.000) <0-00:49:38> ({'r_t':  1000.0000, 'eps':     1.0000, 'critic_loss':   153.4506, 'actor_loss':    -0.6205, 'eps_e':     1.0000})
+Step:  325000, Reward:   200.000 [   0.000], Avg:   198.501 (1.000) <0-00:49:48> ({'r_t':  1000.0000, 'eps':     1.0000, 'critic_loss':   151.7599, 'actor_loss':    -0.6233, 'eps_e':     1.0000})
+Step:  326000, Reward:   200.000 [   0.000], Avg:   198.506 (1.000) <0-00:49:58> ({'r_t':  1000.0000, 'eps':     1.0000, 'critic_loss':   155.3732, 'actor_loss':    -0.3832, 'eps_e':     1.0000})
+Step:  327000, Reward:   200.000 [   0.000], Avg:   198.510 (1.000) <0-00:50:08> ({'r_t':  1000.0000, 'eps':     1.0000, 'critic_loss':   180.7746, 'actor_loss':     0.3702, 'eps_e':     1.0000})
+Step:  328000, Reward:   200.000 [   0.000], Avg:   198.515 (1.000) <0-00:50:16> ({'r_t':  1000.0000, 'eps':     1.0000, 'critic_loss':   176.6841, 'actor_loss':     0.5719, 'eps_e':     1.0000})
+Step:  329000, Reward:   200.000 [   0.000], Avg:   198.519 (1.000) <0-00:50:25> ({'r_t':  1000.0000, 'eps':     1.0000, 'critic_loss':   171.3453, 'actor_loss':     0.1227, 'eps_e':     1.0000})
+Step:  330000, Reward:   200.000 [   0.000], Avg:   198.524 (1.000) <0-00:50:34> ({'r_t':  1000.0000, 'eps':     1.0000, 'critic_loss':   172.0308, 'actor_loss':     0.0720, 'eps_e':     1.0000})
+Step:  331000, Reward:   200.000 [   0.000], Avg:   198.528 (1.000) <0-00:50:42> ({'r_t':  1000.0000, 'eps':     1.0000, 'critic_loss':   168.7021, 'actor_loss':    -0.0917, 'eps_e':     1.0000})
+Step:  332000, Reward:   200.000 [   0.000], Avg:   198.533 (1.000) <0-00:50:51> ({'r_t':  1000.0000, 'eps':     1.0000, 'critic_loss':   150.7771, 'actor_loss':    -0.4369, 'eps_e':     1.0000})
+Step:  333000, Reward:   200.000 [   0.000], Avg:   198.537 (1.000) <0-00:51:00> ({'r_t':  1000.0000, 'eps':     1.0000, 'critic_loss':   158.5007, 'actor_loss':     0.0898, 'eps_e':     1.0000})
+Step:  334000, Reward:   200.000 [   0.000], Avg:   198.541 (1.000) <0-00:51:09> ({'r_t':  1000.0000, 'eps':     1.0000, 'critic_loss':   177.0640, 'actor_loss':     0.2983, 'eps_e':     1.0000})
+Step:  335000, Reward:   200.000 [   0.000], Avg:   198.546 (1.000) <0-00:51:18> ({'r_t':  1000.0000, 'eps':     1.0000, 'critic_loss':   173.7617, 'actor_loss':     0.0572, 'eps_e':     1.0000})
+Step:  336000, Reward:   200.000 [   0.000], Avg:   198.550 (1.000) <0-00:51:26> ({'r_t':  1000.0000, 'eps':     1.0000, 'critic_loss':   156.2652, 'actor_loss':    -0.4110, 'eps_e':     1.0000})
+Step:  337000, Reward:   200.000 [   0.000], Avg:   198.554 (1.000) <0-00:51:35> ({'r_t':  1000.0000, 'eps':     1.0000, 'critic_loss':   170.7805, 'actor_loss':     0.0159, 'eps_e':     1.0000})
+Step:  338000, Reward:   200.000 [   0.000], Avg:   198.559 (1.000) <0-00:51:44> ({'r_t':  1000.0000, 'eps':     1.0000, 'critic_loss':   164.2715, 'actor_loss':    -0.2713, 'eps_e':     1.0000})
+Step:  339000, Reward:   200.000 [   0.000], Avg:   198.563 (1.000) <0-00:51:54> ({'r_t':  1000.0000, 'eps':     1.0000, 'critic_loss':   167.7523, 'actor_loss':    -0.1077, 'eps_e':     1.0000})
+Step:  340000, Reward:   200.000 [   0.000], Avg:   198.567 (1.000) <0-00:52:04> ({'r_t':  1000.0000, 'eps':     1.0000, 'critic_loss':   177.3622, 'actor_loss':     0.2957, 'eps_e':     1.0000})
+Step:  341000, Reward:   200.000 [   0.000], Avg:   198.571 (1.000) <0-00:52:14> ({'r_t':  1000.0000, 'eps':     1.0000, 'critic_loss':   170.0320, 'actor_loss':     0.1969, 'eps_e':     1.0000})
+Step:  342000, Reward:   200.000 [   0.000], Avg:   198.575 (1.000) <0-00:52:24> ({'r_t':  1000.0000, 'eps':     1.0000, 'critic_loss':   162.9554, 'actor_loss':    -0.3559, 'eps_e':     1.0000})
+Step:  343000, Reward:   200.000 [   0.000], Avg:   198.580 (1.000) <0-00:52:33> ({'r_t':  1000.0000, 'eps':     1.0000, 'critic_loss':   160.7463, 'actor_loss':    -0.5803, 'eps_e':     1.0000})
+Step:  344000, Reward:   200.000 [   0.000], Avg:   198.584 (1.000) <0-00:52:42> ({'r_t':  1000.0000, 'eps':     1.0000, 'critic_loss':   175.2367, 'actor_loss':     0.1441, 'eps_e':     1.0000})
+Step:  345000, Reward:   200.000 [   0.000], Avg:   198.588 (1.000) <0-00:52:51> ({'r_t':  1000.0000, 'eps':     1.0000, 'critic_loss':   178.6017, 'actor_loss':     0.3466, 'eps_e':     1.0000})
+Step:  346000, Reward:   200.000 [   0.000], Avg:   198.592 (1.000) <0-00:52:59> ({'r_t':  1000.0000, 'eps':     1.0000, 'critic_loss':   172.0362, 'actor_loss':     0.0414, 'eps_e':     1.0000})
+Step:  347000, Reward:   200.000 [   0.000], Avg:   198.596 (1.000) <0-00:53:08> ({'r_t':  1000.0000, 'eps':     1.0000, 'critic_loss':   167.0868, 'actor_loss':    -0.1672, 'eps_e':     1.0000})
+Step:  348000, Reward:   200.000 [   0.000], Avg:   198.600 (1.000) <0-00:53:17> ({'r_t':  1000.0000, 'eps':     1.0000, 'critic_loss':   160.6861, 'actor_loss':    -0.3153, 'eps_e':     1.0000})
+Step:  349000, Reward:   200.000 [   0.000], Avg:   198.604 (1.000) <0-00:53:26> ({'r_t':  1000.0000, 'eps':     1.0000, 'critic_loss':   164.2392, 'actor_loss':    -0.3462, 'eps_e':     1.0000})
+Step:  350000, Reward:   200.000 [   0.000], Avg:   198.608 (1.000) <0-00:53:35> ({'r_t':  1000.0000, 'eps':     1.0000, 'critic_loss':   175.2750, 'actor_loss':     0.3065, 'eps_e':     1.0000})
+Step:  351000, Reward:   200.000 [   0.000], Avg:   198.612 (1.000) <0-00:53:43> ({'r_t':  1000.0000, 'eps':     1.0000, 'critic_loss':   167.1239, 'actor_loss':    -0.1262, 'eps_e':     1.0000})
+Step:  352000, Reward:   200.000 [   0.000], Avg:   198.616 (1.000) <0-00:53:52> ({'r_t':  1000.0000, 'eps':     1.0000, 'critic_loss':   159.6295, 'actor_loss':    -0.3285, 'eps_e':     1.0000})
+Step:  353000, Reward:   200.000 [   0.000], Avg:   198.620 (1.000) <0-00:54:02> ({'r_t':  1000.0000, 'eps':     1.0000, 'critic_loss':   165.9086, 'actor_loss':    -0.2928, 'eps_e':     1.0000})
+Step:  354000, Reward:   200.000 [   0.000], Avg:   198.624 (1.000) <0-00:54:12> ({'r_t':  1000.0000, 'eps':     1.0000, 'critic_loss':   171.6705, 'actor_loss':     0.0072, 'eps_e':     1.0000})
+Step:  355000, Reward:   200.000 [   0.000], Avg:   198.627 (1.000) <0-00:54:22> ({'r_t':  1000.0000, 'eps':     1.0000, 'critic_loss':   173.7067, 'actor_loss':     0.2664, 'eps_e':     1.0000})
+Step:  356000, Reward:   200.000 [   0.000], Avg:   198.631 (1.000) <0-00:54:32> ({'r_t':  1000.0000, 'eps':     1.0000, 'critic_loss':   175.4150, 'actor_loss':     0.1961, 'eps_e':     1.0000})
+Step:  357000, Reward:   200.000 [   0.000], Avg:   198.635 (1.000) <0-00:54:41> ({'r_t':  1000.0000, 'eps':     1.0000, 'critic_loss':   174.2988, 'actor_loss':     0.1869, 'eps_e':     1.0000})
+Step:  358000, Reward:   200.000 [   0.000], Avg:   198.639 (1.000) <0-00:54:50> ({'r_t':  1000.0000, 'eps':     1.0000, 'critic_loss':   170.1751, 'actor_loss':     0.1713, 'eps_e':     1.0000})
+Step:  359000, Reward:   200.000 [   0.000], Avg:   198.643 (1.000) <0-00:54:59> ({'r_t':  1000.0000, 'eps':     1.0000, 'critic_loss':   160.7846, 'actor_loss':     0.0507, 'eps_e':     1.0000})
+Step:  360000, Reward:   200.000 [   0.000], Avg:   198.646 (1.000) <0-00:55:07> ({'r_t':  1000.0000, 'eps':     1.0000, 'critic_loss':   162.4485, 'actor_loss':     0.2179, 'eps_e':     1.0000})
+Step:  361000, Reward:   200.000 [   0.000], Avg:   198.650 (1.000) <0-00:55:16> ({'r_t':  1000.0000, 'eps':     1.0000, 'critic_loss':   154.0615, 'actor_loss':     0.1503, 'eps_e':     1.0000})
+Step:  362000, Reward:   200.000 [   0.000], Avg:   198.654 (1.000) <0-00:55:25> ({'r_t':  1000.0000, 'eps':     1.0000, 'critic_loss':   151.7355, 'actor_loss':     0.3611, 'eps_e':     1.0000})
+Step:  363000, Reward:   200.000 [   0.000], Avg:   198.658 (1.000) <0-00:55:35> ({'r_t':  1000.0000, 'eps':     1.0000, 'critic_loss':   178.0977, 'actor_loss':     0.1317, 'eps_e':     1.0000})
+Step:  364000, Reward:   200.000 [   0.000], Avg:   198.661 (1.000) <0-00:55:43> ({'r_t':  1000.0000, 'eps':     1.0000, 'critic_loss':   167.4893, 'actor_loss':    -0.0663, 'eps_e':     1.0000})
+Step:  365000, Reward:   200.000 [   0.000], Avg:   198.665 (1.000) <0-00:55:52> ({'r_t':  1000.0000, 'eps':     1.0000, 'critic_loss':   149.7332, 'actor_loss':    -0.2475, 'eps_e':     1.0000})
+Step:  366000, Reward:   200.000 [   0.000], Avg:   198.669 (1.000) <0-00:56:03> ({'r_t':  1000.0000, 'eps':     1.0000, 'critic_loss':   161.7420, 'actor_loss':    -0.0567, 'eps_e':     1.0000})
+Step:  367000, Reward:   200.000 [   0.000], Avg:   198.672 (1.000) <0-00:56:12> ({'r_t':  1000.0000, 'eps':     1.0000, 'critic_loss':   169.4765, 'actor_loss':     0.3341, 'eps_e':     1.0000})
+Step:  368000, Reward:   200.000 [   0.000], Avg:   198.676 (1.000) <0-00:56:22> ({'r_t':  1000.0000, 'eps':     1.0000, 'critic_loss':   162.4917, 'actor_loss':    -0.1869, 'eps_e':     1.0000})
+Step:  369000, Reward:   200.000 [   0.000], Avg:   198.679 (1.000) <0-00:56:32> ({'r_t':  1000.0000, 'eps':     1.0000, 'critic_loss':   167.4782, 'actor_loss':     0.0106, 'eps_e':     1.0000})
+Step:  370000, Reward:   200.000 [   0.000], Avg:   198.683 (1.000) <0-00:56:41> ({'r_t':  1000.0000, 'eps':     1.0000, 'critic_loss':   172.7263, 'actor_loss':     0.1709, 'eps_e':     1.0000})
+Step:  371000, Reward:   200.000 [   0.000], Avg:   198.686 (1.000) <0-00:56:50> ({'r_t':  1000.0000, 'eps':     1.0000, 'critic_loss':   170.1596, 'actor_loss':    -0.0259, 'eps_e':     1.0000})
+Step:  372000, Reward:   200.000 [   0.000], Avg:   198.690 (1.000) <0-00:56:59> ({'r_t':  1000.0000, 'eps':     1.0000, 'critic_loss':   169.8852, 'actor_loss':    -0.0173, 'eps_e':     1.0000})
+Step:  373000, Reward:   200.000 [   0.000], Avg:   198.694 (1.000) <0-00:57:08> ({'r_t':  1000.0000, 'eps':     1.0000, 'critic_loss':   154.5068, 'actor_loss':    -0.2726, 'eps_e':     1.0000})
+Step:  374000, Reward:   200.000 [   0.000], Avg:   198.697 (1.000) <0-00:57:17> ({'r_t':  1000.0000, 'eps':     1.0000, 'critic_loss':   149.4570, 'actor_loss':     0.0943, 'eps_e':     1.0000})
+Step:  375000, Reward:   200.000 [   0.000], Avg:   198.700 (1.000) <0-00:57:26> ({'r_t':  1000.0000, 'eps':     1.0000, 'critic_loss':   175.7363, 'actor_loss':     0.3306, 'eps_e':     1.0000})
+Step:  376000, Reward:   200.000 [   0.000], Avg:   198.704 (1.000) <0-00:57:34> ({'r_t':  1000.0000, 'eps':     1.0000, 'critic_loss':   174.7144, 'actor_loss':     0.3447, 'eps_e':     1.0000})
+Step:  377000, Reward:   200.000 [   0.000], Avg:   198.707 (1.000) <0-00:57:44> ({'r_t':  1000.0000, 'eps':     1.0000, 'critic_loss':   165.9380, 'actor_loss':    -0.1019, 'eps_e':     1.0000})
+Step:  378000, Reward:   200.000 [   0.000], Avg:   198.711 (1.000) <0-00:57:54> ({'r_t':  1000.0000, 'eps':     1.0000, 'critic_loss':   145.8790, 'actor_loss':    -0.2160, 'eps_e':     1.0000})
+Step:  379000, Reward:   200.000 [   0.000], Avg:   198.714 (1.000) <0-00:58:04> ({'r_t':  1000.0000, 'eps':     1.0000, 'critic_loss':   145.7251, 'actor_loss':    -0.2882, 'eps_e':     1.0000})
+Step:  380000, Reward:   200.000 [   0.000], Avg:   198.718 (1.000) <0-00:58:14> ({'r_t':  1000.0000, 'eps':     1.0000, 'critic_loss':   164.9767, 'actor_loss':    -0.0737, 'eps_e':     1.0000})
+Step:  381000, Reward:   200.000 [   0.000], Avg:   198.721 (1.000) <0-00:58:24> ({'r_t':  1000.0000, 'eps':     1.0000, 'critic_loss':   165.7424, 'actor_loss':     0.1485, 'eps_e':     1.0000})
+Step:  382000, Reward:   200.000 [   0.000], Avg:   198.724 (1.000) <0-00:58:33> ({'r_t':  1000.0000, 'eps':     1.0000, 'critic_loss':   157.3365, 'actor_loss':     0.1246, 'eps_e':     1.0000})
+Step:  383000, Reward:   200.000 [   0.000], Avg:   198.728 (1.000) <0-00:58:41> ({'r_t':  1000.0000, 'eps':     1.0000, 'critic_loss':   157.2964, 'actor_loss':     0.1469, 'eps_e':     1.0000})
+Step:  384000, Reward:   200.000 [   0.000], Avg:   198.731 (1.000) <0-00:58:50> ({'r_t':  1000.0000, 'eps':     1.0000, 'critic_loss':   152.7783, 'actor_loss':    -0.2316, 'eps_e':     1.0000})
+Step:  385000, Reward:   200.000 [   0.000], Avg:   198.734 (1.000) <0-00:58:59> ({'r_t':  1000.0000, 'eps':     1.0000, 'critic_loss':   150.0264, 'actor_loss':    -0.3338, 'eps_e':     1.0000})
+Step:  386000, Reward:   200.000 [   0.000], Avg:   198.737 (1.000) <0-00:59:08> ({'r_t':  1000.0000, 'eps':     1.0000, 'critic_loss':   156.0420, 'actor_loss':    -0.6166, 'eps_e':     1.0000})
+Step:  387000, Reward:   200.000 [   0.000], Avg:   198.741 (1.000) <0-00:59:18> ({'r_t':  1000.0000, 'eps':     1.0000, 'critic_loss':   164.4054, 'actor_loss':    -0.2089, 'eps_e':     1.0000})
+Step:  388000, Reward:   200.000 [   0.000], Avg:   198.744 (1.000) <0-00:59:28> ({'r_t':  1000.0000, 'eps':     1.0000, 'critic_loss':   165.4654, 'actor_loss':    -0.0432, 'eps_e':     1.0000})
+Step:  389000, Reward:   200.000 [   0.000], Avg:   198.747 (1.000) <0-00:59:38> ({'r_t':  1000.0000, 'eps':     1.0000, 'critic_loss':   153.3017, 'actor_loss':    -0.5104, 'eps_e':     1.0000})
+Step:  390000, Reward:   200.000 [   0.000], Avg:   198.750 (1.000) <0-00:59:48> ({'r_t':  1000.0000, 'eps':     1.0000, 'critic_loss':   141.6531, 'actor_loss':    -0.3538, 'eps_e':     1.0000})
+Step:  391000, Reward:   200.000 [   0.000], Avg:   198.754 (1.000) <0-00:59:58> ({'r_t':  1000.0000, 'eps':     1.0000, 'critic_loss':   161.3333, 'actor_loss':     0.3514, 'eps_e':     1.0000})
+Step:  392000, Reward:   200.000 [   0.000], Avg:   198.757 (1.000) <0-01:00:06> ({'r_t':  1000.0000, 'eps':     1.0000, 'critic_loss':   167.4789, 'actor_loss':     0.2205, 'eps_e':     1.0000})
+Step:  393000, Reward:   200.000 [   0.000], Avg:   198.760 (1.000) <0-01:00:15> ({'r_t':  1000.0000, 'eps':     1.0000, 'critic_loss':   146.4560, 'actor_loss':    -0.0762, 'eps_e':     1.0000})
+Step:  394000, Reward:   200.000 [   0.000], Avg:   198.763 (1.000) <0-01:00:24> ({'r_t':  1000.0000, 'eps':     1.0000, 'critic_loss':   151.5806, 'actor_loss':     0.2409, 'eps_e':     1.0000})
+Step:  395000, Reward:   200.000 [   0.000], Avg:   198.766 (1.000) <0-01:00:33> ({'r_t':  1000.0000, 'eps':     1.0000, 'critic_loss':   167.9828, 'actor_loss':    -0.0107, 'eps_e':     1.0000})
+Step:  396000, Reward:   200.000 [   0.000], Avg:   198.769 (1.000) <0-01:00:43> ({'r_t':  1000.0000, 'eps':     1.0000, 'critic_loss':   164.2212, 'actor_loss':    -0.1451, 'eps_e':     1.0000})
+Step:  397000, Reward:   200.000 [   0.000], Avg:   198.772 (1.000) <0-01:00:53> ({'r_t':  1000.0000, 'eps':     1.0000, 'critic_loss':   156.5895, 'actor_loss':    -0.4331, 'eps_e':     1.0000})
+Step:  398000, Reward:   200.000 [   0.000], Avg:   198.775 (1.000) <0-01:01:03> ({'r_t':  1000.0000, 'eps':     1.0000, 'critic_loss':   156.1898, 'actor_loss':    -0.1710, 'eps_e':     1.0000})
+Step:  399000, Reward:   200.000 [   0.000], Avg:   198.778 (1.000) <0-01:01:13> ({'r_t':  1000.0000, 'eps':     1.0000, 'critic_loss':   146.5533, 'actor_loss':     0.1161, 'eps_e':     1.0000})
+Step:  400000, Reward:   200.000 [   0.000], Avg:   198.781 (1.000) <0-01:01:23> ({'r_t':  1000.0000, 'eps':     1.0000, 'critic_loss':   183.4084, 'actor_loss':     0.6008, 'eps_e':     1.0000})
+Step:  401000, Reward:   200.000 [   0.000], Avg:   198.785 (1.000) <0-01:01:32> ({'r_t':  1000.0000, 'eps':     1.0000, 'critic_loss':   174.8459, 'actor_loss':     0.3496, 'eps_e':     1.0000})
+Step:  402000, Reward:   200.000 [   0.000], Avg:   198.788 (1.000) <0-01:01:40> ({'r_t':  1000.0000, 'eps':     1.0000, 'critic_loss':   167.0573, 'actor_loss':     0.0763, 'eps_e':     1.0000})
+Step:  403000, Reward:   200.000 [   0.000], Avg:   198.791 (1.000) <0-01:01:49> ({'r_t':  1000.0000, 'eps':     1.0000, 'critic_loss':   157.1120, 'actor_loss':    -0.1616, 'eps_e':     1.0000})
+Step:  404000, Reward:   200.000 [   0.000], Avg:   198.794 (1.000) <0-01:01:58> ({'r_t':  1000.0000, 'eps':     1.0000, 'critic_loss':   155.5027, 'actor_loss':    -0.2826, 'eps_e':     1.0000})
+Step:  405000, Reward:   200.000 [   0.000], Avg:   198.796 (1.000) <0-01:02:06> ({'r_t':  1000.0000, 'eps':     1.0000, 'critic_loss':   164.8167, 'actor_loss':    -0.0819, 'eps_e':     1.0000})
+Step:  406000, Reward:   200.000 [   0.000], Avg:   198.799 (1.000) <0-01:02:15> ({'r_t':  1000.0000, 'eps':     1.0000, 'critic_loss':   162.6116, 'actor_loss':    -0.1555, 'eps_e':     1.0000})
+Step:  407000, Reward:   200.000 [   0.000], Avg:   198.802 (1.000) <0-01:02:24> ({'r_t':  1000.0000, 'eps':     1.0000, 'critic_loss':   163.7499, 'actor_loss':     0.1228, 'eps_e':     1.0000})
+Step:  408000, Reward:   200.000 [   0.000], Avg:   198.805 (1.000) <0-01:02:33> ({'r_t':  1000.0000, 'eps':     1.0000, 'critic_loss':   158.8751, 'actor_loss':    -0.0002, 'eps_e':     1.0000})
+Step:  409000, Reward:   200.000 [   0.000], Avg:   198.808 (1.000) <0-01:02:41> ({'r_t':  1000.0000, 'eps':     1.0000, 'critic_loss':   170.6528, 'actor_loss':     0.0283, 'eps_e':     1.0000})
+Step:  410000, Reward:   200.000 [   0.000], Avg:   198.811 (1.000) <0-01:02:50> ({'r_t':  1000.0000, 'eps':     1.0000, 'critic_loss':   168.9531, 'actor_loss':    -0.0530, 'eps_e':     1.0000})
+Step:  411000, Reward:   200.000 [   0.000], Avg:   198.814 (1.000) <0-01:02:59> ({'r_t':  1000.0000, 'eps':     1.0000, 'critic_loss':   171.2868, 'actor_loss':     0.1820, 'eps_e':     1.0000})
+Step:  412000, Reward:   200.000 [   0.000], Avg:   198.817 (1.000) <0-01:03:08> ({'r_t':  1000.0000, 'eps':     1.0000, 'critic_loss':   158.0005, 'actor_loss':     0.0693, 'eps_e':     1.0000})
+Step:  413000, Reward:   200.000 [   0.000], Avg:   198.820 (1.000) <0-01:03:16> ({'r_t':  1000.0000, 'eps':     1.0000, 'critic_loss':   153.4673, 'actor_loss':     0.3760, 'eps_e':     1.0000})
+Step:  414000, Reward:   200.000 [   0.000], Avg:   198.823 (1.000) <0-01:03:25> ({'r_t':  1000.0000, 'eps':     1.0000, 'critic_loss':   157.3860, 'actor_loss':     0.0006, 'eps_e':     1.0000})
+Step:  415000, Reward:   200.000 [   0.000], Avg:   198.825 (1.000) <0-01:03:34> ({'r_t':  1000.0000, 'eps':     1.0000, 'critic_loss':   165.0239, 'actor_loss':     0.0689, 'eps_e':     1.0000})
+Step:  416000, Reward:   200.000 [   0.000], Avg:   198.828 (1.000) <0-01:03:43> ({'r_t':  1000.0000, 'eps':     1.0000, 'critic_loss':   158.5056, 'actor_loss':    -0.6035, 'eps_e':     1.0000})
+Step:  417000, Reward:   200.000 [   0.000], Avg:   198.831 (1.000) <0-01:03:53> ({'r_t':  1000.0000, 'eps':     1.0000, 'critic_loss':   160.0520, 'actor_loss':    -0.2760, 'eps_e':     1.0000})
+Step:  418000, Reward:   200.000 [   0.000], Avg:   198.834 (1.000) <0-01:04:03> ({'r_t':  1000.0000, 'eps':     1.0000, 'critic_loss':   158.0089, 'actor_loss':     0.1435, 'eps_e':     1.0000})
+Step:  419000, Reward:   200.000 [   0.000], Avg:   198.837 (1.000) <0-01:04:13> ({'r_t':  1000.0000, 'eps':     1.0000, 'critic_loss':   164.8895, 'actor_loss':     0.3951, 'eps_e':     1.0000})
+Step:  420000, Reward:   200.000 [   0.000], Avg:   198.839 (1.000) <0-01:04:23> ({'r_t':  1000.0000, 'eps':     1.0000, 'critic_loss':   162.6519, 'actor_loss':     0.2746, 'eps_e':     1.0000})
+Step:  421000, Reward:   200.000 [   0.000], Avg:   198.842 (1.000) <0-01:04:32> ({'r_t':  1000.0000, 'eps':     1.0000, 'critic_loss':   158.9747, 'actor_loss':     0.2528, 'eps_e':     1.0000})
+Step:  422000, Reward:   200.000 [   0.000], Avg:   198.845 (1.000) <0-01:04:41> ({'r_t':  1000.0000, 'eps':     1.0000, 'critic_loss':   151.0861, 'actor_loss':    -0.1630, 'eps_e':     1.0000})
+Step:  423000, Reward:   193.875 [  23.722], Avg:   198.833 (1.000) <0-01:04:50> ({'r_t':  1000.0000, 'eps':     1.0000, 'critic_loss':   167.5287, 'actor_loss':     0.0390, 'eps_e':     1.0000})
+Step:  424000, Reward:   200.000 [   0.000], Avg:   198.836 (1.000) <0-01:04:58> ({'r_t':  1000.0000, 'eps':     1.0000, 'critic_loss':   170.5024, 'actor_loss':     0.4474, 'eps_e':     1.0000})
+Step:  425000, Reward:   200.000 [   0.000], Avg:   198.839 (1.000) <0-01:05:07> ({'r_t':  1000.0000, 'eps':     1.0000, 'critic_loss':   162.2263, 'actor_loss':    -0.0436, 'eps_e':     1.0000})
+Step:  426000, Reward:   200.000 [   0.000], Avg:   198.841 (1.000) <0-01:05:16> ({'r_t':  1000.0000, 'eps':     1.0000, 'critic_loss':   168.5578, 'actor_loss':     0.1290, 'eps_e':     1.0000})
+Step:  427000, Reward:   200.000 [   0.000], Avg:   198.844 (1.000) <0-01:05:25> ({'r_t':  1000.0000, 'eps':     1.0000, 'critic_loss':   158.4775, 'actor_loss':    -0.0703, 'eps_e':     1.0000})
+Step:  428000, Reward:   200.000 [   0.000], Avg:   198.847 (1.000) <0-01:05:33> ({'r_t':  1000.0000, 'eps':     1.0000, 'critic_loss':   158.6721, 'actor_loss':     0.0041, 'eps_e':     1.0000})
+Step:  429000, Reward:   200.000 [   0.000], Avg:   198.849 (1.000) <0-01:05:42> ({'r_t':  1000.0000, 'eps':     1.0000, 'critic_loss':   173.8716, 'actor_loss':     0.3000, 'eps_e':     1.0000})
+Step:  430000, Reward:   189.875 [  28.209], Avg:   198.829 (1.000) <0-01:05:51> ({'r_t':  1000.0000, 'eps':     1.0000, 'critic_loss':   165.0719, 'actor_loss':    -0.1421, 'eps_e':     1.0000})
+Step:  431000, Reward:   187.062 [  35.783], Avg:   198.801 (1.000) <0-01:05:59> ({'r_t':  1000.0000, 'eps':     1.0000, 'critic_loss':   157.5615, 'actor_loss':    -0.2615, 'eps_e':     1.0000})
+Step:  432000, Reward:   200.000 [   0.000], Avg:   198.804 (1.000) <0-01:06:08> ({'r_t':  1000.0000, 'eps':     1.0000, 'critic_loss':   156.0907, 'actor_loss':    -0.3877, 'eps_e':     1.0000})
+Step:  433000, Reward:   200.000 [   0.000], Avg:   198.807 (1.000) <0-01:06:17> ({'r_t':  1000.0000, 'eps':     1.0000, 'critic_loss':   164.5723, 'actor_loss':    -0.1051, 'eps_e':     1.0000})
+Step:  434000, Reward:   191.812 [  31.710], Avg:   198.791 (1.000) <0-01:06:26> ({'r_t':  1000.0000, 'eps':     1.0000, 'critic_loss':   156.8574, 'actor_loss':    -0.1438, 'eps_e':     1.0000})
+Step:  435000, Reward:   200.000 [   0.000], Avg:   198.794 (1.000) <0-01:06:34> ({'r_t':  1000.0000, 'eps':     1.0000, 'critic_loss':   174.4695, 'actor_loss':     0.2371, 'eps_e':     1.0000})
+Step:  436000, Reward:   200.000 [   0.000], Avg:   198.796 (1.000) <0-01:06:44> ({'r_t':  1000.0000, 'eps':     1.0000, 'critic_loss':   175.6041, 'actor_loss':     0.2147, 'eps_e':     1.0000})
+Step:  437000, Reward:   200.000 [   0.000], Avg:   198.799 (1.000) <0-01:06:54> ({'r_t':  1000.0000, 'eps':     1.0000, 'critic_loss':   170.5552, 'actor_loss':    -0.1352, 'eps_e':     1.0000})
+Step:  438000, Reward:   200.000 [   0.000], Avg:   198.802 (1.000) <0-01:07:04> ({'r_t':  1000.0000, 'eps':     1.0000, 'critic_loss':   163.8228, 'actor_loss':    -0.2303, 'eps_e':     1.0000})
+Step:  439000, Reward:   200.000 [   0.000], Avg:   198.805 (1.000) <0-01:07:14> ({'r_t':  1000.0000, 'eps':     1.0000, 'critic_loss':   170.0062, 'actor_loss':     0.0016, 'eps_e':     1.0000})
+Step:  440000, Reward:   200.000 [   0.000], Avg:   198.807 (1.000) <0-01:07:24> ({'r_t':  1000.0000, 'eps':     1.0000, 'critic_loss':   165.4498, 'actor_loss':    -0.2687, 'eps_e':     1.0000})
+Step:  441000, Reward:   200.000 [   0.000], Avg:   198.810 (1.000) <0-01:07:33> ({'r_t':  1000.0000, 'eps':     1.0000, 'critic_loss':   172.9172, 'actor_loss':     0.2513, 'eps_e':     1.0000})
+Step:  442000, Reward:   200.000 [   0.000], Avg:   198.813 (1.000) <0-01:07:41> ({'r_t':  1000.0000, 'eps':     1.0000, 'critic_loss':   173.5314, 'actor_loss':     0.1370, 'eps_e':     1.0000})
+Step:  443000, Reward:   200.000 [   0.000], Avg:   198.815 (1.000) <0-01:07:50> ({'r_t':  1000.0000, 'eps':     1.0000, 'critic_loss':   169.3027, 'actor_loss':    -0.1079, 'eps_e':     1.0000})
+Step:  444000, Reward:   200.000 [   0.000], Avg:   198.818 (1.000) <0-01:07:59> ({'r_t':  1000.0000, 'eps':     1.0000, 'critic_loss':   161.9678, 'actor_loss':    -0.2968, 'eps_e':     1.0000})
+Step:  445000, Reward:   200.000 [   0.000], Avg:   198.821 (1.000) <0-01:08:07> ({'r_t':  1000.0000, 'eps':     1.0000, 'critic_loss':   167.1981, 'actor_loss':     0.0167, 'eps_e':     1.0000})
+Step:  446000, Reward:   200.000 [   0.000], Avg:   198.823 (1.000) <0-01:08:16> ({'r_t':  1000.0000, 'eps':     1.0000, 'critic_loss':   174.6440, 'actor_loss':     0.4424, 'eps_e':     1.0000})
+Step:  447000, Reward:   200.000 [   0.000], Avg:   198.826 (1.000) <0-01:08:25> ({'r_t':  1000.0000, 'eps':     1.0000, 'critic_loss':   171.8328, 'actor_loss':     0.1211, 'eps_e':     1.0000})
+Step:  448000, Reward:   200.000 [   0.000], Avg:   198.829 (1.000) <0-01:08:34> ({'r_t':  1000.0000, 'eps':     1.0000, 'critic_loss':   165.3000, 'actor_loss':     0.1794, 'eps_e':     1.0000})
+Step:  449000, Reward:   200.000 [   0.000], Avg:   198.831 (1.000) <0-01:08:42> ({'r_t':  1000.0000, 'eps':     1.0000, 'critic_loss':   150.6806, 'actor_loss':    -0.0446, 'eps_e':     1.0000})
+Step:  450000, Reward:   200.000 [   0.000], Avg:   198.834 (1.000) <0-01:08:51> ({'r_t':  1000.0000, 'eps':     1.0000, 'critic_loss':   156.4438, 'actor_loss':     0.1875, 'eps_e':     1.0000})
+Step:  451000, Reward:   200.000 [   0.000], Avg:   198.836 (1.000) <0-01:09:00> ({'r_t':  1000.0000, 'eps':     1.0000, 'critic_loss':   160.3750, 'actor_loss':    -0.0817, 'eps_e':     1.0000})
+Step:  452000, Reward:   200.000 [   0.000], Avg:   198.839 (1.000) <0-01:09:08> ({'r_t':  1000.0000, 'eps':     1.0000, 'critic_loss':   157.8712, 'actor_loss':    -0.1948, 'eps_e':     1.0000})
+Step:  453000, Reward:   200.000 [   0.000], Avg:   198.841 (1.000) <0-01:09:17> ({'r_t':  1000.0000, 'eps':     1.0000, 'critic_loss':   161.7545, 'actor_loss':     0.0638, 'eps_e':     1.0000})
+Step:  454000, Reward:   200.000 [   0.000], Avg:   198.844 (1.000) <0-01:09:27> ({'r_t':  1000.0000, 'eps':     1.0000, 'critic_loss':   164.5825, 'actor_loss':     0.1077, 'eps_e':     1.0000})
+Step:  455000, Reward:   188.625 [  44.055], Avg:   198.822 (1.000) <0-01:09:36> ({'r_t':  1000.0000, 'eps':     1.0000, 'critic_loss':   157.9936, 'actor_loss':     0.0388, 'eps_e':     1.0000})
+Step:  456000, Reward:   200.000 [   0.000], Avg:   198.824 (1.000) <0-01:09:46> ({'r_t':  1000.0000, 'eps':     1.0000, 'critic_loss':   165.9908, 'actor_loss':    -0.1464, 'eps_e':     1.0000})
+Step:  457000, Reward:   200.000 [   0.000], Avg:   198.827 (1.000) <0-01:09:56> ({'r_t':  1000.0000, 'eps':     1.0000, 'critic_loss':   170.3869, 'actor_loss':     0.0848, 'eps_e':     1.0000})
+Step:  458000, Reward:   200.000 [   0.000], Avg:   198.829 (1.000) <0-01:10:06> ({'r_t':  1000.0000, 'eps':     1.0000, 'critic_loss':   176.6262, 'actor_loss':     0.3286, 'eps_e':     1.0000})
+Step:  459000, Reward:   200.000 [   0.000], Avg:   198.832 (1.000) <0-01:10:15> ({'r_t':  1000.0000, 'eps':     1.0000, 'critic_loss':   170.4292, 'actor_loss':    -0.1132, 'eps_e':     1.0000})
+Step:  460000, Reward:   200.000 [   0.000], Avg:   198.834 (1.000) <0-01:10:24> ({'r_t':  1000.0000, 'eps':     1.0000, 'critic_loss':   169.1809, 'actor_loss':     0.1732, 'eps_e':     1.0000})
+Step:  461000, Reward:   200.000 [   0.000], Avg:   198.837 (1.000) <0-01:10:32> ({'r_t':  1000.0000, 'eps':     1.0000, 'critic_loss':   166.6707, 'actor_loss':     0.1239, 'eps_e':     1.0000})
+Step:  462000, Reward:   200.000 [   0.000], Avg:   198.839 (1.000) <0-01:10:41> ({'r_t':  1000.0000, 'eps':     1.0000, 'critic_loss':   168.5821, 'actor_loss':     0.1053, 'eps_e':     1.0000})
+Step:  463000, Reward:   200.000 [   0.000], Avg:   198.842 (1.000) <0-01:10:50> ({'r_t':  1000.0000, 'eps':     1.0000, 'critic_loss':   174.5183, 'actor_loss':     0.2556, 'eps_e':     1.0000})
+Step:  464000, Reward:   200.000 [   0.000], Avg:   198.844 (1.000) <0-01:10:59> ({'r_t':  1000.0000, 'eps':     1.0000, 'critic_loss':   170.9390, 'actor_loss':    -0.0944, 'eps_e':     1.0000})
+Step:  465000, Reward:   200.000 [   0.000], Avg:   198.847 (1.000) <0-01:11:07> ({'r_t':  1000.0000, 'eps':     1.0000, 'critic_loss':   173.6903, 'actor_loss':     0.3085, 'eps_e':     1.0000})
+Step:  466000, Reward:   200.000 [   0.000], Avg:   198.849 (1.000) <0-01:11:16> ({'r_t':  1000.0000, 'eps':     1.0000, 'critic_loss':   164.1754, 'actor_loss':    -0.0316, 'eps_e':     1.0000})
+Step:  467000, Reward:   200.000 [   0.000], Avg:   198.852 (1.000) <0-01:11:25> ({'r_t':  1000.0000, 'eps':     1.0000, 'critic_loss':   171.3655, 'actor_loss':     0.1320, 'eps_e':     1.0000})
+Step:  468000, Reward:   189.875 [  39.214], Avg:   198.833 (1.000) <0-01:11:34> ({'r_t':  1000.0000, 'eps':     1.0000, 'critic_loss':   162.0123, 'actor_loss':    -0.0111, 'eps_e':     1.0000})
+Step:  469000, Reward:   200.000 [   0.000], Avg:   198.835 (1.000) <0-01:11:42> ({'r_t':  1000.0000, 'eps':     1.0000, 'critic_loss':   162.0701, 'actor_loss':     0.1171, 'eps_e':     1.0000})
+Step:  470000, Reward:   200.000 [   0.000], Avg:   198.838 (1.000) <0-01:11:51> ({'r_t':  1000.0000, 'eps':     1.0000, 'critic_loss':   168.5274, 'actor_loss':     0.0617, 'eps_e':     1.0000})
+Step:  471000, Reward:   200.000 [   0.000], Avg:   198.840 (1.000) <0-01:12:01> ({'r_t':  1000.0000, 'eps':     1.0000, 'critic_loss':   161.6415, 'actor_loss':    -0.3573, 'eps_e':     1.0000})
+Step:  472000, Reward:   200.000 [   0.000], Avg:   198.842 (1.000) <0-01:12:11> ({'r_t':  1000.0000, 'eps':     1.0000, 'critic_loss':   169.8115, 'actor_loss':    -0.0322, 'eps_e':     1.0000})
+Step:  473000, Reward:   200.000 [   0.000], Avg:   198.845 (1.000) <0-01:12:21> ({'r_t':  1000.0000, 'eps':     1.0000, 'critic_loss':   172.0081, 'actor_loss':     0.2691, 'eps_e':     1.0000})
+Step:  474000, Reward:   200.000 [   0.000], Avg:   198.847 (1.000) <0-01:12:31> ({'r_t':  1000.0000, 'eps':     1.0000, 'critic_loss':   169.3013, 'actor_loss':    -0.0214, 'eps_e':     1.0000})
+Step:  475000, Reward:   200.000 [   0.000], Avg:   198.850 (1.000) <0-01:12:40> ({'r_t':  1000.0000, 'eps':     1.0000, 'critic_loss':   170.1035, 'actor_loss':     0.0290, 'eps_e':     1.0000})
+Step:  476000, Reward:   200.000 [   0.000], Avg:   198.852 (1.000) <0-01:12:49> ({'r_t':  1000.0000, 'eps':     1.0000, 'critic_loss':   163.2376, 'actor_loss':    -0.1763, 'eps_e':     1.0000})
+Step:  477000, Reward:   200.000 [   0.000], Avg:   198.855 (1.000) <0-01:12:58> ({'r_t':  1000.0000, 'eps':     1.0000, 'critic_loss':   167.9562, 'actor_loss':     0.0442, 'eps_e':     1.0000})
+Step:  478000, Reward:   200.000 [   0.000], Avg:   198.857 (1.000) <0-01:13:06> ({'r_t':  1000.0000, 'eps':     1.0000, 'critic_loss':   178.4412, 'actor_loss':     0.4131, 'eps_e':     1.0000})
+Step:  479000, Reward:   200.000 [   0.000], Avg:   198.859 (1.000) <0-01:13:15> ({'r_t':  1000.0000, 'eps':     1.0000, 'critic_loss':   177.9690, 'actor_loss':     0.4537, 'eps_e':     1.0000})
+Step:  480000, Reward:   200.000 [   0.000], Avg:   198.862 (1.000) <0-01:13:24> ({'r_t':  1000.0000, 'eps':     1.0000, 'critic_loss':   180.1631, 'actor_loss':     0.4449, 'eps_e':     1.0000})
+Step:  481000, Reward:   200.000 [   0.000], Avg:   198.864 (1.000) <0-01:13:33> ({'r_t':  1000.0000, 'eps':     1.0000, 'critic_loss':   171.4392, 'actor_loss':     0.4105, 'eps_e':     1.0000})
+Step:  482000, Reward:   200.000 [   0.000], Avg:   198.866 (1.000) <0-01:13:42> ({'r_t':  1000.0000, 'eps':     1.0000, 'critic_loss':   166.1862, 'actor_loss':     0.1019, 'eps_e':     1.0000})
+Step:  483000, Reward:   200.000 [   0.000], Avg:   198.869 (1.000) <0-01:13:50> ({'r_t':  1000.0000, 'eps':     1.0000, 'critic_loss':   164.8898, 'actor_loss':     0.1746, 'eps_e':     1.0000})
+Step:  484000, Reward:   200.000 [   0.000], Avg:   198.871 (1.000) <0-01:13:59> ({'r_t':  1000.0000, 'eps':     1.0000, 'critic_loss':   173.9150, 'actor_loss':     0.4320, 'eps_e':     1.0000})
+Step:  485000, Reward:   200.000 [   0.000], Avg:   198.873 (1.000) <0-01:14:08> ({'r_t':  1000.0000, 'eps':     1.0000, 'critic_loss':   169.4012, 'actor_loss':     0.0135, 'eps_e':     1.0000})
+Step:  486000, Reward:   200.000 [   0.000], Avg:   198.876 (1.000) <0-01:14:17> ({'r_t':  1000.0000, 'eps':     1.0000, 'critic_loss':   177.7291, 'actor_loss':     0.4212, 'eps_e':     1.0000})
+Step:  487000, Reward:   200.000 [   0.000], Avg:   198.878 (1.000) <0-01:14:27> ({'r_t':  1000.0000, 'eps':     1.0000, 'critic_loss':   172.7376, 'actor_loss':     0.1135, 'eps_e':     1.0000})
+Step:  488000, Reward:   200.000 [   0.000], Avg:   198.880 (1.000) <0-01:14:37> ({'r_t':  1000.0000, 'eps':     1.0000, 'critic_loss':   174.0838, 'actor_loss':     0.2308, 'eps_e':     1.0000})
+Step:  489000, Reward:   200.000 [   0.000], Avg:   198.883 (1.000) <0-01:14:47> ({'r_t':  1000.0000, 'eps':     1.0000, 'critic_loss':   173.8746, 'actor_loss':     0.1925, 'eps_e':     1.0000})
+Step:  490000, Reward:   200.000 [   0.000], Avg:   198.885 (1.000) <0-01:14:57> ({'r_t':  1000.0000, 'eps':     1.0000, 'critic_loss':   168.1565, 'actor_loss':    -0.0536, 'eps_e':     1.0000})
+Step:  491000, Reward:   200.000 [   0.000], Avg:   198.887 (1.000) <0-01:15:06> ({'r_t':  1000.0000, 'eps':     1.0000, 'critic_loss':   180.9419, 'actor_loss':     0.5824, 'eps_e':     1.0000})
+Step:  492000, Reward:   200.000 [   0.000], Avg:   198.889 (1.000) <0-01:15:15> ({'r_t':  1000.0000, 'eps':     1.0000, 'critic_loss':   177.5221, 'actor_loss':     0.3689, 'eps_e':     1.0000})
+Step:  493000, Reward:   200.000 [   0.000], Avg:   198.892 (1.000) <0-01:15:24> ({'r_t':  1000.0000, 'eps':     1.0000, 'critic_loss':   173.6573, 'actor_loss':     0.1841, 'eps_e':     1.0000})
+Step:  494000, Reward:   200.000 [   0.000], Avg:   198.894 (1.000) <0-01:15:32> ({'r_t':  1000.0000, 'eps':     1.0000, 'critic_loss':   170.5475, 'actor_loss':     0.0846, 'eps_e':     1.0000})
+Step:  495000, Reward:   200.000 [   0.000], Avg:   198.896 (1.000) <0-01:15:41> ({'r_t':  1000.0000, 'eps':     1.0000, 'critic_loss':   161.3582, 'actor_loss':    -0.1407, 'eps_e':     1.0000})
+Step:  496000, Reward:   200.000 [   0.000], Avg:   198.898 (1.000) <0-01:15:50> ({'r_t':  1000.0000, 'eps':     1.0000, 'critic_loss':   174.1828, 'actor_loss':     0.2257, 'eps_e':     1.0000})
+Step:  497000, Reward:   200.000 [   0.000], Avg:   198.901 (1.000) <0-01:15:59> ({'r_t':  1000.0000, 'eps':     1.0000, 'critic_loss':   176.8097, 'actor_loss':     0.3196, 'eps_e':     1.0000})
+Step:  498000, Reward:   200.000 [   0.000], Avg:   198.903 (1.000) <0-01:16:07> ({'r_t':  1000.0000, 'eps':     1.0000, 'critic_loss':   174.1388, 'actor_loss':     0.1982, 'eps_e':     1.0000})
+Step:  499000, Reward:   200.000 [   0.000], Avg:   198.905 (1.000) <0-01:16:16> ({'r_t':  1000.0000, 'eps':     1.0000, 'critic_loss':   167.6909, 'actor_loss':     0.1270, 'eps_e':     1.0000})
+Step:  500000, Reward:   200.000 [   0.000], Avg:   198.907 (1.000) <0-01:16:25> ({'r_t':  1000.0000, 'eps':     1.0000, 'critic_loss':   160.5342, 'actor_loss':     0.2205, 'eps_e':     1.0000})
