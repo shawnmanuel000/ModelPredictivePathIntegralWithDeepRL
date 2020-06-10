@@ -83,10 +83,10 @@ class MPPIAgent(PTAgent):
 			self.ep_lens.append(len(buffer))
 			states, actions, next_states, rewards, dones = map(lambda x: self.to_tensor(x)[None], zip(*buffer))
 			buffer.clear()
-			mask = np.ones_like(rewards)
+			mask = torch.ones_like(rewards)
 			values = self.network.envmodel.network.reward(actions, states, next_states)[0]
 			rewards = self.compute_gae(0*values[-1], rewards.transpose(0,1), dones.transpose(0,1), values)[0].transpose(0,1)
-			states, actions, next_states, rewards, dones = map(lambda x: x.cpu().numpy(), [states, actions, next_states, rewards, dones])
+			states, actions, next_states, rewards, dones, mask = map(lambda x: x.cpu().numpy(), [states, actions, next_states, rewards, dones, mask])
 			states, actions, next_states, rewards, dones, mask = map(lambda x: pad(x[0], self.config.NUM_STEPS), [states, actions, next_states, rewards, dones, mask])
 			self.replay_buffer.extend(list(zip(states, actions, next_states, rewards, dones, mask)), shuffle=False)
 		if len(self.replay_buffer) > self.config.REPLAY_BATCH_SIZE:# and self.time % self.config.TRAIN_EVERY == 0:
