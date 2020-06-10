@@ -1,0 +1,808 @@
+Model: <class 'src.models.pytorch.mpc.mppi.MPPIAgent'>, Env: CartPole-v0, Date: 10/06/2020 12:48:54
+CPU: 20 Core, 0.0GHz, 377.59 GB, Linux-4.14.175-llgrid-10ms-x86_64-with-debian-buster-sid
+GPU 0: Tesla V100-PCIE-32GB, 32.51 GB (Driver: 440.33.01)
+Git URL: https://github.com/shawnmanuel000/ModelPredictivePathIntegralWithDeepRL.git
+Hash: 762d294d989a2ee63534a58d1363310463df4f0e
+Branch: master
+
+config: 
+   TRIAL_AT = 1000
+   SAVE_AT = 1
+   SEED = 0
+   REG_LAMBDA = 1e-06
+   LEARN_RATE = 0.0001
+   DISCOUNT_RATE = 0.99
+   ADVANTAGE_DECAY = 0.95
+   INPUT_LAYER = 512
+   ACTOR_HIDDEN = 256
+   CRITIC_HIDDEN = 1024
+   EPS_MAX = 1.0
+   EPS_MIN = 0.1
+   EPS_DECAY = 0.998
+   NUM_STEPS = 20
+   MAX_BUFFER_SIZE = 1000000
+   REPLAY_BATCH_SIZE = 2000
+   TARGET_UPDATE_RATE = 0.0004
+   TRAIN_EVERY = 2000
+   BATCH_SIZE = 500
+   ENV_MODEL = dfrntl
+   MPC = 
+      NSAMPLES = 100
+      HORIZON = 20
+      LAMBDA = 0.1
+      COV = 1
+   dynamics_size = 4
+   state_size = (4,)
+   action_size = [2]
+   env_name = CartPole-v0
+   rank = 0
+   size = 17
+   split = 17
+   model = mppi
+   framework = pt
+   train_prop = 1.0
+   tcp_ports = []
+   tcp_rank = 0
+   num_envs = 1
+   nsteps = 500000
+   render = False
+   trial = False
+   icm = False
+   rs = False
+   DYN = 
+      REG_LAMBDA = 1e-06
+      FACTOR = 0.97
+      PATIENCE = 10
+      LEARN_RATE = 0.0001
+      TRANSITION_HIDDEN = 512
+      REWARD_HIDDEN = 256
+      BETA_DYN = 1
+      BETA_DOT = 0
+      BETA_DDOT = 0,
+num_envs: 16,
+envs: <src.utils.envs.EnvManager object at 0x7f5d2fbf6ef0> 
+	env = <GymEnv<TimeLimit<CartPoleEnv<CartPole-v0>>>> 
+		env = <TimeLimit<CartPoleEnv<CartPole-v0>>> 
+			env = <CartPoleEnv<CartPole-v0>> 
+				gravity = 9.8
+				masscart = 1.0
+				masspole = 0.1
+				total_mass = 1.1
+				length = 0.5
+				polemass_length = 0.05
+				force_mag = 10.0
+				tau = 0.02
+				kinematics_integrator = euler
+				theta_threshold_radians = 0.20943951023931953
+				x_threshold = 2.4
+				action_space = Discrete(2) 
+					n = 2
+					shape = ()
+					dtype = int64
+					np_random = RandomState(MT19937)
+				observation_space = Box(4,) 
+					dtype = float32
+					shape = (4,)
+					low = [-4.800e+00 -3.403e+38 -4.189e-01 -3.403e+38]
+					high = [ 4.800e+00  3.403e+38  4.189e-01  3.403e+38]
+					bounded_below = [ True  True  True  True]
+					bounded_above = [ True  True  True  True]
+					np_random = RandomState(MT19937)
+				np_random = RandomState(MT19937)
+				viewer = None
+				state = None
+				steps_beyond_done = None
+				spec = EnvSpec(CartPole-v0) 
+					id = CartPole-v0
+					entry_point = gym.envs.classic_control:CartPoleEnv
+					reward_threshold = 195.0
+					nondeterministic = False
+					max_episode_steps = 200
+				verbose = 0
+			action_space = Discrete(2) 
+				n = 2
+				shape = ()
+				dtype = int64
+				np_random = RandomState(MT19937)
+			observation_space = Box(4,) 
+				dtype = float32
+				shape = (4,)
+				low = [-4.800e+00 -3.403e+38 -4.189e-01 -3.403e+38]
+				high = [ 4.800e+00  3.403e+38  4.189e-01  3.403e+38]
+				bounded_below = [ True  True  True  True]
+				bounded_above = [ True  True  True  True]
+				np_random = RandomState(MT19937)
+			reward_range = (-inf, inf)
+			metadata = {'render.modes': ['human', 'rgb_array'], 'video.frames_per_second': 50}
+		action_space = Discrete(2) 
+			n = 2
+			shape = ()
+			dtype = int64
+			np_random = RandomState(MT19937)
+		observation_space = Box(4,) 
+			dtype = float32
+			shape = (4,)
+			low = [-4.800e+00 -3.403e+38 -4.189e-01 -3.403e+38]
+			high = [ 4.800e+00  3.403e+38  4.189e-01  3.403e+38]
+			bounded_below = [ True  True  True  True]
+			bounded_above = [ True  True  True  True]
+			np_random = RandomState(MT19937)
+		reward_range = (-inf, inf)
+		metadata = {'render.modes': ['human', 'rgb_array'], 'video.frames_per_second': 50}
+		preprocess = <src.envs.wrappers.RawPreprocess object at 0x7f5d2fb68160> 
+			observation_space = Box(4,) 
+				dtype = float32
+				shape = (4,)
+				low = [-4.800e+00 -3.403e+38 -4.189e-01 -3.403e+38]
+				high = [ 4.800e+00  3.403e+38  4.189e-01  3.403e+38]
+				bounded_below = [ True  True  True  True]
+				bounded_above = [ True  True  True  True]
+				np_random = RandomState(MT19937)
+	state_size = (4,)
+	action_size = [2]
+	action_space = Discrete(2) 
+		n = 2
+		shape = ()
+		dtype = int64
+		np_random = RandomState(MT19937)
+	server_ports = <list len=16>
+	conn = <src.utils.multiprocess.MPIConnection object at 0x7f5d2fb687f0> 
+		root = 0
+		rank = 0
+		cluster = <list len=16>
+	num_envs = 16
+	max_steps = 200,
+agent: <src.models.wrappers.ParallelAgent object at 0x7f5d2fb68828> 
+	icm = None
+	stack = <src.models.wrappers.RawState object at 0x7f5d2fb6ff60> 
+		state_size = (4,)
+	agent = <src.models.pytorch.mpc.mppi.MPPIAgent object at 0x7f5d2fb803c8> 
+		noise_process = <src.utils.rand.BrownianNoise object at 0x7f5d2fb80400> 
+			size = [2]
+			dt = 0.2
+			action = [ 0.660  0.318]
+			daction_dt = [ 0.469  1.402]
+		discrete = True
+		action_size = [2]
+		state_size = (4,)
+		config = <src.utils.config.Config object at 0x7f5d2ff051d0> 
+			TRIAL_AT = 1000
+			SAVE_AT = 1
+			SEED = 0
+			REG_LAMBDA = 1e-06
+			LEARN_RATE = 0.0001
+			DISCOUNT_RATE = 0.99
+			ADVANTAGE_DECAY = 0.95
+			INPUT_LAYER = 512
+			ACTOR_HIDDEN = 256
+			CRITIC_HIDDEN = 1024
+			EPS_MAX = 1.0
+			EPS_MIN = 0.1
+			EPS_DECAY = 0.998
+			NUM_STEPS = 20
+			MAX_BUFFER_SIZE = 1000000
+			REPLAY_BATCH_SIZE = 2000
+			TARGET_UPDATE_RATE = 0.0004
+			TRAIN_EVERY = 2000
+			BATCH_SIZE = 500
+			ENV_MODEL = dfrntl
+			MPC = <src.utils.config.Config object at 0x7f5d55dc8550> 
+				NSAMPLES = 100
+				HORIZON = 20
+				LAMBDA = 0.1
+				COV = 1
+			dynamics_size = 4
+			state_size = (4,)
+			action_size = [2]
+			env_name = CartPole-v0
+			rank = 0
+			size = 17
+			split = 17
+			model = mppi
+			framework = pt
+			train_prop = 1.0
+			tcp_ports = []
+			tcp_rank = 0
+			num_envs = 1
+			nsteps = 500000
+			render = False
+			trial = False
+			icm = False
+			rs = False
+			DYN = <src.utils.config.Config object at 0x7f5d541b7908> 
+				REG_LAMBDA = 1e-06
+				FACTOR = 0.97
+				PATIENCE = 10
+				LEARN_RATE = 0.0001
+				TRANSITION_HIDDEN = 512
+				REWARD_HIDDEN = 256
+				BETA_DYN = 1
+				BETA_DOT = 0
+				BETA_DDOT = 0
+		stats = <src.utils.logger.Stats object at 0x7f5d2fb80438> 
+			mean_dict = {}
+			sum_dict = {}
+		eps = 1.0
+		network = MPPIController() 
+			training = True
+			tau = 0.0004
+			name = mppi
+			stats = <src.utils.logger.Stats object at 0x7f5d2fb804a8> 
+				mean_dict = {}
+				sum_dict = {}
+			config = <src.utils.config.Config object at 0x7f5d2ff051d0> 
+				TRIAL_AT = 1000
+				SAVE_AT = 1
+				SEED = 0
+				REG_LAMBDA = 1e-06
+				LEARN_RATE = 0.0001
+				DISCOUNT_RATE = 0.99
+				ADVANTAGE_DECAY = 0.95
+				INPUT_LAYER = 512
+				ACTOR_HIDDEN = 256
+				CRITIC_HIDDEN = 1024
+				EPS_MAX = 1.0
+				EPS_MIN = 0.1
+				EPS_DECAY = 0.998
+				NUM_STEPS = 20
+				MAX_BUFFER_SIZE = 1000000
+				REPLAY_BATCH_SIZE = 2000
+				TARGET_UPDATE_RATE = 0.0004
+				TRAIN_EVERY = 2000
+				BATCH_SIZE = 500
+				ENV_MODEL = dfrntl
+				MPC = <src.utils.config.Config object at 0x7f5d55dc8550> 
+					NSAMPLES = 100
+					HORIZON = 20
+					LAMBDA = 0.1
+					COV = 1
+				dynamics_size = 4
+				state_size = (4,)
+				action_size = [2]
+				env_name = CartPole-v0
+				rank = 0
+				size = 17
+				split = 17
+				model = mppi
+				framework = pt
+				train_prop = 1.0
+				tcp_ports = []
+				tcp_rank = 0
+				num_envs = 1
+				nsteps = 500000
+				render = False
+				trial = False
+				icm = False
+				rs = False
+				DYN = <src.utils.config.Config object at 0x7f5d541b7908> 
+					REG_LAMBDA = 1e-06
+					FACTOR = 0.97
+					PATIENCE = 10
+					LEARN_RATE = 0.0001
+					TRANSITION_HIDDEN = 512
+					REWARD_HIDDEN = 256
+					BETA_DYN = 1
+					BETA_DOT = 0
+					BETA_DDOT = 0
+			device = cuda
+			envmodel = <src.models.pytorch.mpc.EnvModel object at 0x7f5d2fb804e0> 
+				network = DifferentialEnv(
+					  (reward): RewardModel(
+					    (linear1): Linear(in_features=10, out_features=256, bias=True)
+					    (drop1): Dropout(p=0.5, inplace=False)
+					    (linear2): Linear(in_features=256, out_features=256, bias=True)
+					    (drop2): Dropout(p=0.5, inplace=False)
+					    (linear3): Linear(in_features=256, out_features=256, bias=True)
+					    (linear4): Linear(in_features=256, out_features=1, bias=True)
+					  )
+					  (dynamics): TransitionModel(
+					    (gru): GRUCell(10, 512)
+					    (linear1): Linear(in_features=512, out_features=512, bias=True)
+					    (drop1): Dropout(p=0.5, inplace=False)
+					    (linear2): Linear(in_features=512, out_features=512, bias=True)
+					    (drop2): Dropout(p=0.5, inplace=False)
+					    (state_ddot): Linear(in_features=512, out_features=4, bias=True)
+					  )
+					) 
+					training = True
+					tau = 0.0004
+					name = dfrntl
+					stats = <src.utils.logger.Stats object at 0x7f5d2fb80550> 
+						mean_dict = {}
+						sum_dict = {}
+					config = <src.utils.config.Config object at 0x7f5d2ff051d0> 
+						TRIAL_AT = 1000
+						SAVE_AT = 1
+						SEED = 0
+						REG_LAMBDA = 1e-06
+						LEARN_RATE = 0.0001
+						DISCOUNT_RATE = 0.99
+						ADVANTAGE_DECAY = 0.95
+						INPUT_LAYER = 512
+						ACTOR_HIDDEN = 256
+						CRITIC_HIDDEN = 1024
+						EPS_MAX = 1.0
+						EPS_MIN = 0.1
+						EPS_DECAY = 0.998
+						NUM_STEPS = 20
+						MAX_BUFFER_SIZE = 1000000
+						REPLAY_BATCH_SIZE = 2000
+						TARGET_UPDATE_RATE = 0.0004
+						TRAIN_EVERY = 2000
+						BATCH_SIZE = 500
+						ENV_MODEL = dfrntl
+						MPC = <src.utils.config.Config object at 0x7f5d55dc8550> 
+							NSAMPLES = 100
+							HORIZON = 20
+							LAMBDA = 0.1
+							COV = 1
+						dynamics_size = 4
+						state_size = (4,)
+						action_size = [2]
+						env_name = CartPole-v0
+						rank = 0
+						size = 17
+						split = 17
+						model = mppi
+						framework = pt
+						train_prop = 1.0
+						tcp_ports = []
+						tcp_rank = 0
+						num_envs = 1
+						nsteps = 500000
+						render = False
+						trial = False
+						icm = False
+						rs = False
+						DYN = <src.utils.config.Config object at 0x7f5d541b7908> 
+							REG_LAMBDA = 1e-06
+							FACTOR = 0.97
+							PATIENCE = 10
+							LEARN_RATE = 0.0001
+							TRANSITION_HIDDEN = 512
+							REWARD_HIDDEN = 256
+							BETA_DYN = 1
+							BETA_DOT = 0
+							BETA_DDOT = 0
+					device = cuda
+					state_size = (4,)
+					action_size = [2]
+					discrete = True
+					dyn_index = 4
+					optimizer = Adam (
+					Parameter Group 0
+					    amsgrad: False
+					    betas: (0.9, 0.999)
+					    eps: 1e-08
+					    lr: 0.0001
+					    weight_decay: 1e-06
+					)
+					scheduler = <torch.optim.lr_scheduler.ReduceLROnPlateau object at 0x7f5d2fb808d0>
+				state_size = (4,)
+				action_size = [2]
+			mu = [ 0.000  0.000]
+			cov = [[ 1.000  0.000]
+			 [ 0.000  1.000]]
+			icov = [[ 1.000  0.000]
+			 [ 0.000  1.000]]
+			lamda = 0.1
+			horizon = 20
+			nsamples = 100
+			action_size = [2]
+			control = [[[ 0.468  0.519]
+			  [-0.310  0.165]
+			  [ 0.420 -0.594]
+			  [-0.482 -0.293]
+			  [-0.063 -0.833]
+			  [-0.859  0.584]
+			  [ 0.651 -0.648]
+			  [-0.017  0.082]
+			  [-0.494  0.083]
+			  [ 0.065  0.945]
+			  [ 0.168 -0.469]
+			  [-0.723  0.131]
+			  [ 0.859  0.499]
+			  [-0.168 -0.160]
+			  [ 0.965  0.714]
+			  [ 0.219  0.524]
+			  [ 0.231 -0.845]
+			  [-0.998 -0.923]
+			  [-0.833  0.305]
+			  [ 0.292 -0.128]]]
+			noise = [[[[ 2.281 -1.040]
+			   [-0.294  2.139]
+			   [ 0.644  0.375]
+			   ...
+			   [ 0.567 -0.656]
+			   [ 0.726  0.272]
+			   [-0.085  0.846]]
+			
+			  [[ 1.016 -1.127]
+			   [-1.373  0.768]
+			   [ 0.231 -1.282]
+			   ...
+			   [ 1.409  1.015]
+			   [-0.487 -1.120]
+			   [-0.167  0.220]]
+			
+			  [[-0.813  1.140]
+			   [ 0.250  0.012]
+			   [ 0.790  0.884]
+			   ...
+			   [ 0.860  0.878]
+			   [ 1.230  0.065]
+			   [ 1.475  1.487]]
+			
+			  ...
+			
+			  [[-0.203  0.324]
+			   [-0.955 -0.555]
+			   [-0.877 -1.114]
+			   ...
+			   [ 1.294 -0.619]
+			   [-0.152 -0.214]
+			   [ 1.205 -0.140]]
+			
+			  [[-0.681  0.330]
+			   [ 2.285 -0.573]
+			   [ 1.385 -0.149]
+			   ...
+			   [-1.139 -0.795]
+			   [-0.549 -0.303]
+			   [-2.163 -1.041]]
+			
+			  [[ 0.371 -0.059]
+			   [ 0.984 -1.819]
+			   [ 1.508  2.395]
+			   ...
+			   [-0.177 -0.541]
+			   [ 0.281 -1.575]
+			   [-1.125  1.347]]]]
+			init_cost = [[-0.209 -0.064 -0.252 -0.144 -0.319 -0.241  0.177 -0.209  0.010 -0.262 -0.134  0.371 -0.078  0.121  0.016  0.060  0.075 -0.274  0.013  0.022  0.302 -0.056  0.201  0.230 -0.089 -0.101  0.243 -0.156  0.073 -0.395 -0.050  0.162  0.088  0.095  0.077 -0.022  0.163  0.022  0.200 -0.232 -0.084  0.191 -0.061 -0.477  0.033  0.045 -0.168  0.010  0.124 -0.172 -0.100 -0.144  0.029  0.038  0.123 -0.225 -0.291  0.201 -0.127  0.306 -0.028 -0.278  0.259 -0.135 -0.318  0.205  0.386 -0.101  0.249  0.141 -0.100 -0.090 -0.102  0.132  0.047  0.051 -0.236 -0.227 -0.095  0.045  0.014  0.074 -0.053  0.110 -0.060 -0.080  0.209 -0.075 -0.035 -0.092  0.164  0.211  0.089  0.031  0.178 -0.275 -0.145 -0.163 -0.119 -0.029]]
+		replay_buffer = <src.utils.rand.ReplayBuffer object at 0x7f5d2fb80908> 
+			buffer = deque([], maxlen=1000000)
+		buffer = []
+		dataset = <class 'src.data.loaders.OnlineDataset'>
+		ep_lens = deque([], maxlen=1000000)
+	noise_process = <src.utils.rand.BrownianNoise object at 0x7f5d2fba1400> 
+		size = [2]
+		dt = 0.2
+		action = [ 0.054 -0.316]
+		daction_dt = [ 0.696 -1.252]
+	discrete = True
+	action_size = [2]
+	state_size = (4,)
+	config = <src.utils.config.Config object at 0x7f5d2ff051d0> 
+		TRIAL_AT = 1000
+		SAVE_AT = 1
+		SEED = 0
+		REG_LAMBDA = 1e-06
+		LEARN_RATE = 0.0001
+		DISCOUNT_RATE = 0.99
+		ADVANTAGE_DECAY = 0.95
+		INPUT_LAYER = 512
+		ACTOR_HIDDEN = 256
+		CRITIC_HIDDEN = 1024
+		EPS_MAX = 1.0
+		EPS_MIN = 0.1
+		EPS_DECAY = 0.998
+		NUM_STEPS = 20
+		MAX_BUFFER_SIZE = 1000000
+		REPLAY_BATCH_SIZE = 2000
+		TARGET_UPDATE_RATE = 0.0004
+		TRAIN_EVERY = 2000
+		BATCH_SIZE = 500
+		ENV_MODEL = dfrntl
+		MPC = <src.utils.config.Config object at 0x7f5d55dc8550> 
+			NSAMPLES = 100
+			HORIZON = 20
+			LAMBDA = 0.1
+			COV = 1
+		dynamics_size = 4
+		state_size = (4,)
+		action_size = [2]
+		env_name = CartPole-v0
+		rank = 0
+		size = 17
+		split = 17
+		model = mppi
+		framework = pt
+		train_prop = 1.0
+		tcp_ports = []
+		tcp_rank = 0
+		num_envs = 1
+		nsteps = 500000
+		render = False
+		trial = False
+		icm = False
+		rs = False
+		DYN = <src.utils.config.Config object at 0x7f5d541b7908> 
+			REG_LAMBDA = 1e-06
+			FACTOR = 0.97
+			PATIENCE = 10
+			LEARN_RATE = 0.0001
+			TRANSITION_HIDDEN = 512
+			REWARD_HIDDEN = 256
+			BETA_DYN = 1
+			BETA_DOT = 0
+			BETA_DDOT = 0
+	stats = <src.utils.logger.Stats object at 0x7f5d2fba1080> 
+		mean_dict = {}
+		sum_dict = {},
+conn: None,
+
+import tqdm
+import torch
+import random
+import numpy as np
+import scipy as sp
+from collections import deque
+from scipy.stats import multivariate_normal
+from src.utils.misc import load_module, pad
+from src.utils.rand import RandomAgent, ReplayBuffer
+from ..agents.base import PTNetwork, PTAgent, Conv, one_hot_from_indices
+from . import EnvModel
+
+class MPPIController(PTNetwork):
+	def __init__(self, state_size, action_size, config, load="", gpu=True, name="mppi"):
+		super().__init__(config, gpu=gpu, name=name)
+		self.envmodel = EnvModel(state_size, action_size, config, load=load, gpu=gpu)
+		self.mu = np.zeros(action_size)
+		self.cov = np.diag(np.ones(action_size))*config.MPC.COV
+		self.icov = np.linalg.inv(self.cov)
+		self.lamda = config.MPC.LAMBDA
+		self.horizon = config.MPC.HORIZON
+		self.nsamples = config.MPC.NSAMPLES
+		self.action_size = action_size
+		self.config = config
+		self.init_control()
+
+	def get_action(self, state, eps=None, sample=True):
+		batch = state.shape[:-1]
+		horizon = max(int((1-eps)*self.horizon),1) if eps else self.horizon
+		if len(batch) and self.control.shape[0] != batch[0]: self.init_control(batch[0])
+		x = torch.Tensor(state).view(*batch, 1,-1).repeat_interleave(self.nsamples, -2)
+		noise = self.noise[...,:horizon,:] * max(eps if eps else 0, 0.1)
+		controls = np.clip(self.control[:,None,:horizon,:] + noise, -1, 1)
+		self.states, rewards = self.envmodel.rollout(controls, x, numpy=True)
+		costs = -np.sum(rewards, -1) + self.lamda * np.copy(self.init_cost)
+		beta = np.min(costs, -1, keepdims=True)
+		costs_norm = -(costs - beta)/self.lamda
+		weights = sp.special.softmax(costs_norm, axis=-1)
+		self.control[...,:horizon,:] += np.sum(weights[:,:,None,None]*noise, len(batch))
+		action = self.control[...,0,:]
+		self.control = np.roll(self.control, -1, axis=-2)
+		self.control[...,-1,:] = 0
+		return action
+
+	def init_control(self, batch_size=1):
+		self.control = np.random.uniform(-1, 1, size=[batch_size, self.horizon, *self.action_size])
+		self.noise = np.random.multivariate_normal(self.mu, self.cov, size=[batch_size, self.nsamples, self.horizon])
+		self.init_cost = np.sum(self.control[:,None,:,None,:] @ self.icov[None,None,None,:,:] @ self.noise[:,:,:,:,None], axis=(2,3,4))/self.horizon
+
+	def optimize(self, states, actions, next_states, rewards, dones):
+		return self.envmodel.optimize(states, actions, next_states, rewards, dones)
+
+	def save_model(self, dirname="pytorch", name="checkpoint", net=None):
+		return self.envmodel.save_model(dirname, name, net)
+		
+	def load_model(self, dirname="pytorch", name="checkpoint", net=None):
+		return self.envmodel.load_model(dirname, name, net)
+
+	def get_stats(self):
+		return {**super().get_stats(), **self.envmodel.get_stats()}
+
+class MPPIAgent(PTAgent):
+	def __init__(self, state_size, action_size, config, gpu=True, load=None):
+		super().__init__(state_size, action_size, config, MPPIController, gpu=gpu, load=load)
+		self.dataset = load_module("src.data.loaders:OnlineDataset")
+		self.ep_lens = deque(maxlen=config.MAX_BUFFER_SIZE)
+
+	def get_action(self, state, eps=None, sample=True):
+		action_random = super().get_action(state)
+		if eps is None and not hasattr(self, "losses"): return action_random
+		eps = self.eps if eps is None else eps
+		action_greedy = self.network.get_action(np.array(state), eps)
+		action = np.clip((1-eps)*action_greedy + eps*action_random, -1, 1)
+		return action
+
+	def train(self, state, action, next_state, reward, done):
+		self.time = getattr(self, "time", 0) + 1
+		if not hasattr(self, "buffers"): self.buffers = [[] for _ in done]
+		for buffer, s, a, ns, r, d in zip(self.buffers, state, action, next_state, reward, done):
+			buffer.append((s, a, s if d else ns, r, d))
+			if not d: continue
+			self.ep_lens.append(len(buffer))
+			states, actions, next_states, rewards, dones = map(lambda x: self.to_tensor(x)[None], zip(*buffer))
+			buffer.clear()
+			values = self.network.envmodel.network.reward(actions, states, next_states)[0]
+			rewards = self.compute_gae(0*values[-1], rewards.transpose(0,1), dones.transpose(0,1), values)[0].transpose(0,1)
+			states, actions, next_states, rewards, dones = map(lambda x: x.cpu().numpy(), [states, actions, next_states, rewards, dones])
+			states, actions, next_states, rewards, dones = map(lambda x: pad(x[0], self.config.NUM_STEPS), [states, actions, next_states, rewards, dones])
+			self.replay_buffer.extend(list(zip(states, actions, next_states, rewards, dones)), shuffle=False)
+		if len(self.replay_buffer) > self.config.REPLAY_BATCH_SIZE:# and self.time % self.config.TRAIN_EVERY == 0:
+			self.losses = []
+			states, actions, next_states, rewards, dones = self.replay_buffer.sample(self.config.REPLAY_BATCH_SIZE, dtype=self.to_tensor)[0]
+			self.losses.append(self.network.optimize(states, actions, next_states, rewards, dones))
+			# samples = list(self.replay_buffer.sample(self.config.REPLAY_BATCH_SIZE, dtype=None)[0])
+			# dataset = self.dataset(self.config, samples, seq_len=self.config.MPC.HORIZON)
+			# loader = torch.utils.data.DataLoader(dataset, batch_size=self.config.BATCH_SIZE, shuffle=True)
+			# pbar = tqdm.tqdm(loader)
+			# for states, actions, next_states, rewards, dones in pbar:
+			# 	self.losses.append(self.network.optimize(states, actions, next_states, rewards, dones))
+			# 	pbar.set_postfix_str(f"Loss: {self.losses[-1]:.4f}")
+			self.network.envmodel.network.schedule(np.mean(self.losses))
+		self.eps = (self.time/np.mean(self.ep_lens))%1 if hasattr(self, "losses") else 1
+
+	def get_stats(self):
+		return {**super().get_stats(), "len":len(self.replay_buffer), "ep_len":np.mean(self.ep_lens)}
+
+
+Step:       0, Reward:    16.000 [   4.528], Avg:    16.000 (1.000) <0-00:00:00> ({'r_t':     1.0000, 'eps':     1.0000, 'lr':     0.0001, 'len':   0.00e+00, 'ep_len':        nan, 'eps_e':     1.0000, 'lr_e':     0.0001, 'len_e':   0.00e+00, 'ep_len_e':        nan})
+Step:    1000, Reward:    12.062 [   4.854], Avg:    14.031 (1.000) <0-00:00:05> ({'r_t':  1000.0000, 'eps':     1.0000, 'lr':     0.0001, 'len':  1351.0000, 'ep_len':    13.4132, 'eps_e':     1.0000, 'lr_e':     0.0001, 'len_e':  1351.0000, 'ep_len_e':    13.4132})
+Step:    2000, Reward:    33.562 [  14.076], Avg:    20.542 (0.202) <0-00:00:56> ({'r_t':  1000.0000, 'eps':     0.2021, 'dyn_loss':    15.2284, 'dot_loss':     1.2698, 'ddot_loss':     0.4311, 'rew_loss':    13.6207, 'lr':   6.33e-05, 'len':  2613.0000, 'ep_len':    14.4788, 'eps_e':     0.2021, 'lr_e':   6.33e-05, 'len_e':  2613.0000, 'ep_len_e':    14.4788})
+Step:    3000, Reward:    31.812 [  12.345], Avg:    23.359 (0.119) <0-00:02:24> ({'r_t':  1000.0000, 'eps':     0.1194, 'dyn_loss':     2.0362, 'dot_loss':     0.3482, 'ddot_loss':     0.2365, 'rew_loss':    13.7796, 'lr':   3.96e-06, 'len':  3687.0000, 'ep_len':    16.8482, 'eps_e':     0.1194, 'lr_e':   3.96e-06, 'len_e':  3687.0000, 'ep_len_e':    16.8482})
+Step:    4000, Reward:    39.062 [  17.166], Avg:    26.500 (0.313) <0-00:03:52> ({'r_t':  1000.0000, 'eps':     0.3126, 'dyn_loss':     1.7613, 'dot_loss':     0.3174, 'ddot_loss':     0.2352, 'rew_loss':    21.1427, 'lr':   3.26e-07, 'len':  4775.0000, 'ep_len':    18.4964, 'eps_e':     0.3126, 'lr_e':   3.26e-07, 'len_e':  4775.0000, 'ep_len_e':    18.4964})
+Step:    5000, Reward:    42.000 [  20.224], Avg:    29.083 (0.686) <0-00:05:21> ({'r_t':  1000.0000, 'eps':     0.6858, 'dyn_loss':     1.6903, 'dot_loss':     0.3134, 'ddot_loss':     0.2391, 'rew_loss':    25.3183, 'lr':   3.26e-07, 'len':  5839.0000, 'ep_len':    19.6360, 'eps_e':     0.6858, 'lr_e':   3.26e-07, 'len_e':  5839.0000, 'ep_len_e':    19.6360})
+Step:    6000, Reward:    36.875 [  15.945], Avg:    30.196 (0.779) <0-00:06:48> ({'r_t':  1000.0000, 'eps':     0.7794, 'dyn_loss':     1.6363, 'dot_loss':     0.3090, 'ddot_loss':     0.2412, 'rew_loss':    28.0533, 'lr':   3.26e-07, 'len':  6912.0000, 'ep_len':    20.4269, 'eps_e':     0.7794, 'lr_e':   3.26e-07, 'len_e':  6912.0000, 'ep_len_e':    20.4269})
+Step:    7000, Reward:    42.438 [  20.451], Avg:    31.727 (0.011) <0-00:08:17> ({'r_t':  1000.0000, 'eps':     0.0110, 'dyn_loss':     1.5821, 'dot_loss':     0.3029, 'ddot_loss':     0.2414, 'rew_loss':    30.1803, 'lr':   3.26e-07, 'len':  7985.0000, 'ep_len':    21.0867, 'eps_e':     0.0110, 'lr_e':   3.26e-07, 'len_e':  7985.0000, 'ep_len_e':    21.0867})
+Step:    8000, Reward:    58.750 [  36.977], Avg:    34.729 (0.821) <0-00:09:48> ({'r_t':  1000.0000, 'eps':     0.8210, 'dyn_loss':     1.5165, 'dot_loss':     0.2940, 'ddot_loss':     0.2398, 'rew_loss':    31.7439, 'lr':   3.26e-07, 'len':  9063.0000, 'ep_len':    21.5764, 'eps_e':     0.8210, 'lr_e':   3.26e-07, 'len_e':  9063.0000, 'ep_len_e':    21.5764})
+Step:    9000, Reward:    50.875 [  30.180], Avg:    36.344 (0.319) <0-00:11:25> ({'r_t':  1000.0000, 'eps':     0.3188, 'dyn_loss':     1.4353, 'dot_loss':     0.2823, 'ddot_loss':     0.2368, 'rew_loss':    33.0415, 'lr':   3.26e-07, 'len': 10139.0000, 'ep_len':    22.0982, 'eps_e':     0.3188, 'lr_e':   3.26e-07, 'len_e': 10139.0000, 'ep_len_e':    22.0982})
+Step:   10000, Reward:    50.250 [  19.857], Avg:    37.608 (0.357) <0-00:12:59> ({'r_t':  1000.0000, 'eps':     0.3566, 'dyn_loss':     1.3444, 'dot_loss':     0.2683, 'ddot_loss':     0.2323, 'rew_loss':    34.0230, 'lr':   3.26e-07, 'len': 11206.0000, 'ep_len':    22.5067, 'eps_e':     0.3566, 'lr_e':   3.26e-07, 'len_e': 11206.0000, 'ep_len_e':    22.5067})
+Step:   11000, Reward:    44.875 [  20.297], Avg:    38.214 (0.263) <0-00:14:31> ({'r_t':  1000.0000, 'eps':     0.2626, 'dyn_loss':     1.2454, 'dot_loss':     0.2526, 'ddot_loss':     0.2266, 'rew_loss':    34.8554, 'lr':   3.26e-07, 'len': 12272.0000, 'ep_len':    22.8112, 'eps_e':     0.2626, 'lr_e':   3.26e-07, 'len_e': 12272.0000, 'ep_len_e':    22.8112})
+Step:   12000, Reward:    47.125 [  17.331], Avg:    38.899 (0.220) <0-00:16:03> ({'r_t':  1000.0000, 'eps':     0.2205, 'dyn_loss':     1.1412, 'dot_loss':     0.2362, 'ddot_loss':     0.2203, 'rew_loss':    35.4107, 'lr':   3.26e-07, 'len': 13362.0000, 'ep_len':    23.0691, 'eps_e':     0.2205, 'lr_e':   3.26e-07, 'len_e': 13362.0000, 'ep_len_e':    23.0691})
+Step:   13000, Reward:    40.000 [  20.612], Avg:    38.978 (0.060) <0-00:17:43> ({'r_t':  1000.0000, 'eps':     0.0595, 'dyn_loss':     1.0368, 'dot_loss':     0.2196, 'ddot_loss':     0.2133, 'rew_loss':    35.9405, 'lr':   3.26e-07, 'len': 14427.0000, 'ep_len':    23.2551, 'eps_e':     0.0595, 'lr_e':   3.26e-07, 'len_e': 14427.0000, 'ep_len_e':    23.2551})
+Step:   14000, Reward:    60.188 [  26.094], Avg:    40.392 (0.847) <0-00:19:17> ({'r_t':  1000.0000, 'eps':     0.8475, 'dyn_loss':     0.9385, 'dot_loss':     0.2033, 'ddot_loss':     0.2058, 'rew_loss':    36.2575, 'lr':   3.26e-07, 'len': 15493.0000, 'ep_len':    23.4583, 'eps_e':     0.8475, 'lr_e':   3.26e-07, 'len_e': 15493.0000, 'ep_len_e':    23.4583})
+Step:   15000, Reward:    67.312 [  28.142], Avg:    42.074 (0.793) <0-00:20:51> ({'r_t':  1000.0000, 'eps':     0.7930, 'dyn_loss':     0.8489, 'dot_loss':     0.1878, 'ddot_loss':     0.1981, 'rew_loss':    36.7990, 'lr':   3.26e-07, 'len': 16540.0000, 'ep_len':    23.6686, 'eps_e':     0.7930, 'lr_e':   3.26e-07, 'len_e': 16540.0000, 'ep_len_e':    23.6686})
+Step:   16000, Reward:    49.688 [  15.991], Avg:    42.522 (0.212) <0-00:22:29> ({'r_t':  1000.0000, 'eps':     0.2121, 'dyn_loss':     0.7658, 'dot_loss':     0.1731, 'ddot_loss':     0.1901, 'rew_loss':    37.2825, 'lr':   3.26e-07, 'len': 17621.0000, 'ep_len':    23.8745, 'eps_e':     0.2121, 'lr_e':   3.26e-07, 'len_e': 17621.0000, 'ep_len_e':    23.8745})
+Step:   17000, Reward:    42.625 [  17.124], Avg:    42.528 (0.412) <0-00:24:02> ({'r_t':  1000.0000, 'eps':     0.4125, 'dyn_loss':     0.6916, 'dot_loss':     0.1595, 'ddot_loss':     0.1821, 'rew_loss':    37.5307, 'lr':   3.26e-07, 'len': 18681.0000, 'ep_len':    24.0327, 'eps_e':     0.4125, 'lr_e':   3.26e-07, 'len_e': 18681.0000, 'ep_len_e':    24.0327})
+Step:   18000, Reward:    47.875 [  20.012], Avg:    42.809 (0.552) <0-00:25:35> ({'r_t':  1000.0000, 'eps':     0.5522, 'dyn_loss':     0.6278, 'dot_loss':     0.1469, 'ddot_loss':     0.1743, 'rew_loss':    37.8071, 'lr':   3.26e-07, 'len': 19744.0000, 'ep_len':    24.2095, 'eps_e':     0.5522, 'lr_e':   3.26e-07, 'len_e': 19744.0000, 'ep_len_e':    24.2095})
+Step:   19000, Reward:    58.312 [  21.606], Avg:    43.584 (0.056) <0-00:27:11> ({'r_t':  1000.0000, 'eps':     0.0562, 'dyn_loss':     0.5707, 'dot_loss':     0.1356, 'ddot_loss':     0.1668, 'rew_loss':    38.2238, 'lr':   3.26e-07, 'len': 20810.0000, 'ep_len':    24.4211, 'eps_e':     0.0562, 'lr_e':   3.26e-07, 'len_e': 20810.0000, 'ep_len_e':    24.4211})
+Step:   20000, Reward:    45.062 [  25.036], Avg:    43.655 (0.486) <0-00:28:44> ({'r_t':  1000.0000, 'eps':     0.4858, 'dyn_loss':     0.5203, 'dot_loss':     0.1256, 'ddot_loss':     0.1597, 'rew_loss':    38.6472, 'lr':   3.26e-07, 'len': 21852.0000, 'ep_len':    24.5566, 'eps_e':     0.4858, 'lr_e':   3.26e-07, 'len_e': 21852.0000, 'ep_len_e':    24.5566})
+Step:   21000, Reward:    46.562 [  17.396], Avg:    43.787 (0.565) <0-00:30:18> ({'r_t':  1000.0000, 'eps':     0.5651, 'dyn_loss':     0.4762, 'dot_loss':     0.1167, 'ddot_loss':     0.1530, 'rew_loss':    38.9127, 'lr':   3.26e-07, 'len': 22915.0000, 'ep_len':    24.7488, 'eps_e':     0.5651, 'lr_e':   3.26e-07, 'len_e': 22915.0000, 'ep_len_e':    24.7488})
+Step:   22000, Reward:    55.688 [  20.823], Avg:    44.304 (0.790) <0-00:31:56> ({'r_t':  1000.0000, 'eps':     0.7905, 'dyn_loss':     0.4376, 'dot_loss':     0.1091, 'ddot_loss':     0.1469, 'rew_loss':    39.3276, 'lr':   3.26e-07, 'len': 23961.0000, 'ep_len':    24.8939, 'eps_e':     0.7905, 'lr_e':   3.26e-07, 'len_e': 23961.0000, 'ep_len_e':    24.8939})
+Step:   23000, Reward:    47.062 [  21.367], Avg:    44.419 (0.172) <0-00:33:29> ({'r_t':  1000.0000, 'eps':     0.1715, 'dyn_loss':     0.4049, 'dot_loss':     0.1025, 'ddot_loss':     0.1412, 'rew_loss':    39.6321, 'lr':   3.26e-07, 'len': 25031.0000, 'ep_len':    25.0509, 'eps_e':     0.1715, 'lr_e':   3.26e-07, 'len_e': 25031.0000, 'ep_len_e':    25.0509})
+Step:   24000, Reward:    46.188 [  18.915], Avg:    44.490 (0.324) <0-00:35:06> ({'r_t':  1000.0000, 'eps':     0.3241, 'dyn_loss':     0.3764, 'dot_loss':     0.0969, 'ddot_loss':     0.1360, 'rew_loss':    39.8352, 'lr':   3.26e-07, 'len': 26094.0000, 'ep_len':    25.1497, 'eps_e':     0.3241, 'lr_e':   3.26e-07, 'len_e': 26094.0000, 'ep_len_e':    25.1497})
+Step:   25000, Reward:    65.500 [  19.605], Avg:    45.298 (0.817) <0-00:36:45> ({'r_t':  1000.0000, 'eps':     0.8172, 'dyn_loss':     0.3517, 'dot_loss':     0.0922, 'ddot_loss':     0.1314, 'rew_loss':    39.9554, 'lr':   3.26e-07, 'len': 27153.0000, 'ep_len':    25.2582, 'eps_e':     0.8172, 'lr_e':   3.26e-07, 'len_e': 27153.0000, 'ep_len_e':    25.2582})
+Step:   26000, Reward:    49.250 [  15.213], Avg:    45.444 (0.029) <0-00:38:20> ({'r_t':  1000.0000, 'eps':     0.0294, 'dyn_loss':     0.3299, 'dot_loss':     0.0881, 'ddot_loss':     0.1271, 'rew_loss':    40.0717, 'lr':   3.26e-07, 'len': 28221.0000, 'ep_len':    25.3414, 'eps_e':     0.0294, 'lr_e':   3.26e-07, 'len_e': 28221.0000, 'ep_len_e':    25.3414})
+Step:   27000, Reward:    53.000 [  29.787], Avg:    45.714 (0.156) <0-00:39:54> ({'r_t':  1000.0000, 'eps':     0.1564, 'dyn_loss':     0.3107, 'dot_loss':     0.0847, 'ddot_loss':     0.1234, 'rew_loss':    40.2334, 'lr':   3.26e-07, 'len': 29284.0000, 'ep_len':    25.4209, 'eps_e':     0.1564, 'lr_e':   3.26e-07, 'len_e': 29284.0000, 'ep_len_e':    25.4209})
+Step:   28000, Reward:    57.625 [  25.015], Avg:    46.125 (0.700) <0-00:41:25> ({'r_t':  1000.0000, 'eps':     0.6995, 'dyn_loss':     0.2926, 'dot_loss':     0.0816, 'ddot_loss':     0.1199, 'rew_loss':    40.4481, 'lr':   3.26e-07, 'len': 30355.0000, 'ep_len':    25.5088, 'eps_e':     0.6995, 'lr_e':   3.26e-07, 'len_e': 30355.0000, 'ep_len_e':    25.5088})
+Step:   29000, Reward:    60.062 [  22.955], Avg:    46.590 (0.132) <0-00:42:59> ({'r_t':  1000.0000, 'eps':     0.1319, 'dyn_loss':     0.2768, 'dot_loss':     0.0790, 'ddot_loss':     0.1169, 'rew_loss':    40.5391, 'lr':   3.26e-07, 'len': 31397.0000, 'ep_len':    25.6163, 'eps_e':     0.1319, 'lr_e':   3.26e-07, 'len_e': 31397.0000, 'ep_len_e':    25.6163})
+Step:   30000, Reward:    51.688 [  16.892], Avg:    46.754 (0.703) <0-00:44:40> ({'r_t':  1000.0000, 'eps':     0.7031, 'dyn_loss':     0.2627, 'dot_loss':     0.0768, 'ddot_loss':     0.1142, 'rew_loss':    40.6847, 'lr':   3.26e-07, 'len': 32459.0000, 'ep_len':    25.7143, 'eps_e':     0.7031, 'lr_e':   3.26e-07, 'len_e': 32459.0000, 'ep_len_e':    25.7143})
+Step:   31000, Reward:    71.812 [  31.983], Avg:    47.537 (0.848) <0-00:46:16> ({'r_t':  1000.0000, 'eps':     0.8475, 'dyn_loss':     0.2500, 'dot_loss':     0.0750, 'ddot_loss':     0.1120, 'rew_loss':    40.8562, 'lr':   3.26e-07, 'len': 33523.0000, 'ep_len':    25.8159, 'eps_e':     0.8475, 'lr_e':   3.26e-07, 'len_e': 33523.0000, 'ep_len_e':    25.8159})
+Step:   32000, Reward:    69.312 [  20.459], Avg:    48.197 (0.336) <0-00:47:56> ({'r_t':  1000.0000, 'eps':     0.3358, 'dyn_loss':     0.2380, 'dot_loss':     0.0735, 'ddot_loss':     0.1100, 'rew_loss':    41.0660, 'lr':   3.26e-07, 'len': 34594.0000, 'ep_len':    25.9047, 'eps_e':     0.3358, 'lr_e':   3.26e-07, 'len_e': 34594.0000, 'ep_len_e':    25.9047})
+Step:   33000, Reward:    53.812 [  27.077], Avg:    48.362 (0.370) <0-00:49:34> ({'r_t':  1000.0000, 'eps':     0.3703, 'dyn_loss':     0.2271, 'dot_loss':     0.0723, 'ddot_loss':     0.1083, 'rew_loss':    41.1803, 'lr':   3.26e-07, 'len': 35642.0000, 'ep_len':    25.9979, 'eps_e':     0.3703, 'lr_e':   3.26e-07, 'len_e': 35642.0000, 'ep_len_e':    25.9979})
+Step:   34000, Reward:    77.750 [  44.832], Avg:    49.202 (0.604) <0-00:51:13> ({'r_t':  1000.0000, 'eps':     0.6038, 'dyn_loss':     0.2169, 'dot_loss':     0.0713, 'ddot_loss':     0.1069, 'rew_loss':    41.3994, 'lr':   3.26e-07, 'len': 36674.0000, 'ep_len':    26.1023, 'eps_e':     0.6038, 'lr_e':   3.26e-07, 'len_e': 36674.0000, 'ep_len_e':    26.1023})
+Step:   35000, Reward:    62.500 [  31.217], Avg:    49.571 (0.055) <0-00:52:52> ({'r_t':  1000.0000, 'eps':     0.0554, 'dyn_loss':     0.2071, 'dot_loss':     0.0705, 'ddot_loss':     0.1058, 'rew_loss':    41.4999, 'lr':   3.26e-07, 'len': 37731.0000, 'ep_len':    26.1777, 'eps_e':     0.0554, 'lr_e':   3.26e-07, 'len_e': 37731.0000, 'ep_len_e':    26.1777})
+Step:   36000, Reward:    60.438 [  27.785], Avg:    49.865 (0.228) <0-00:54:28> ({'r_t':  1000.0000, 'eps':     0.2277, 'dyn_loss':     0.1977, 'dot_loss':     0.0699, 'ddot_loss':     0.1049, 'rew_loss':    41.6048, 'lr':   3.26e-07, 'len': 38793.0000, 'ep_len':    26.2354, 'eps_e':     0.2277, 'lr_e':   3.26e-07, 'len_e': 38793.0000, 'ep_len_e':    26.2354})
+Step:   37000, Reward:    86.500 [  36.043], Avg:    50.829 (0.915) <0-00:56:06> ({'r_t':  1000.0000, 'eps':     0.9149, 'dyn_loss':     0.1898, 'dot_loss':     0.0697, 'ddot_loss':     0.1043, 'rew_loss':    41.7024, 'lr':   3.26e-07, 'len': 39844.0000, 'ep_len':    26.2994, 'eps_e':     0.9149, 'lr_e':   3.26e-07, 'len_e': 39844.0000, 'ep_len_e':    26.2994})
+Step:   38000, Reward:    70.562 [  24.403], Avg:    51.335 (0.571) <0-00:57:49> ({'r_t':  1000.0000, 'eps':     0.5710, 'dyn_loss':     0.1817, 'dot_loss':     0.0694, 'ddot_loss':     0.1038, 'rew_loss':    41.8080, 'lr':   3.26e-07, 'len': 40914.0000, 'ep_len':    26.3426, 'eps_e':     0.5710, 'lr_e':   3.26e-07, 'len_e': 40914.0000, 'ep_len_e':    26.3426})
+Step:   39000, Reward:    74.625 [  35.009], Avg:    51.917 (0.909) <0-00:59:28> ({'r_t':  1000.0000, 'eps':     0.9093, 'dyn_loss':     0.1743, 'dot_loss':     0.0693, 'ddot_loss':     0.1036, 'rew_loss':    41.8876, 'lr':   3.26e-07, 'len': 41981.0000, 'ep_len':    26.3893, 'eps_e':     0.9093, 'lr_e':   3.26e-07, 'len_e': 41981.0000, 'ep_len_e':    26.3893})
+Step:   40000, Reward:    72.438 [  37.083], Avg:    52.418 (0.033) <0-01:01:05> ({'r_t':  1000.0000, 'eps':     0.0331, 'dyn_loss':     0.1670, 'dot_loss':     0.0693, 'ddot_loss':     0.1035, 'rew_loss':    41.9465, 'lr':   3.26e-07, 'len': 43025.0000, 'ep_len':    26.4551, 'eps_e':     0.0331, 'lr_e':   3.26e-07, 'len_e': 43025.0000, 'ep_len_e':    26.4551})
+Step:   41000, Reward:    76.062 [  33.366], Avg:    52.981 (0.461) <0-01:02:45> ({'r_t':  1000.0000, 'eps':     0.4607, 'dyn_loss':     0.1605, 'dot_loss':     0.0695, 'ddot_loss':     0.1036, 'rew_loss':    42.0707, 'lr':   3.26e-07, 'len': 44064.0000, 'ep_len':    26.5128, 'eps_e':     0.4607, 'lr_e':   3.26e-07, 'len_e': 44064.0000, 'ep_len_e':    26.5128})
+Step:   42000, Reward:    83.438 [  40.722], Avg:    53.689 (0.682) <0-01:04:26> ({'r_t':  1000.0000, 'eps':     0.6821, 'dyn_loss':     0.1538, 'dot_loss':     0.0696, 'ddot_loss':     0.1038, 'rew_loss':    42.2259, 'lr':   3.26e-07, 'len': 45108.0000, 'ep_len':    26.5714, 'eps_e':     0.6821, 'lr_e':   3.26e-07, 'len_e': 45108.0000, 'ep_len_e':    26.5714})
+Step:   43000, Reward:    83.375 [  38.926], Avg:    54.364 (0.980) <0-01:06:10> ({'r_t':  1000.0000, 'eps':     0.9797, 'dyn_loss':     0.1479, 'dot_loss':     0.0698, 'ddot_loss':     0.1042, 'rew_loss':    42.2928, 'lr':   3.26e-07, 'len': 46177.0000, 'ep_len':    26.6263, 'eps_e':     0.9797, 'lr_e':   3.26e-07, 'len_e': 46177.0000, 'ep_len_e':    26.6263})
+Step:   44000, Reward:    82.125 [  29.062], Avg:    54.981 (0.436) <0-01:07:47> ({'r_t':  1000.0000, 'eps':     0.4359, 'dyn_loss':     0.1423, 'dot_loss':     0.0702, 'ddot_loss':     0.1048, 'rew_loss':    42.2940, 'lr':   3.26e-07, 'len': 47212.0000, 'ep_len':    26.6926, 'eps_e':     0.4359, 'lr_e':   3.26e-07, 'len_e': 47212.0000, 'ep_len_e':    26.6926})
+Step:   45000, Reward:    94.188 [  45.943], Avg:    55.833 (0.652) <0-01:09:32> ({'r_t':  1000.0000, 'eps':     0.6521, 'dyn_loss':     0.1367, 'dot_loss':     0.0705, 'ddot_loss':     0.1054, 'rew_loss':    42.4563, 'lr':   3.26e-07, 'len': 48243.0000, 'ep_len':    26.7600, 'eps_e':     0.6521, 'lr_e':   3.26e-07, 'len_e': 48243.0000, 'ep_len_e':    26.7600})
+Step:   46000, Reward:    78.375 [  38.441], Avg:    56.312 (0.335) <0-01:11:11> ({'r_t':  1000.0000, 'eps':     0.3354, 'dyn_loss':     0.1314, 'dot_loss':     0.0709, 'ddot_loss':     0.1061, 'rew_loss':    42.5228, 'lr':   3.26e-07, 'len': 49287.0000, 'ep_len':    26.8331, 'eps_e':     0.3354, 'lr_e':   3.26e-07, 'len_e': 49287.0000, 'ep_len_e':    26.8331})
+Step:   47000, Reward:   112.188 [  42.987], Avg:    57.477 (0.325) <0-01:12:54> ({'r_t':  1000.0000, 'eps':     0.3251, 'dyn_loss':     0.1266, 'dot_loss':     0.0714, 'ddot_loss':     0.1070, 'rew_loss':    42.6498, 'lr':   3.26e-07, 'len': 50325.0000, 'ep_len':    26.8988, 'eps_e':     0.3251, 'lr_e':   3.26e-07, 'len_e': 50325.0000, 'ep_len_e':    26.8988})
+Step:   48000, Reward:    86.375 [  37.631], Avg:    58.066 (0.786) <0-01:14:36> ({'r_t':  1000.0000, 'eps':     0.7857, 'dyn_loss':     0.1220, 'dot_loss':     0.0720, 'ddot_loss':     0.1081, 'rew_loss':    42.7491, 'lr':   3.26e-07, 'len': 51357.0000, 'ep_len':    26.9701, 'eps_e':     0.7857, 'lr_e':   3.26e-07, 'len_e': 51357.0000, 'ep_len_e':    26.9701})
+Step:   49000, Reward:    96.500 [  38.030], Avg:    58.835 (0.735) <0-01:16:16> ({'r_t':  1000.0000, 'eps':     0.7353, 'dyn_loss':     0.1176, 'dot_loss':     0.0726, 'ddot_loss':     0.1094, 'rew_loss':    42.7935, 'lr':   3.26e-07, 'len': 52399.0000, 'ep_len':    27.0315, 'eps_e':     0.7353, 'lr_e':   3.26e-07, 'len_e': 52399.0000, 'ep_len_e':    27.0315})
+Step:   50000, Reward:   107.812 [  43.778], Avg:    59.795 (0.759) <0-01:18:02> ({'r_t':  1000.0000, 'eps':     0.7586, 'dyn_loss':     0.1134, 'dot_loss':     0.0732, 'ddot_loss':     0.1108, 'rew_loss':    42.9427, 'lr':   3.26e-07, 'len': 53435.0000, 'ep_len':    27.0897, 'eps_e':     0.7586, 'lr_e':   3.26e-07, 'len_e': 53435.0000, 'ep_len_e':    27.0897})
+Step:   51000, Reward:    96.438 [  47.840], Avg:    60.500 (0.093) <0-01:19:41> ({'r_t':  1000.0000, 'eps':     0.0927, 'dyn_loss':     0.1092, 'dot_loss':     0.0739, 'ddot_loss':     0.1123, 'rew_loss':    42.9728, 'lr':   3.26e-07, 'len': 54510.0000, 'ep_len':    27.1124, 'eps_e':     0.0927, 'lr_e':   3.26e-07, 'len_e': 54510.0000, 'ep_len_e':    27.1124})
+Step:   52000, Reward:   110.500 [  51.925], Avg:    61.443 (0.843) <0-01:21:26> ({'r_t':  1000.0000, 'eps':     0.8434, 'dyn_loss':     0.1052, 'dot_loss':     0.0746, 'ddot_loss':     0.1140, 'rew_loss':    43.0993, 'lr':   3.26e-07, 'len': 55552.0000, 'ep_len':    27.1568, 'eps_e':     0.8434, 'lr_e':   3.26e-07, 'len_e': 55552.0000, 'ep_len_e':    27.1568})
+Step:   53000, Reward:   104.125 [  37.799], Avg:    62.234 (0.361) <0-01:23:05> ({'r_t':  1000.0000, 'eps':     0.3610, 'dyn_loss':     0.1017, 'dot_loss':     0.0756, 'ddot_loss':     0.1160, 'rew_loss':    43.0280, 'lr':   3.26e-07, 'len': 56621.0000, 'ep_len':    27.1750, 'eps_e':     0.3610, 'lr_e':   3.26e-07, 'len_e': 56621.0000, 'ep_len_e':    27.1750})
+Step:   54000, Reward:   112.938 [  47.402], Avg:    63.156 (0.761) <0-01:24:43> ({'r_t':  1000.0000, 'eps':     0.7607, 'dyn_loss':     0.0981, 'dot_loss':     0.0766, 'ddot_loss':     0.1182, 'rew_loss':    43.0147, 'lr':   3.26e-07, 'len': 57664.0000, 'ep_len':    27.2215, 'eps_e':     0.7607, 'lr_e':   3.26e-07, 'len_e': 57664.0000, 'ep_len_e':    27.2215})
+Step:   55000, Reward:    98.125 [  37.390], Avg:    63.780 (0.725) <0-01:26:27> ({'r_t':  1000.0000, 'eps':     0.7250, 'dyn_loss':     0.0949, 'dot_loss':     0.0776, 'ddot_loss':     0.1205, 'rew_loss':    43.0971, 'lr':   3.26e-07, 'len': 58717.0000, 'ep_len':    27.2589, 'eps_e':     0.7250, 'lr_e':   3.26e-07, 'len_e': 58717.0000, 'ep_len_e':    27.2589})
+Step:   56000, Reward:    86.312 [  26.955], Avg:    64.175 (0.544) <0-01:28:05> ({'r_t':  1000.0000, 'eps':     0.5439, 'dyn_loss':     0.0916, 'dot_loss':     0.0785, 'ddot_loss':     0.1229, 'rew_loss':    43.0764, 'lr':   3.26e-07, 'len': 59768.0000, 'ep_len':    27.2837, 'eps_e':     0.5439, 'lr_e':   3.26e-07, 'len_e': 59768.0000, 'ep_len_e':    27.2837})
+Step:   57000, Reward:   123.188 [  29.460], Avg:    65.193 (0.200) <0-01:29:41> ({'r_t':  1000.0000, 'eps':     0.2003, 'dyn_loss':     0.0886, 'dot_loss':     0.0797, 'ddot_loss':     0.1257, 'rew_loss':    43.0778, 'lr':   3.26e-07, 'len': 60815.0000, 'ep_len':    27.3098, 'eps_e':     0.2003, 'lr_e':   3.26e-07, 'len_e': 60815.0000, 'ep_len_e':    27.3098})
+Step:   58000, Reward:    98.438 [  41.096], Avg:    65.756 (0.334) <0-01:31:18> ({'r_t':  1000.0000, 'eps':     0.3343, 'dyn_loss':     0.0857, 'dot_loss':     0.0809, 'ddot_loss':     0.1285, 'rew_loss':    43.0739, 'lr':   3.26e-07, 'len': 61883.0000, 'ep_len':    27.3160, 'eps_e':     0.3343, 'lr_e':   3.26e-07, 'len_e': 61883.0000, 'ep_len_e':    27.3160})
+Step:   59000, Reward:   128.250 [  44.443], Avg:    66.798 (0.312) <0-01:33:02> ({'r_t':  1000.0000, 'eps':     0.3120, 'dyn_loss':     0.0829, 'dot_loss':     0.0822, 'ddot_loss':     0.1317, 'rew_loss':    43.0699, 'lr':   3.26e-07, 'len': 62958.0000, 'ep_len':    27.3240, 'eps_e':     0.3120, 'lr_e':   3.26e-07, 'len_e': 62958.0000, 'ep_len_e':    27.3240})
+Step:   60000, Reward:   103.312 [  39.826], Avg:    67.397 (0.748) <0-01:34:45> ({'r_t':  1000.0000, 'eps':     0.7480, 'dyn_loss':     0.0802, 'dot_loss':     0.0834, 'ddot_loss':     0.1348, 'rew_loss':    43.0270, 'lr':   3.26e-07, 'len': 63991.0000, 'ep_len':    27.3759, 'eps_e':     0.7480, 'lr_e':   3.26e-07, 'len_e': 63991.0000, 'ep_len_e':    27.3759})
+Step:   61000, Reward:   118.312 [  49.492], Avg:    68.218 (0.949) <0-01:36:27> ({'r_t':  1000.0000, 'eps':     0.9485, 'dyn_loss':     0.0776, 'dot_loss':     0.0847, 'ddot_loss':     0.1383, 'rew_loss':    43.0432, 'lr':   3.26e-07, 'len': 65060.0000, 'ep_len':    27.3799, 'eps_e':     0.9485, 'lr_e':   3.26e-07, 'len_e': 65060.0000, 'ep_len_e':    27.3799})
+Step:   62000, Reward:   125.312 [  40.707], Avg:    69.124 (0.627) <0-01:38:15> ({'r_t':  1000.0000, 'eps':     0.6271, 'dyn_loss':     0.0750, 'dot_loss':     0.0860, 'ddot_loss':     0.1417, 'rew_loss':    42.9812, 'lr':   3.26e-07, 'len': 66128.0000, 'ep_len':    27.3901, 'eps_e':     0.6271, 'lr_e':   3.26e-07, 'len_e': 66128.0000, 'ep_len_e':    27.3901})
+Step:   63000, Reward:    75.812 [  46.496], Avg:    69.229 (0.996) <0-01:39:57> ({'r_t':  1000.0000, 'eps':     0.9958, 'dyn_loss':     0.0728, 'dot_loss':     0.0877, 'ddot_loss':     0.1456, 'rew_loss':    42.9294, 'lr':   3.26e-07, 'len': 67192.0000, 'ep_len':    27.4037, 'eps_e':     0.9958, 'lr_e':   3.26e-07, 'len_e': 67192.0000, 'ep_len_e':    27.4037})
+Step:   64000, Reward:    85.812 [  44.854], Avg:    69.484 (0.940) <0-01:41:41> ({'r_t':  1000.0000, 'eps':     0.9396, 'dyn_loss':     0.0705, 'dot_loss':     0.0891, 'ddot_loss':     0.1494, 'rew_loss':    42.9074, 'lr':   3.26e-07, 'len': 68245.0000, 'ep_len':    27.4219, 'eps_e':     0.9396, 'lr_e':   3.26e-07, 'len_e': 68245.0000, 'ep_len_e':    27.4219})
+Step:   65000, Reward:   111.625 [  36.980], Avg:    70.122 (0.290) <0-01:43:24> ({'r_t':  1000.0000, 'eps':     0.2899, 'dyn_loss':     0.0683, 'dot_loss':     0.0906, 'ddot_loss':     0.1533, 'rew_loss':    42.9141, 'lr':   3.26e-07, 'len': 69299.0000, 'ep_len':    27.4464, 'eps_e':     0.2899, 'lr_e':   3.26e-07, 'len_e': 69299.0000, 'ep_len_e':    27.4464})
+Step:   66000, Reward:   106.562 [  21.107], Avg:    70.666 (0.179) <0-01:45:04> ({'r_t':  1000.0000, 'eps':     0.1790, 'dyn_loss':     0.0663, 'dot_loss':     0.0921, 'ddot_loss':     0.1573, 'rew_loss':    42.8520, 'lr':   3.26e-07, 'len': 70356.0000, 'ep_len':    27.4755, 'eps_e':     0.1790, 'lr_e':   3.26e-07, 'len_e': 70356.0000, 'ep_len_e':    27.4755})
+Step:   67000, Reward:   113.250 [  43.442], Avg:    71.292 (0.830) <0-01:46:51> ({'r_t':  1000.0000, 'eps':     0.8302, 'dyn_loss':     0.0645, 'dot_loss':     0.0938, 'ddot_loss':     0.1615, 'rew_loss':    42.8603, 'lr':   3.26e-07, 'len': 71422.0000, 'ep_len':    27.4726, 'eps_e':     0.8302, 'lr_e':   3.26e-07, 'len_e': 71422.0000, 'ep_len_e':    27.4726})
+Step:   68000, Reward:   103.938 [  50.760], Avg:    71.765 (0.099) <0-01:48:33> ({'r_t':  1000.0000, 'eps':     0.0985, 'dyn_loss':     0.0626, 'dot_loss':     0.0953, 'ddot_loss':     0.1656, 'rew_loss':    42.8162, 'lr':   3.26e-07, 'len': 72488.0000, 'ep_len':    27.4741, 'eps_e':     0.0985, 'lr_e':   3.26e-07, 'len_e': 72488.0000, 'ep_len_e':    27.4741})
+Step:   69000, Reward:   144.125 [  32.628], Avg:    72.799 (0.679) <0-01:50:21> ({'r_t':  1000.0000, 'eps':     0.6794, 'dyn_loss':     0.0608, 'dot_loss':     0.0968, 'ddot_loss':     0.1698, 'rew_loss':    42.7482, 'lr':   3.26e-07, 'len': 73545.0000, 'ep_len':    27.5049, 'eps_e':     0.6794, 'lr_e':   3.26e-07, 'len_e': 73545.0000, 'ep_len_e':    27.5049})
+Step:   70000, Reward:   110.188 [  52.579], Avg:    73.326 (0.545) <0-01:52:04> ({'r_t':  1000.0000, 'eps':     0.5445, 'dyn_loss':     0.0591, 'dot_loss':     0.0985, 'ddot_loss':     0.1742, 'rew_loss':    42.6673, 'lr':   3.26e-07, 'len': 74596.0000, 'ep_len':    27.5319, 'eps_e':     0.5445, 'lr_e':   3.26e-07, 'len_e': 74596.0000, 'ep_len_e':    27.5319})
+Step:   71000, Reward:   115.688 [  39.153], Avg:    73.914 (0.732) <0-01:53:50> ({'r_t':  1000.0000, 'eps':     0.7323, 'dyn_loss':     0.0575, 'dot_loss':     0.1000, 'ddot_loss':     0.1781, 'rew_loss':    42.7172, 'lr':   3.26e-07, 'len': 75654.0000, 'ep_len':    27.5654, 'eps_e':     0.7323, 'lr_e':   3.26e-07, 'len_e': 75654.0000, 'ep_len_e':    27.5654})
+Step:   72000, Reward:   106.000 [  39.909], Avg:    74.354 (0.359) <0-01:55:33> ({'r_t':  1000.0000, 'eps':     0.3590, 'dyn_loss':     0.0560, 'dot_loss':     0.1017, 'ddot_loss':     0.1826, 'rew_loss':    42.7312, 'lr':   3.26e-07, 'len': 76701.0000, 'ep_len':    27.5828, 'eps_e':     0.3590, 'lr_e':   3.26e-07, 'len_e': 76701.0000, 'ep_len_e':    27.5828})
+Step:   73000, Reward:   123.250 [  51.388], Avg:    75.014 (0.438) <0-01:57:21> ({'r_t':  1000.0000, 'eps':     0.4377, 'dyn_loss':     0.0544, 'dot_loss':     0.1031, 'ddot_loss':     0.1865, 'rew_loss':    42.7351, 'lr':   3.26e-07, 'len': 77730.0000, 'ep_len':    27.6055, 'eps_e':     0.4377, 'lr_e':   3.26e-07, 'len_e': 77730.0000, 'ep_len_e':    27.6055})
+Step:   74000, Reward:   129.062 [  51.762], Avg:    75.735 (0.510) <0-01:59:08> ({'r_t':  1000.0000, 'eps':     0.5098, 'dyn_loss':     0.0531, 'dot_loss':     0.1048, 'ddot_loss':     0.1908, 'rew_loss':    42.6816, 'lr':   3.26e-07, 'len': 78776.0000, 'ep_len':    27.6277, 'eps_e':     0.5098, 'lr_e':   3.26e-07, 'len_e': 78776.0000, 'ep_len_e':    27.6277})
+Step:   75000, Reward:   111.375 [  44.985], Avg:    76.204 (0.193) <0-02:00:52> ({'r_t':  1000.0000, 'eps':     0.1931, 'dyn_loss':     0.0517, 'dot_loss':     0.1062, 'ddot_loss':     0.1946, 'rew_loss':    42.6439, 'lr':   3.26e-07, 'len': 79852.0000, 'ep_len':    27.6533, 'eps_e':     0.1931, 'lr_e':   3.26e-07, 'len_e': 79852.0000, 'ep_len_e':    27.6533})
+Step:   76000, Reward:   106.750 [  51.068], Avg:    76.601 (0.677) <0-02:02:40> ({'r_t':  1000.0000, 'eps':     0.6766, 'dyn_loss':     0.0503, 'dot_loss':     0.1076, 'ddot_loss':     0.1985, 'rew_loss':    42.5771, 'lr':   3.26e-07, 'len': 80918.0000, 'ep_len':    27.6500, 'eps_e':     0.6766, 'lr_e':   3.26e-07, 'len_e': 80918.0000, 'ep_len_e':    27.6500})
+Step:   77000, Reward:   113.625 [  37.833], Avg:    77.075 (0.327) <0-02:04:25> ({'r_t':  1000.0000, 'eps':     0.3271, 'dyn_loss':     0.0492, 'dot_loss':     0.1090, 'ddot_loss':     0.2022, 'rew_loss':    42.5754, 'lr':   3.26e-07, 'len': 81965.0000, 'ep_len':    27.6850, 'eps_e':     0.3271, 'lr_e':   3.26e-07, 'len_e': 81965.0000, 'ep_len_e':    27.6850})
+Step:   78000, Reward:   110.938 [  42.795], Avg:    77.504 (0.150) <0-02:06:12> ({'r_t':  1000.0000, 'eps':     0.1503, 'dyn_loss':     0.0480, 'dot_loss':     0.1105, 'ddot_loss':     0.2060, 'rew_loss':    42.5282, 'lr':   3.26e-07, 'len': 83026.0000, 'ep_len':    27.7076, 'eps_e':     0.1503, 'lr_e':   3.26e-07, 'len_e': 83026.0000, 'ep_len_e':    27.7076})
+Step:   79000, Reward:   111.812 [  39.283], Avg:    77.933 (0.282) <0-02:08:00> ({'r_t':  1000.0000, 'eps':     0.2818, 'dyn_loss':     0.0468, 'dot_loss':     0.1118, 'ddot_loss':     0.2095, 'rew_loss':    42.5395, 'lr':   3.26e-07, 'len': 84088.0000, 'ep_len':    27.7169, 'eps_e':     0.2818, 'lr_e':   3.26e-07, 'len_e': 84088.0000, 'ep_len_e':    27.7169})
+Step:   80000, Reward:    99.438 [  39.978], Avg:    78.198 (0.395) <0-02:09:44> ({'r_t':  1000.0000, 'eps':     0.3946, 'dyn_loss':     0.0458, 'dot_loss':     0.1129, 'ddot_loss':     0.2125, 'rew_loss':    42.5285, 'lr':   3.26e-07, 'len': 85140.0000, 'ep_len':    27.7358, 'eps_e':     0.3946, 'lr_e':   3.26e-07, 'len_e': 85140.0000, 'ep_len_e':    27.7358})
+Step:   81000, Reward:   112.125 [  33.780], Avg:    78.612 (0.567) <0-02:11:19> ({'r_t':  1000.0000, 'eps':     0.5669, 'dyn_loss':     0.0448, 'dot_loss':     0.1142, 'ddot_loss':     0.2159, 'rew_loss':    42.5082, 'lr':   3.26e-07, 'len': 86203.0000, 'ep_len':    27.7537, 'eps_e':     0.5669, 'lr_e':   3.26e-07, 'len_e': 86203.0000, 'ep_len_e':    27.7537})
+Step:   82000, Reward:    94.938 [  48.555], Avg:    78.809 (0.741) <0-02:12:56> ({'r_t':  1000.0000, 'eps':     0.7412, 'dyn_loss':     0.0439, 'dot_loss':     0.1155, 'ddot_loss':     0.2193, 'rew_loss':    42.4139, 'lr':   3.26e-07, 'len': 87265.0000, 'ep_len':    27.7617, 'eps_e':     0.7412, 'lr_e':   3.26e-07, 'len_e': 87265.0000, 'ep_len_e':    27.7617})
+Step:   83000, Reward:   128.438 [  42.815], Avg:    79.400 (0.822) <0-02:14:41> ({'r_t':  1000.0000, 'eps':     0.8217, 'dyn_loss':     0.0430, 'dot_loss':     0.1165, 'ddot_loss':     0.2221, 'rew_loss':    42.4960, 'lr':   3.26e-07, 'len': 88310.0000, 'ep_len':    27.7798, 'eps_e':     0.8217, 'lr_e':   3.26e-07, 'len_e': 88310.0000, 'ep_len_e':    27.7798})
+Step:   84000, Reward:   104.062 [  49.425], Avg:    79.690 (0.956) <0-02:16:22> ({'r_t':  1000.0000, 'eps':     0.9565, 'dyn_loss':     0.0422, 'dot_loss':     0.1175, 'ddot_loss':     0.2247, 'rew_loss':    42.4488, 'lr':   3.26e-07, 'len': 89388.0000, 'ep_len':    27.7785, 'eps_e':     0.9565, 'lr_e':   3.26e-07, 'len_e': 89388.0000, 'ep_len_e':    27.7785})
+Step:   85000, Reward:   108.812 [  32.493], Avg:    80.028 (0.254) <0-02:18:02> ({'r_t':  1000.0000, 'eps':     0.2536, 'dyn_loss':     0.0414, 'dot_loss':     0.1184, 'ddot_loss':     0.2272, 'rew_loss':    42.4607, 'lr':   3.26e-07, 'len': 90442.0000, 'ep_len':    27.7849, 'eps_e':     0.2536, 'lr_e':   3.26e-07, 'len_e': 90442.0000, 'ep_len_e':    27.7849})
+Step:   86000, Reward:   114.812 [  41.561], Avg:    80.428 (0.491) <0-02:19:46> ({'r_t':  1000.0000, 'eps':     0.4912, 'dyn_loss':     0.0406, 'dot_loss':     0.1194, 'ddot_loss':     0.2298, 'rew_loss':    42.4078, 'lr':   3.26e-07, 'len': 91499.0000, 'ep_len':    27.7916, 'eps_e':     0.4912, 'lr_e':   3.26e-07, 'len_e': 91499.0000, 'ep_len_e':    27.7916})
+Step:   87000, Reward:    97.812 [  48.560], Avg:    80.626 (0.755) <0-02:21:33> ({'r_t':  1000.0000, 'eps':     0.7554, 'dyn_loss':     0.0399, 'dot_loss':     0.1204, 'ddot_loss':     0.2324, 'rew_loss':    42.3806, 'lr':   3.26e-07, 'len': 92564.0000, 'ep_len':    27.7980, 'eps_e':     0.7554, 'lr_e':   3.26e-07, 'len_e': 92564.0000, 'ep_len_e':    27.7980})
+Step:   88000, Reward:   111.625 [  46.346], Avg:    80.974 (0.662) <0-02:23:21> ({'r_t':  1000.0000, 'eps':     0.6617, 'dyn_loss':     0.0393, 'dot_loss':     0.1214, 'ddot_loss':     0.2348, 'rew_loss':    42.3321, 'lr':   3.26e-07, 'len': 93612.0000, 'ep_len':    27.8074, 'eps_e':     0.6617, 'lr_e':   3.26e-07, 'len_e': 93612.0000, 'ep_len_e':    27.8074})
+Step:   89000, Reward:   147.125 [  41.132], Avg:    81.709 (0.806) <0-02:25:02> ({'r_t':  1000.0000, 'eps':     0.8064, 'dyn_loss':     0.0385, 'dot_loss':     0.1221, 'ddot_loss':     0.2366, 'rew_loss':    42.3213, 'lr':   3.26e-07, 'len': 94672.0000, 'ep_len':    27.8058, 'eps_e':     0.8064, 'lr_e':   3.26e-07, 'len_e': 94672.0000, 'ep_len_e':    27.8058})
+Step:   90000, Reward:   112.375 [  42.212], Avg:    82.046 (0.703) <0-02:26:49> ({'r_t':  1000.0000, 'eps':     0.7027, 'dyn_loss':     0.0379, 'dot_loss':     0.1227, 'ddot_loss':     0.2385, 'rew_loss':    42.3824, 'lr':   3.26e-07, 'len': 95738.0000, 'ep_len':    27.8236, 'eps_e':     0.7027, 'lr_e':   3.26e-07, 'len_e': 95738.0000, 'ep_len_e':    27.8236})
+Step:   91000, Reward:   133.625 [  38.018], Avg:    82.607 (0.016) <0-02:28:35> ({'r_t':  1000.0000, 'eps':     0.0162, 'dyn_loss':     0.0373, 'dot_loss':     0.1236, 'ddot_loss':     0.2405, 'rew_loss':    42.2753, 'lr':   3.26e-07, 'len': 96809.0000, 'ep_len':    27.8289, 'eps_e':     0.0162, 'lr_e':   3.26e-07, 'len_e': 96809.0000, 'ep_len_e':    27.8289})
+Step:   92000, Reward:   137.625 [  30.131], Avg:    83.198 (0.727) <0-02:30:26> ({'r_t':  1000.0000, 'eps':     0.7272, 'dyn_loss':     0.0366, 'dot_loss':     0.1243, 'ddot_loss':     0.2424, 'rew_loss':    42.3186, 'lr':   3.26e-07, 'len': 97846.0000, 'ep_len':    27.8476, 'eps_e':     0.7272, 'lr_e':   3.26e-07, 'len_e': 97846.0000, 'ep_len_e':    27.8476})
+Step:   93000, Reward:   101.750 [  39.425], Avg:    83.396 (0.633) <0-02:32:13> ({'r_t':  1000.0000, 'eps':     0.6327, 'dyn_loss':     0.0362, 'dot_loss':     0.1248, 'ddot_loss':     0.2439, 'rew_loss':    42.2793, 'lr':   3.26e-07, 'len': 98888.0000, 'ep_len':    27.8644, 'eps_e':     0.6327, 'lr_e':   3.26e-07, 'len_e': 98888.0000, 'ep_len_e':    27.8644})
+Step:   94000, Reward:   129.938 [  49.166], Avg:    83.886 (0.468) <0-02:34:02> ({'r_t':  1000.0000, 'eps':     0.4681, 'dyn_loss':     0.0355, 'dot_loss':     0.1252, 'ddot_loss':     0.2450, 'rew_loss':    42.3117, 'lr':   3.26e-07, 'len': 99960.0000, 'ep_len':    27.8731, 'eps_e':     0.4681, 'lr_e':   3.26e-07, 'len_e': 99960.0000, 'ep_len_e':    27.8731})
+Step:   95000, Reward:   133.875 [  42.095], Avg:    84.406 (0.072) <0-02:35:45> ({'r_t':  1000.0000, 'eps':     0.0718, 'dyn_loss':     0.0350, 'dot_loss':     0.1259, 'ddot_loss':     0.2466, 'rew_loss':    42.2418, 'lr':   3.26e-07, 'len': 101023.0000, 'ep_len':    27.8835, 'eps_e':     0.0718, 'lr_e':   3.26e-07, 'len_e': 101023.0000, 'ep_len_e':    27.8835})
+Step:   96000, Reward:   131.375 [  55.572], Avg:    84.890 (0.699) <0-02:37:37> ({'r_t':  1000.0000, 'eps':     0.6991, 'dyn_loss':     0.0345, 'dot_loss':     0.1265, 'ddot_loss':     0.2483, 'rew_loss':    42.2422, 'lr':   3.26e-07, 'len': 102076.0000, 'ep_len':    27.8935, 'eps_e':     0.6991, 'lr_e':   3.26e-07, 'len_e': 102076.0000, 'ep_len_e':    27.8935})
+Step:   97000, Reward:   132.188 [  42.341], Avg:    85.373 (0.620) <0-02:39:22> ({'r_t':  1000.0000, 'eps':     0.6205, 'dyn_loss':     0.0340, 'dot_loss':     0.1268, 'ddot_loss':     0.2494, 'rew_loss':    42.2267, 'lr':   3.26e-07, 'len': 103117.0000, 'ep_len':    27.9009, 'eps_e':     0.6205, 'lr_e':   3.26e-07, 'len_e': 103117.0000, 'ep_len_e':    27.9009})
+Step:   98000, Reward:   143.688 [  37.813], Avg:    85.962 (0.210) <0-02:41:14> ({'r_t':  1000.0000, 'eps':     0.2098, 'dyn_loss':     0.0336, 'dot_loss':     0.1274, 'ddot_loss':     0.2506, 'rew_loss':    42.2140, 'lr':   3.26e-07, 'len': 104203.0000, 'ep_len':    27.9029, 'eps_e':     0.2098, 'lr_e':   3.26e-07, 'len_e': 104203.0000, 'ep_len_e':    27.9029})
+Step:   99000, Reward:   140.375 [  38.544], Avg:    86.506 (0.119) <0-02:42:57> ({'r_t':  1000.0000, 'eps':     0.1189, 'dyn_loss':     0.0331, 'dot_loss':     0.1277, 'ddot_loss':     0.2516, 'rew_loss':    42.1981, 'lr':   3.26e-07, 'len': 105248.0000, 'ep_len':    27.9103, 'eps_e':     0.1189, 'lr_e':   3.26e-07, 'len_e': 105248.0000, 'ep_len_e':    27.9103})
+Step:  100000, Reward:    96.000 [  34.673], Avg:    86.600 (0.796) <0-02:44:41> ({'r_t':  1000.0000, 'eps':     0.7963, 'dyn_loss':     0.0326, 'dot_loss':     0.1279, 'ddot_loss':     0.2523, 'rew_loss':    42.2138, 'lr':   3.26e-07, 'len': 106303.0000, 'ep_len':    27.9114, 'eps_e':     0.7963, 'lr_e':   3.26e-07, 'len_e': 106303.0000, 'ep_len_e':    27.9114})
+Step:  101000, Reward:   116.062 [  42.102], Avg:    86.889 (0.645) <0-02:46:36> ({'r_t':  1000.0000, 'eps':     0.6452, 'dyn_loss':     0.0322, 'dot_loss':     0.1284, 'ddot_loss':     0.2533, 'rew_loss':    42.1899, 'lr':   3.26e-07, 'len': 107365.0000, 'ep_len':    27.9344, 'eps_e':     0.6452, 'lr_e':   3.26e-07, 'len_e': 107365.0000, 'ep_len_e':    27.9344})
+Step:  102000, Reward:   143.812 [  40.841], Avg:    87.442 (0.321) <0-02:48:22> ({'r_t':  1000.0000, 'eps':     0.3205, 'dyn_loss':     0.0317, 'dot_loss':     0.1289, 'ddot_loss':     0.2546, 'rew_loss':    42.1754, 'lr':   3.26e-07, 'len': 108446.0000, 'ep_len':    27.9354, 'eps_e':     0.3205, 'lr_e':   3.26e-07, 'len_e': 108446.0000, 'ep_len_e':    27.9354})
+Step:  103000, Reward:   132.250 [  52.972], Avg:    87.873 (0.046) <0-02:50:11> ({'r_t':  1000.0000, 'eps':     0.0456, 'dyn_loss':     0.0314, 'dot_loss':     0.1292, 'ddot_loss':     0.2554, 'rew_loss':    42.1134, 'lr':   3.26e-07, 'len': 109500.0000, 'ep_len':    27.9435, 'eps_e':     0.0456, 'lr_e':   3.26e-07, 'len_e': 109500.0000, 'ep_len_e':    27.9435})
+Step:  104000, Reward:   147.062 [  58.459], Avg:    88.436 (0.748) <0-02:51:59> ({'r_t':  1000.0000, 'eps':     0.7481, 'dyn_loss':     0.0310, 'dot_loss':     0.1296, 'ddot_loss':     0.2563, 'rew_loss':    42.0828, 'lr':   3.26e-07, 'len': 110553.0000, 'ep_len':    27.9366, 'eps_e':     0.7481, 'lr_e':   3.26e-07, 'len_e': 110553.0000, 'ep_len_e':    27.9366})
+Step:  105000, Reward:   120.438 [  45.518], Avg:    88.738 (0.007) <0-02:53:51> ({'r_t':  1000.0000, 'eps':     0.0072, 'dyn_loss':     0.0305, 'dot_loss':     0.1298, 'ddot_loss':     0.2569, 'rew_loss':    42.0989, 'lr':   3.26e-07, 'len': 111631.0000, 'ep_len':    27.9332, 'eps_e':     0.0072, 'lr_e':   3.26e-07, 'len_e': 111631.0000, 'ep_len_e':    27.9332})
+Step:  106000, Reward:   129.625 [  47.017], Avg:    89.120 (0.821) <0-02:55:40> ({'r_t':  1000.0000, 'eps':     0.8209, 'dyn_loss':     0.0302, 'dot_loss':     0.1300, 'ddot_loss':     0.2576, 'rew_loss':    42.0709, 'lr':   3.26e-07, 'len': 112709.0000, 'ep_len':    27.9331, 'eps_e':     0.8209, 'lr_e':   3.26e-07, 'len_e': 112709.0000, 'ep_len_e':    27.9331})
+Step:  107000, Reward:   149.562 [  49.782], Avg:    89.680 (0.568) <0-02:57:31> ({'r_t':  1000.0000, 'eps':     0.5684, 'dyn_loss':     0.0299, 'dot_loss':     0.1303, 'ddot_loss':     0.2582, 'rew_loss':    42.0351, 'lr':   3.26e-07, 'len': 113763.0000, 'ep_len':    27.9407, 'eps_e':     0.5684, 'lr_e':   3.26e-07, 'len_e': 113763.0000, 'ep_len_e':    27.9407})
+Step:  108000, Reward:   142.938 [  46.257], Avg:    90.169 (0.455) <0-02:59:25> ({'r_t':  1000.0000, 'eps':     0.4552, 'dyn_loss':     0.0295, 'dot_loss':     0.1305, 'ddot_loss':     0.2588, 'rew_loss':    42.0164, 'lr':   3.26e-07, 'len': 114796.0000, 'ep_len':    27.9473, 'eps_e':     0.4552, 'lr_e':   3.26e-07, 'len_e': 114796.0000, 'ep_len_e':    27.9473})
+Step:  109000, Reward:   148.562 [  53.427], Avg:    90.699 (0.289) <0-03:01:14> ({'r_t':  1000.0000, 'eps':     0.2888, 'dyn_loss':     0.0293, 'dot_loss':     0.1307, 'ddot_loss':     0.2592, 'rew_loss':    42.0045, 'lr':   3.26e-07, 'len': 115845.0000, 'ep_len':    27.9684, 'eps_e':     0.2888, 'lr_e':   3.26e-07, 'len_e': 115845.0000, 'ep_len_e':    27.9684})
+Step:  110000, Reward:   174.938 [  28.543], Avg:    91.458 (0.280) <0-03:03:02> ({'r_t':  1000.0000, 'eps':     0.2799, 'dyn_loss':     0.0289, 'dot_loss':     0.1309, 'ddot_loss':     0.2597, 'rew_loss':    42.0378, 'lr':   3.26e-07, 'len': 116897.0000, 'ep_len':    27.9738, 'eps_e':     0.2799, 'lr_e':   3.26e-07, 'len_e': 116897.0000, 'ep_len_e':    27.9738})
+Step:  111000, Reward:   145.938 [  47.013], Avg:    91.945 (0.391) <0-03:04:46> ({'r_t':  1000.0000, 'eps':     0.3913, 'dyn_loss':     0.0287, 'dot_loss':     0.1311, 'ddot_loss':     0.2603, 'rew_loss':    41.9851, 'lr':   3.26e-07, 'len': 117982.0000, 'ep_len':    27.9713, 'eps_e':     0.3913, 'lr_e':   3.26e-07, 'len_e': 117982.0000, 'ep_len_e':    27.9713})
+Step:  112000, Reward:   155.500 [  41.737], Avg:    92.507 (0.219) <0-03:06:36> ({'r_t':  1000.0000, 'eps':     0.2192, 'dyn_loss':     0.0284, 'dot_loss':     0.1312, 'ddot_loss':     0.2607, 'rew_loss':    41.9922, 'lr':   3.26e-07, 'len': 119043.0000, 'ep_len':    27.9777, 'eps_e':     0.2192, 'lr_e':   3.26e-07, 'len_e': 119043.0000, 'ep_len_e':    27.9777})
+Step:  113000, Reward:   156.438 [  37.086], Avg:    93.068 (0.045) <0-03:08:29> ({'r_t':  1000.0000, 'eps':     0.0451, 'dyn_loss':     0.0280, 'dot_loss':     0.1313, 'ddot_loss':     0.2609, 'rew_loss':    41.8980, 'lr':   3.26e-07, 'len': 120106.0000, 'ep_len':    27.9772, 'eps_e':     0.0451, 'lr_e':   3.26e-07, 'len_e': 120106.0000, 'ep_len_e':    27.9772})
+Step:  114000, Reward:   145.312 [  63.102], Avg:    93.522 (0.376) <0-03:10:14> ({'r_t':  1000.0000, 'eps':     0.3756, 'dyn_loss':     0.0277, 'dot_loss':     0.1317, 'ddot_loss':     0.2617, 'rew_loss':    41.9515, 'lr':   3.26e-07, 'len': 121164.0000, 'ep_len':    27.9800, 'eps_e':     0.3756, 'lr_e':   3.26e-07, 'len_e': 121164.0000, 'ep_len_e':    27.9800})
+Step:  115000, Reward:   144.875 [  66.843], Avg:    93.965 (0.545) <0-03:12:03> ({'r_t':  1000.0000, 'eps':     0.5449, 'dyn_loss':     0.0275, 'dot_loss':     0.1316, 'ddot_loss':     0.2618, 'rew_loss':    41.9366, 'lr':   3.26e-07, 'len': 122238.0000, 'ep_len':    27.9839, 'eps_e':     0.5449, 'lr_e':   3.26e-07, 'len_e': 122238.0000, 'ep_len_e':    27.9839})
+Step:  116000, Reward:   143.000 [  55.946], Avg:    94.384 (0.505) <0-03:13:52> ({'r_t':  1000.0000, 'eps':     0.5046, 'dyn_loss':     0.0271, 'dot_loss':     0.1316, 'ddot_loss':     0.2618, 'rew_loss':    41.9485, 'lr':   3.26e-07, 'len': 123272.0000, 'ep_len':    27.9959, 'eps_e':     0.5046, 'lr_e':   3.26e-07, 'len_e': 123272.0000, 'ep_len_e':    27.9959})
+Step:  117000, Reward:   144.375 [  62.744], Avg:    94.808 (0.067) <0-03:15:43> ({'r_t':  1000.0000, 'eps':     0.0667, 'dyn_loss':     0.0270, 'dot_loss':     0.1319, 'ddot_loss':     0.2624, 'rew_loss':    41.8652, 'lr':   3.26e-07, 'len': 124313.0000, 'ep_len':    28.0103, 'eps_e':     0.0667, 'lr_e':   3.26e-07, 'len_e': 124313.0000, 'ep_len_e':    28.0103})
+Step:  118000, Reward:   149.062 [  49.854], Avg:    95.264 (0.939) <0-03:17:36> ({'r_t':  1000.0000, 'eps':     0.9394, 'dyn_loss':     0.0266, 'dot_loss':     0.1323, 'ddot_loss':     0.2633, 'rew_loss':    41.8333, 'lr':   3.26e-07, 'len': 125376.0000, 'ep_len':    28.0092, 'eps_e':     0.9394, 'lr_e':   3.26e-07, 'len_e': 125376.0000, 'ep_len_e':    28.0092})
+Step:  119000, Reward:   154.000 [  44.682], Avg:    95.753 (0.276) <0-03:19:27> ({'r_t':  1000.0000, 'eps':     0.2763, 'dyn_loss':     0.0264, 'dot_loss':     0.1325, 'ddot_loss':     0.2638, 'rew_loss':    41.8771, 'lr':   3.26e-07, 'len': 126427.0000, 'ep_len':    28.0248, 'eps_e':     0.2763, 'lr_e':   3.26e-07, 'len_e': 126427.0000, 'ep_len_e':    28.0248})
+Step:  120000, Reward:   145.688 [  49.616], Avg:    96.166 (0.963) <0-03:21:22> ({'r_t':  1000.0000, 'eps':     0.9633, 'dyn_loss':     0.0262, 'dot_loss':     0.1325, 'ddot_loss':     0.2637, 'rew_loss':    41.8789, 'lr':   3.26e-07, 'len': 127475.0000, 'ep_len':    28.0248, 'eps_e':     0.9633, 'lr_e':   3.26e-07, 'len_e': 127475.0000, 'ep_len_e':    28.0248})
+Step:  121000, Reward:   161.500 [  45.237], Avg:    96.701 (0.787) <0-03:23:15> ({'r_t':  1000.0000, 'eps':     0.7867, 'dyn_loss':     0.0260, 'dot_loss':     0.1326, 'ddot_loss':     0.2641, 'rew_loss':    41.8906, 'lr':   3.26e-07, 'len': 128545.0000, 'ep_len':    28.0303, 'eps_e':     0.7867, 'lr_e':   3.26e-07, 'len_e': 128545.0000, 'ep_len_e':    28.0303})
+Step:  122000, Reward:   143.625 [  54.417], Avg:    97.083 (0.448) <0-03:25:09> ({'r_t':  1000.0000, 'eps':     0.4479, 'dyn_loss':     0.0258, 'dot_loss':     0.1326, 'ddot_loss':     0.2642, 'rew_loss':    41.9008, 'lr':   3.26e-07, 'len': 129611.0000, 'ep_len':    28.0433, 'eps_e':     0.4479, 'lr_e':   3.26e-07, 'len_e': 129611.0000, 'ep_len_e':    28.0433})
+Step:  123000, Reward:   158.125 [  47.906], Avg:    97.575 (0.672) <0-03:26:59> ({'r_t':  1000.0000, 'eps':     0.6725, 'dyn_loss':     0.0255, 'dot_loss':     0.1329, 'ddot_loss':     0.2647, 'rew_loss':    41.8593, 'lr':   3.26e-07, 'len': 130662.0000, 'ep_len':    28.0461, 'eps_e':     0.6725, 'lr_e':   3.26e-07, 'len_e': 130662.0000, 'ep_len_e':    28.0461})
+Step:  124000, Reward:   170.312 [  35.171], Avg:    98.157 (0.862) <0-03:28:56> ({'r_t':  1000.0000, 'eps':     0.8620, 'dyn_loss':     0.0253, 'dot_loss':     0.1331, 'ddot_loss':     0.2652, 'rew_loss':    41.8747, 'lr':   3.26e-07, 'len': 131712.0000, 'ep_len':    28.0745, 'eps_e':     0.8620, 'lr_e':   3.26e-07, 'len_e': 131712.0000, 'ep_len_e':    28.0745})
+Step:  125000, Reward:   121.938 [  61.753], Avg:    98.346 (0.530) <0-03:30:52> ({'r_t':  1000.0000, 'eps':     0.5301, 'dyn_loss':     0.0250, 'dot_loss':     0.1328, 'ddot_loss':     0.2646, 'rew_loss':    41.9112, 'lr':   3.26e-07, 'len': 132739.0000, 'ep_len':    28.0931, 'eps_e':     0.5301, 'lr_e':   3.26e-07, 'len_e': 132739.0000, 'ep_len_e':    28.0931})
+Step:  126000, Reward:   181.750 [  29.132], Avg:    99.002 (0.827) <0-03:32:42> ({'r_t':  1000.0000, 'eps':     0.8271, 'dyn_loss':     0.0248, 'dot_loss':     0.1328, 'ddot_loss':     0.2647, 'rew_loss':    41.8843, 'lr':   3.26e-07, 'len': 133802.0000, 'ep_len':    28.1012, 'eps_e':     0.8271, 'lr_e':   3.26e-07, 'len_e': 133802.0000, 'ep_len_e':    28.1012})
+Step:  127000, Reward:   162.438 [  46.719], Avg:    99.498 (0.113) <0-03:34:38> ({'r_t':  1000.0000, 'eps':     0.1129, 'dyn_loss':     0.0246, 'dot_loss':     0.1332, 'ddot_loss':     0.2656, 'rew_loss':    41.8688, 'lr':   3.26e-07, 'len': 134870.0000, 'ep_len':    28.0969, 'eps_e':     0.1129, 'lr_e':   3.26e-07, 'len_e': 134870.0000, 'ep_len_e':    28.0969})
+Step:  128000, Reward:   178.375 [  34.923], Avg:   100.109 (0.656) <0-03:36:27> ({'r_t':  1000.0000, 'eps':     0.6558, 'dyn_loss':     0.0244, 'dot_loss':     0.1331, 'ddot_loss':     0.2655, 'rew_loss':    41.8575, 'lr':   3.26e-07, 'len': 135949.0000, 'ep_len':    28.0972, 'eps_e':     0.6558, 'lr_e':   3.26e-07, 'len_e': 135949.0000, 'ep_len_e':    28.0972})
+Step:  129000, Reward:   171.688 [  48.067], Avg:   100.660 (0.475) <0-03:38:25> ({'r_t':  1000.0000, 'eps':     0.4755, 'dyn_loss':     0.0242, 'dot_loss':     0.1335, 'ddot_loss':     0.2662, 'rew_loss':    41.8517, 'lr':   3.26e-07, 'len': 137005.0000, 'ep_len':    28.1019, 'eps_e':     0.4755, 'lr_e':   3.26e-07, 'len_e': 137005.0000, 'ep_len_e':    28.1019})
+Step:  130000, Reward:   151.875 [  60.912], Avg:   101.051 (0.516) <0-03:40:14> ({'r_t':  1000.0000, 'eps':     0.5159, 'dyn_loss':     0.0240, 'dot_loss':     0.1333, 'ddot_loss':     0.2660, 'rew_loss':    41.8524, 'lr':   3.26e-07, 'len': 138074.0000, 'ep_len':    28.0930, 'eps_e':     0.5159, 'lr_e':   3.26e-07, 'len_e': 138074.0000, 'ep_len_e':    28.0930})
+Step:  131000, Reward:   167.938 [  37.053], Avg:   101.558 (0.744) <0-03:42:11> ({'r_t':  1000.0000, 'eps':     0.7438, 'dyn_loss':     0.0238, 'dot_loss':     0.1336, 'ddot_loss':     0.2665, 'rew_loss':    41.8130, 'lr':   3.26e-07, 'len': 139142.0000, 'ep_len':    28.0892, 'eps_e':     0.7438, 'lr_e':   3.26e-07, 'len_e': 139142.0000, 'ep_len_e':    28.0892})
+Step:  132000, Reward:   181.375 [  29.529], Avg:   102.158 (0.810) <0-03:44:01> ({'r_t':  1000.0000, 'eps':     0.8101, 'dyn_loss':     0.0236, 'dot_loss':     0.1335, 'ddot_loss':     0.2665, 'rew_loss':    41.8227, 'lr':   3.26e-07, 'len': 140195.0000, 'ep_len':    28.0984, 'eps_e':     0.8101, 'lr_e':   3.26e-07, 'len_e': 140195.0000, 'ep_len_e':    28.0984})
+Step:  133000, Reward:   184.062 [  25.977], Avg:   102.769 (0.152) <0-03:45:56> ({'r_t':  1000.0000, 'eps':     0.1520, 'dyn_loss':     0.0235, 'dot_loss':     0.1335, 'ddot_loss':     0.2665, 'rew_loss':    41.8054, 'lr':   3.26e-07, 'len': 141267.0000, 'ep_len':    28.0939, 'eps_e':     0.1520, 'lr_e':   3.26e-07, 'len_e': 141267.0000, 'ep_len_e':    28.0939})
+Step:  134000, Reward:   173.312 [  25.497], Avg:   103.292 (0.595) <0-03:47:45> ({'r_t':  1000.0000, 'eps':     0.5952, 'dyn_loss':     0.0233, 'dot_loss':     0.1337, 'ddot_loss':     0.2668, 'rew_loss':    41.7913, 'lr':   3.26e-07, 'len': 142309.0000, 'ep_len':    28.1007, 'eps_e':     0.5952, 'lr_e':   3.26e-07, 'len_e': 142309.0000, 'ep_len_e':    28.1007})
+Step:  135000, Reward:   155.562 [  61.373], Avg:   103.676 (0.878) <0-03:49:41> ({'r_t':  1000.0000, 'eps':     0.8776, 'dyn_loss':     0.0231, 'dot_loss':     0.1336, 'ddot_loss':     0.2667, 'rew_loss':    41.7784, 'lr':   3.26e-07, 'len': 143348.0000, 'ep_len':    28.1084, 'eps_e':     0.8776, 'lr_e':   3.26e-07, 'len_e': 143348.0000, 'ep_len_e':    28.1084})
+Step:  136000, Reward:   165.750 [  46.350], Avg:   104.129 (0.061) <0-03:51:34> ({'r_t':  1000.0000, 'eps':     0.0606, 'dyn_loss':     0.0230, 'dot_loss':     0.1338, 'ddot_loss':     0.2670, 'rew_loss':    41.7976, 'lr':   3.26e-07, 'len': 144415.0000, 'ep_len':    28.1223, 'eps_e':     0.0606, 'lr_e':   3.26e-07, 'len_e': 144415.0000, 'ep_len_e':    28.1223})
+Step:  137000, Reward:   171.938 [  35.559], Avg:   104.620 (0.751) <0-03:53:25> ({'r_t':  1000.0000, 'eps':     0.7506, 'dyn_loss':     0.0227, 'dot_loss':     0.1338, 'ddot_loss':     0.2673, 'rew_loss':    41.7778, 'lr':   3.26e-07, 'len': 145459.0000, 'ep_len':    28.1331, 'eps_e':     0.7506, 'lr_e':   3.26e-07, 'len_e': 145459.0000, 'ep_len_e':    28.1331})
+Step:  138000, Reward:   148.188 [  51.932], Avg:   104.934 (0.405) <0-03:55:18> ({'r_t':  1000.0000, 'eps':     0.4047, 'dyn_loss':     0.0226, 'dot_loss':     0.1338, 'ddot_loss':     0.2672, 'rew_loss':    41.7656, 'lr':   3.26e-07, 'len': 146505.0000, 'ep_len':    28.1382, 'eps_e':     0.4047, 'lr_e':   3.26e-07, 'len_e': 146505.0000, 'ep_len_e':    28.1382})
+Step:  139000, Reward:   184.875 [  26.742], Avg:   105.505 (0.519) <0-03:57:14> ({'r_t':  1000.0000, 'eps':     0.5192, 'dyn_loss':     0.0225, 'dot_loss':     0.1336, 'ddot_loss':     0.2669, 'rew_loss':    41.8325, 'lr':   3.26e-07, 'len': 147558.0000, 'ep_len':    28.1520, 'eps_e':     0.5192, 'lr_e':   3.26e-07, 'len_e': 147558.0000, 'ep_len_e':    28.1520})
+Step:  140000, Reward:   187.125 [  17.489], Avg:   106.084 (0.121) <0-03:59:10> ({'r_t':  1000.0000, 'eps':     0.1208, 'dyn_loss':     0.0222, 'dot_loss':     0.1336, 'ddot_loss':     0.2668, 'rew_loss':    41.8511, 'lr':   3.26e-07, 'len': 148607.0000, 'ep_len':    28.1572, 'eps_e':     0.1208, 'lr_e':   3.26e-07, 'len_e': 148607.0000, 'ep_len_e':    28.1572})
+Step:  141000, Reward:   176.125 [  40.028], Avg:   106.577 (0.147) <0-04:01:01> ({'r_t':  1000.0000, 'eps':     0.1468, 'dyn_loss':     0.0221, 'dot_loss':     0.1340, 'ddot_loss':     0.2676, 'rew_loss':    41.8253, 'lr':   3.26e-07, 'len': 149661.0000, 'ep_len':    28.1656, 'eps_e':     0.1468, 'lr_e':   3.26e-07, 'len_e': 149661.0000, 'ep_len_e':    28.1656})
+Step:  142000, Reward:   163.688 [  42.858], Avg:   106.976 (0.729) <0-04:02:57> ({'r_t':  1000.0000, 'eps':     0.7291, 'dyn_loss':     0.0220, 'dot_loss':     0.1341, 'ddot_loss':     0.2679, 'rew_loss':    41.8436, 'lr':   3.26e-07, 'len': 150685.0000, 'ep_len':    28.1707, 'eps_e':     0.7291, 'lr_e':   3.26e-07, 'len_e': 150685.0000, 'ep_len_e':    28.1707})
+Step:  143000, Reward:   146.125 [  63.707], Avg:   107.248 (0.547) <0-04:04:52> ({'r_t':  1000.0000, 'eps':     0.5473, 'dyn_loss':     0.0218, 'dot_loss':     0.1340, 'ddot_loss':     0.2676, 'rew_loss':    41.7854, 'lr':   3.26e-07, 'len': 151762.0000, 'ep_len':    28.1856, 'eps_e':     0.5473, 'lr_e':   3.26e-07, 'len_e': 151762.0000, 'ep_len_e':    28.1856})
+Step:  144000, Reward:   158.812 [  38.975], Avg:   107.604 (0.428) <0-04:06:49> ({'r_t':  1000.0000, 'eps':     0.4276, 'dyn_loss':     0.0217, 'dot_loss':     0.1340, 'ddot_loss':     0.2677, 'rew_loss':    41.8024, 'lr':   3.26e-07, 'len': 152825.0000, 'ep_len':    28.1834, 'eps_e':     0.4276, 'lr_e':   3.26e-07, 'len_e': 152825.0000, 'ep_len_e':    28.1834})
+Step:  145000, Reward:   163.500 [  53.479], Avg:   107.987 (0.236) <0-04:08:48> ({'r_t':  1000.0000, 'eps':     0.2359, 'dyn_loss':     0.0216, 'dot_loss':     0.1343, 'ddot_loss':     0.2682, 'rew_loss':    41.8588, 'lr':   3.26e-07, 'len': 153876.0000, 'ep_len':    28.1926, 'eps_e':     0.2359, 'lr_e':   3.26e-07, 'len_e': 153876.0000, 'ep_len_e':    28.1926})
+Step:  146000, Reward:   177.438 [  34.335], Avg:   108.459 (0.320) <0-04:10:43> ({'r_t':  1000.0000, 'eps':     0.3201, 'dyn_loss':     0.0214, 'dot_loss':     0.1341, 'ddot_loss':     0.2678, 'rew_loss':    41.8669, 'lr':   3.26e-07, 'len': 154930.0000, 'ep_len':    28.1947, 'eps_e':     0.3201, 'lr_e':   3.26e-07, 'len_e': 154930.0000, 'ep_len_e':    28.1947})
+Step:  147000, Reward:   183.438 [  25.402], Avg:   108.966 (0.422) <0-04:12:39> ({'r_t':  1000.0000, 'eps':     0.4218, 'dyn_loss':     0.0213, 'dot_loss':     0.1343, 'ddot_loss':     0.2682, 'rew_loss':    41.8260, 'lr':   3.26e-07, 'len': 155967.0000, 'ep_len':    28.2075, 'eps_e':     0.4218, 'lr_e':   3.26e-07, 'len_e': 155967.0000, 'ep_len_e':    28.2075})
+Step:  148000, Reward:   174.312 [  52.611], Avg:   109.404 (0.564) <0-04:14:37> ({'r_t':  1000.0000, 'eps':     0.5642, 'dyn_loss':     0.0211, 'dot_loss':     0.1340, 'ddot_loss':     0.2677, 'rew_loss':    41.8154, 'lr':   3.26e-07, 'len': 157039.0000, 'ep_len':    28.2091, 'eps_e':     0.5642, 'lr_e':   3.26e-07, 'len_e': 157039.0000, 'ep_len_e':    28.2091})
+Step:  149000, Reward:   179.125 [  30.337], Avg:   109.869 (0.492) <0-04:16:31> ({'r_t':  1000.0000, 'eps':     0.4920, 'dyn_loss':     0.0210, 'dot_loss':     0.1344, 'ddot_loss':     0.2684, 'rew_loss':    41.8014, 'lr':   3.26e-07, 'len': 158075.0000, 'ep_len':    28.2173, 'eps_e':     0.4920, 'lr_e':   3.26e-07, 'len_e': 158075.0000, 'ep_len_e':    28.2173})
+Step:  150000, Reward:   180.375 [  46.601], Avg:   110.336 (0.394) <0-04:18:31> ({'r_t':  1000.0000, 'eps':     0.3936, 'dyn_loss':     0.0208, 'dot_loss':     0.1344, 'ddot_loss':     0.2686, 'rew_loss':    41.8405, 'lr':   3.26e-07, 'len': 159143.0000, 'ep_len':    28.2254, 'eps_e':     0.3936, 'lr_e':   3.26e-07, 'len_e': 159143.0000, 'ep_len_e':    28.2254})
+Step:  151000, Reward:   169.812 [  50.698], Avg:   110.727 (0.280) <0-04:20:16> ({'r_t':  1000.0000, 'eps':     0.2800, 'dyn_loss':     0.0208, 'dot_loss':     0.1346, 'ddot_loss':     0.2688, 'rew_loss':    41.7831, 'lr':   3.26e-07, 'len': 160208.0000, 'ep_len':    28.2230, 'eps_e':     0.2800, 'lr_e':   3.26e-07, 'len_e': 160208.0000, 'ep_len_e':    28.2230})
+Step:  152000, Reward:   182.875 [  23.590], Avg:   111.199 (0.288) <0-04:21:59> ({'r_t':  1000.0000, 'eps':     0.2880, 'dyn_loss':     0.0206, 'dot_loss':     0.1347, 'ddot_loss':     0.2690, 'rew_loss':    41.7741, 'lr':   3.26e-07, 'len': 161233.0000, 'ep_len':    28.2305, 'eps_e':     0.2880, 'lr_e':   3.26e-07, 'len_e': 161233.0000, 'ep_len_e':    28.2305})
+Step:  153000, Reward:   162.500 [  67.219], Avg:   111.532 (0.133) <0-04:23:43> ({'r_t':  1000.0000, 'eps':     0.1328, 'dyn_loss':     0.0205, 'dot_loss':     0.1347, 'ddot_loss':     0.2691, 'rew_loss':    41.7892, 'lr':   3.26e-07, 'len': 162284.0000, 'ep_len':    28.2439, 'eps_e':     0.1328, 'lr_e':   3.26e-07, 'len_e': 162284.0000, 'ep_len_e':    28.2439})
+Step:  154000, Reward:   183.000 [  43.691], Avg:   111.993 (0.202) <0-04:25:26> ({'r_t':  1000.0000, 'eps':     0.2023, 'dyn_loss':     0.0204, 'dot_loss':     0.1342, 'ddot_loss':     0.2682, 'rew_loss':    41.8552, 'lr':   3.26e-07, 'len': 163316.0000, 'ep_len':    28.2560, 'eps_e':     0.2023, 'lr_e':   3.26e-07, 'len_e': 163316.0000, 'ep_len_e':    28.2560})
+Step:  155000, Reward:   186.938 [  25.106], Avg:   112.474 (0.063) <0-04:27:09> ({'r_t':  1000.0000, 'eps':     0.0633, 'dyn_loss':     0.0203, 'dot_loss':     0.1345, 'ddot_loss':     0.2687, 'rew_loss':    41.8039, 'lr':   3.26e-07, 'len': 164373.0000, 'ep_len':    28.2639, 'eps_e':     0.0633, 'lr_e':   3.26e-07, 'len_e': 164373.0000, 'ep_len_e':    28.2639})
+Step:  156000, Reward:   155.375 [  66.665], Avg:   112.747 (0.410) <0-04:28:53> ({'r_t':  1000.0000, 'eps':     0.4095, 'dyn_loss':     0.0201, 'dot_loss':     0.1344, 'ddot_loss':     0.2685, 'rew_loss':    41.8243, 'lr':   3.26e-07, 'len': 165421.0000, 'ep_len':    28.2641, 'eps_e':     0.4095, 'lr_e':   3.26e-07, 'len_e': 165421.0000, 'ep_len_e':    28.2641})
+Step:  157000, Reward:   185.625 [  24.561], Avg:   113.208 (0.428) <0-04:30:37> ({'r_t':  1000.0000, 'eps':     0.4284, 'dyn_loss':     0.0200, 'dot_loss':     0.1345, 'ddot_loss':     0.2686, 'rew_loss':    41.8327, 'lr':   3.26e-07, 'len': 166485.0000, 'ep_len':    28.2659, 'eps_e':     0.4284, 'lr_e':   3.26e-07, 'len_e': 166485.0000, 'ep_len_e':    28.2659})
+Step:  158000, Reward:   177.750 [  29.878], Avg:   113.614 (0.360) <0-04:34:02> ({'r_t':  1000.0000, 'eps':     0.3601, 'dyn_loss':     0.0199, 'dot_loss':     0.1347, 'ddot_loss':     0.2690, 'rew_loss':    41.8081, 'lr':   3.26e-07, 'len': 167519.0000, 'ep_len':    28.2732, 'eps_e':     0.3601, 'lr_e':   3.26e-07, 'len_e': 167519.0000, 'ep_len_e':    28.2732})
+Step:  159000, Reward:   184.562 [  43.818], Avg:   114.057 (0.698) <0-04:36:54> ({'r_t':  1000.0000, 'eps':     0.6984, 'dyn_loss':     0.0199, 'dot_loss':     0.1346, 'ddot_loss':     0.2688, 'rew_loss':    41.8154, 'lr':   3.26e-07, 'len': 168572.0000, 'ep_len':    28.2784, 'eps_e':     0.6984, 'lr_e':   3.26e-07, 'len_e': 168572.0000, 'ep_len_e':    28.2784})
+Step:  160000, Reward:   167.625 [  54.121], Avg:   114.390 (0.320) <0-04:38:39> ({'r_t':  1000.0000, 'eps':     0.3198, 'dyn_loss':     0.0197, 'dot_loss':     0.1347, 'ddot_loss':     0.2690, 'rew_loss':    41.8610, 'lr':   3.26e-07, 'len': 169637.0000, 'ep_len':    28.2821, 'eps_e':     0.3198, 'lr_e':   3.26e-07, 'len_e': 169637.0000, 'ep_len_e':    28.2821})
+Step:  161000, Reward:   164.250 [  62.397], Avg:   114.698 (0.106) <0-04:40:23> ({'r_t':  1000.0000, 'eps':     0.1061, 'dyn_loss':     0.0196, 'dot_loss':     0.1347, 'ddot_loss':     0.2690, 'rew_loss':    41.8207, 'lr':   3.26e-07, 'len': 170690.0000, 'ep_len':    28.2850, 'eps_e':     0.1061, 'lr_e':   3.26e-07, 'len_e': 170690.0000, 'ep_len_e':    28.2850})
+Step:  162000, Reward:   185.062 [  37.011], Avg:   115.130 (0.314) <0-04:42:08> ({'r_t':  1000.0000, 'eps':     0.3142, 'dyn_loss':     0.0195, 'dot_loss':     0.1347, 'ddot_loss':     0.2691, 'rew_loss':    41.7705, 'lr':   3.26e-07, 'len': 171755.0000, 'ep_len':    28.2807, 'eps_e':     0.3142, 'lr_e':   3.26e-07, 'len_e': 171755.0000, 'ep_len_e':    28.2807})
+Step:  163000, Reward:   185.750 [  28.050], Avg:   115.560 (0.717) <0-04:43:53> ({'r_t':  1000.0000, 'eps':     0.7175, 'dyn_loss':     0.0194, 'dot_loss':     0.1349, 'ddot_loss':     0.2694, 'rew_loss':    41.7921, 'lr':   3.26e-07, 'len': 172801.0000, 'ep_len':    28.2854, 'eps_e':     0.7175, 'lr_e':   3.26e-07, 'len_e': 172801.0000, 'ep_len_e':    28.2854})
+Step:  164000, Reward:   162.750 [  63.274], Avg:   115.846 (0.966) <0-04:45:38> ({'r_t':  1000.0000, 'eps':     0.9664, 'dyn_loss':     0.0193, 'dot_loss':     0.1349, 'ddot_loss':     0.2693, 'rew_loss':    41.7774, 'lr':   3.26e-07, 'len': 173860.0000, 'ep_len':    28.2811, 'eps_e':     0.9664, 'lr_e':   3.26e-07, 'len_e': 173860.0000, 'ep_len_e':    28.2811})
+Step:  165000, Reward:   163.688 [  56.486], Avg:   116.134 (0.897) <0-04:48:32> ({'r_t':  1000.0000, 'eps':     0.8967, 'dyn_loss':     0.0192, 'dot_loss':     0.1348, 'ddot_loss':     0.2691, 'rew_loss':    41.7525, 'lr':   3.26e-07, 'len': 174924.0000, 'ep_len':    28.2880, 'eps_e':     0.8967, 'lr_e':   3.26e-07, 'len_e': 174924.0000, 'ep_len_e':    28.2880})
+Step:  166000, Reward:   190.188 [  20.372], Avg:   116.578 (0.409) <0-04:50:28> ({'r_t':  1000.0000, 'eps':     0.4093, 'dyn_loss':     0.0191, 'dot_loss':     0.1348, 'ddot_loss':     0.2690, 'rew_loss':    41.7476, 'lr':   3.26e-07, 'len': 175983.0000, 'ep_len':    28.2920, 'eps_e':     0.4093, 'lr_e':   3.26e-07, 'len_e': 175983.0000, 'ep_len_e':    28.2920})
+Step:  167000, Reward:   189.312 [  24.566], Avg:   117.011 (0.196) <0-04:52:12> ({'r_t':  1000.0000, 'eps':     0.1962, 'dyn_loss':     0.0190, 'dot_loss':     0.1349, 'ddot_loss':     0.2693, 'rew_loss':    41.7659, 'lr':   3.26e-07, 'len': 177041.0000, 'ep_len':    28.2947, 'eps_e':     0.1962, 'lr_e':   3.26e-07, 'len_e': 177041.0000, 'ep_len_e':    28.2947})
