@@ -86,7 +86,7 @@ env_model_configs = {
 		"ddqn": net_config.clone(),
 		"sac": net_config.clone(),
 		"mppi": net_config.clone(
-			REPLAY_BATCH_SIZE = 2000,  		# How many experience tuples to sample from the buffer for each train step
+			REPLAY_BATCH_SIZE = 250,  		# How many experience tuples to sample from the buffer for each train step
 			TRAIN_EVERY = 2000,   			# Number of iterations to sample batches for training
 			NUM_STEPS = 20,  				# The number of steps to collect experience in sequence for each GAE calculation
 		),
@@ -98,7 +98,7 @@ env_model_configs = {
 		"ddqn": net_config.clone(),
 		"sac": net_config.clone(),
 		"mppi": net_config.clone(
-			REPLAY_BATCH_SIZE = 5000,  		# How many experience tuples to sample from the buffer for each train step
+			REPLAY_BATCH_SIZE = 250,  		# How many experience tuples to sample from the buffer for each train step
 			TRAIN_EVERY = 5000,   			# Number of iterations to sample batches for training
 			NUM_STEPS = 20,  				# The number of steps to collect experience in sequence for each GAE calculation
 		),
@@ -133,6 +133,6 @@ def get_config(env_name, model_name, framework="pt", render=False):
 	env_model_config = env_model_configs.get(env_list, model_configs).get(model_name, model_configs.get(model_name, net_config))
 	model_config.merge(env_model_config)
 	env_config.merge(model_config)
-	make_env = lambda: get_env(env_name, render)
+	make_env = lambda **kwargs: get_env(env_name, render, **kwargs)
 	set_dynamics_size(env_config, make_env)
 	return make_env, model, env_config.update(env_name=env_name)

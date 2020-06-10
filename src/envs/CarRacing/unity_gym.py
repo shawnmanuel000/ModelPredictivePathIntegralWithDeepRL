@@ -129,6 +129,7 @@ class UnityToGymWrapper(gym.Env):
             return self._single_step(decision_step)
 
     def _single_step(self, info: Union[DecisionSteps, TerminalSteps]) -> GymStepResult:
+        self.info = info
         if self.use_visual:
             visual_obs = self._get_vis_obs_list(info)
             if self._allow_multiple_visual_obs:
@@ -146,8 +147,8 @@ class UnityToGymWrapper(gym.Env):
         done = isinstance(info, TerminalSteps)
         return (default_observation, info.reward[0], done, {"step": info})
 
-    def _preprocess_single(self, single_visual_obs: np.ndarray) -> np.ndarray:
-        if self.uint8_visual:
+    def _preprocess_single(self, single_visual_obs: np.ndarray, uint8_visual: bool=False) -> np.ndarray:
+        if self.uint8_visual or uint8_visual:
             return (255.0 * single_visual_obs).astype(np.uint8)
         else:
             return single_visual_obs
@@ -186,8 +187,12 @@ class UnityToGymWrapper(gym.Env):
                 result += shape[0]
         return result
 
-    def render(self, mode="rgb_array"):
-        return self.visual_obs
+    def render(self, mode="human"):
+        if mode=="rgb_array":
+            visual_obs_list = self._get_vis_obs_list(self.info)
+            visual_obs = self._preprocess_single(visual_obs_list[0][0], uint8_visual=True)
+            return visual_obs 
+        return None
 
     def close(self) -> None:
         """Override _close in your subclass to perform any necessary cleanup.

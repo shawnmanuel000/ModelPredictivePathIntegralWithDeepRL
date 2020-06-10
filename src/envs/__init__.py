@@ -29,5 +29,5 @@ def make_env(cls, env_name):
 
 all_envs = get_names(["gym", "unt"])
 
-def get_env(env_name, render=False):
-	return GymEnv(gym.make(env_name))
+def get_env(env_name, render=False, **kwargs):
+	return GymEnv(gym.make(env_name, **kwargs))

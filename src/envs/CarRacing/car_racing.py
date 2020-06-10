@@ -24,14 +24,14 @@ class CarRacing(gym.Env, metaclass=EnvMeta):
 		cls.id = getattr(cls, "id", 0)+1
 		return super().__new__(cls)
 
-	def __init__(self, max_time=500):
+	def __init__(self, max_time=500, pixels=False):
 		root = os.path.dirname(os.path.abspath(__file__))
-		sim_file = os.path.abspath(os.path.join(root, "simulator", sys.platform, "CarRacing"))
+		sim_file = os.path.abspath(os.path.join(root, "simulator", sys.platform, "CircuitRacing"))
 		self.channel = EngineConfigurationChannel()
 		logging_util.set_log_level(logging_util.ERROR)
 		unity_env = UnityEnvironment(file_name=sim_file, side_channels=[self.channel], worker_id=self.id + np.random.randint(10000, 20000))
 		self.scale_sim = lambda s: self.channel.set_configuration_parameters(width=50*int(1+9*s), height=50*int(1+9*s), quality_level=int(1+3*s), time_scale=int(1+9*(1-s)))
-		self.env = UnityToGymWrapper(unity_env)
+		self.env = UnityToGymWrapper(unity_env, use_visual=pixels)
 		self.cost_model = CostModel()
 		self.action_space = self.env.action_space
 		self.cost_queries = list(it.product(np.linspace(-2,2,5), [0], np.linspace(0,4,5)))
@@ -60,7 +60,7 @@ class CarRacing(gym.Env, metaclass=EnvMeta):
 
 	def render(self, mode=None, **kwargs):
 		self.scale_sim(1)
-		return self.env.render()
+		return self.env.render(mode=mode, **kwargs)
 
 	@staticmethod
 	def dynamics_spec(state):

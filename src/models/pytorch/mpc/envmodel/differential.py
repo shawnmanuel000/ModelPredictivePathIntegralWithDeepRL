@@ -112,22 +112,24 @@ class DifferentialEnv(PTNetwork):
 		if numpy: next_states, states_dot, states_ddot, rewards = map(lambda x: x.cpu().numpy(), [next_states, states_dot, states_ddot, rewards])
 		return (next_states, states_dot, states_ddot), rewards.squeeze(-1)
 
-	def get_loss(self, states, actions, next_states, rewards, dones):
+	def get_loss(self, states, actions, next_states, rewards, dones, mask=None):
 		s, a, ns, r = map(self.to_tensor, (states, actions, next_states, rewards))
 		s, ns = [x[...,:self.dyn_index] for x in [s, ns]]
 		ns_dot = (ns-s)
 		s_dot = torch.cat([ns_dot[:,0:1,:], ns_dot[:,:-1,:]], -2)
 		next_states, states_dot, states_ddot = self.rollout(a, s[...,0,:], grad=True)[0]
 		rewards = self.reward(a, s, ns, grad=True).squeeze(-1)
-		dyn_loss = (next_states - ns).pow(2).sum(-1).mean()
-		dot_loss = (states_dot - ns_dot).pow(2).sum(-1).mean()
-		ddot_loss = (states_ddot - (ns_dot - s_dot)).pow(2).sum(-1).mean()
-		rew_loss = (rewards - r).pow(2).mean()
+		dyn_loss = (next_states - ns).pow(2).sum(-1)
+		dot_loss = (states_dot - ns_dot).pow(2).sum(-1)
+		ddot_loss = (states_ddot - (ns_dot - s_dot)).pow(2).sum(-1)
+		rew_loss = (rewards - r).pow(2)
+		loss = self.config.DYN.BETA_DYN*dyn_loss + self.config.DYN.BETA_DOT*dot_loss + self.config.DYN.BETA_DDOT*ddot_loss + rew_loss
 		self.stats.mean(dyn_loss=dyn_loss, dot_loss=dot_loss, ddot_loss=ddot_loss, rew_loss=rew_loss)
-		return self.config.DYN.BETA_DYN*dyn_loss + self.config.DYN.BETA_DOT*dot_loss + self.config.DYN.BETA_DDOT*ddot_loss + rew_loss
+		if mask is not None: loss = loss*mask
+		return loss.mean()
 
-	def optimize(self, states, actions, next_states, rewards, dones):
-		loss = self.get_loss(states, actions, next_states, rewards, dones)
+	def optimize(self, states, actions, next_states, rewards, dones, mask=None):
+		loss = self.get_loss(states, actions, next_states, rewards, dones, mask=mask)
 		self.optimizer.zero_grad()
 		loss.backward()
 		self.optimizer.step()

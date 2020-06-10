@@ -14,8 +14,9 @@ class MPPIController(PTNetwork):
 	def __init__(self, state_size, action_size, config, load="", gpu=True, name="mppi"):
 		super().__init__(config, gpu=gpu, name=name)
 		self.envmodel = EnvModel(state_size, action_size, config, load=load, gpu=gpu)
+		self.discrete = type(action_size)!=tuple
 		self.mu = np.zeros(action_size)
-		self.cov = np.diag(np.ones(action_size))*config.MPC.COV
+		self.cov = np.diag(np.ones(action_size))*config.MPC.COV*(1+4*int(self.discrete))
 		self.icov = np.linalg.inv(self.cov)
 		self.lamda = config.MPC.LAMBDA
 		self.horizon = config.MPC.HORIZON
@@ -47,8 +48,8 @@ class MPPIController(PTNetwork):
 		self.noise = np.random.multivariate_normal(self.mu, self.cov, size=[batch_size, self.nsamples, self.horizon])
 		self.init_cost = np.sum(self.control[:,None,:,None,:] @ self.icov[None,None,None,:,:] @ self.noise[:,:,:,:,None], axis=(2,3,4))/self.horizon
 
-	def optimize(self, states, actions, next_states, rewards, dones):
-		return self.envmodel.optimize(states, actions, next_states, rewards, dones)
+	def optimize(self, states, actions, next_states, rewards, dones, **kwargs):
+		return self.envmodel.optimize(states, actions, next_states, rewards, dones, **kwargs)
 
 	def save_model(self, dirname="pytorch", name="checkpoint", net=None):
 		return self.envmodel.save_model(dirname, name, net)
@@ -66,9 +67,9 @@ class MPPIAgent(PTAgent):
 		self.ep_lens = deque(maxlen=config.MAX_BUFFER_SIZE)
 
 	def get_action(self, state, eps=None, sample=True):
-		action_random = super().get_action(state)
-		if eps is None and not hasattr(self, "losses"): return action_random
 		eps = self.eps if eps is None else eps
+		action_random = super().get_action(state)
+		if eps >= 1: return action_random
 		action_greedy = self.network.get_action(np.array(state), eps)
 		action = np.clip((1-eps)*action_greedy + eps*action_random, -1, 1)
 		return action
@@ -82,15 +83,15 @@ class MPPIAgent(PTAgent):
 			self.ep_lens.append(len(buffer))
 			states, actions, next_states, rewards, dones = map(lambda x: self.to_tensor(x)[None], zip(*buffer))
 			buffer.clear()
+			mask = np.ones_like(rewards)
 			values = self.network.envmodel.network.reward(actions, states, next_states)[0]
 			rewards = self.compute_gae(0*values[-1], rewards.transpose(0,1), dones.transpose(0,1), values)[0].transpose(0,1)
 			states, actions, next_states, rewards, dones = map(lambda x: x.cpu().numpy(), [states, actions, next_states, rewards, dones])
-			states, actions, next_states, rewards, dones = map(lambda x: pad(x[0], self.config.NUM_STEPS), [states, actions, next_states, rewards, dones])
-			self.replay_buffer.extend(list(zip(states, actions, next_states, rewards, dones)), shuffle=False)
+			states, actions, next_states, rewards, dones, mask = map(lambda x: pad(x[0], self.config.NUM_STEPS), [states, actions, next_states, rewards, dones, mask])
+			self.replay_buffer.extend(list(zip(states, actions, next_states, rewards, dones, mask)), shuffle=False)
 		if len(self.replay_buffer) > self.config.REPLAY_BATCH_SIZE:# and self.time % self.config.TRAIN_EVERY == 0:
-			self.losses = []
-			states, actions, next_states, rewards, dones = self.replay_buffer.sample(self.config.REPLAY_BATCH_SIZE, dtype=self.to_tensor)[0]
-			self.losses.append(self.network.optimize(states, actions, next_states, rewards, dones))
+			states, actions, next_states, rewards, dones, mask = self.replay_buffer.sample(self.config.REPLAY_BATCH_SIZE, dtype=self.to_tensor)[0]
+			loss = self.network.optimize(states, actions, next_states, rewards, dones, mask=mask)
 			# samples = list(self.replay_buffer.sample(self.config.REPLAY_BATCH_SIZE, dtype=None)[0])
 			# dataset = self.dataset(self.config, samples, seq_len=self.config.MPC.HORIZON)
 			# loader = torch.utils.data.DataLoader(dataset, batch_size=self.config.BATCH_SIZE, shuffle=True)
@@ -98,8 +99,9 @@ class MPPIAgent(PTAgent):
 			# for states, actions, next_states, rewards, dones in pbar:
 			# 	self.losses.append(self.network.optimize(states, actions, next_states, rewards, dones))
 			# 	pbar.set_postfix_str(f"Loss: {self.losses[-1]:.4f}")
-			self.network.envmodel.network.schedule(np.mean(self.losses))
-		self.eps = (self.time/np.mean(self.ep_lens))%1 if hasattr(self, "losses") else 1
+			# self.network.envmodel.network.schedule(np.mean(self.losses))
+			self.eps = (self.time/np.mean(self.ep_lens))%1
+			self.stats.mean(loss=loss)
 
 	def get_stats(self):
-		return {**super().get_stats(), "len":len(self.replay_buffer), "ep_len":np.mean(self.ep_lens)}
+		return {**super().get_stats(), "len":len(self.replay_buffer), "ep_len":np.mean(self.ep_lens) if len(self.ep_lens) else 0}

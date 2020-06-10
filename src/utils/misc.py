@@ -45,10 +45,12 @@ def show_image(img, filename="test.png", save=True):
 	plt.show()
 
 def make_video(imgs, filename):
+	os.makedirs(os.path.dirname(filename), exist_ok=True)
 	dim = (imgs[0].shape[1], imgs[0].shape[0])
 	video = cv2.VideoWriter(filename, 0, 30, dim)
 	for img in imgs:
-		video.write(img.astype(np.uint8))
+		rgb = cv2.cvtColor(img, cv2.COLOR_BGR2RGB)
+		video.write(rgb.astype(np.uint8))
 	video.release()
 
 def rollout(env, agent, eps=None, render=False, sample=False, time_sleep=None, print_action=False):
