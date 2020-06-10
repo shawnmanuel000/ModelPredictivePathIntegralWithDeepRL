@@ -86,9 +86,9 @@ env_model_configs = {
 		"ddqn": net_config.clone(),
 		"sac": net_config.clone(),
 		"mppi": net_config.clone(
-			REPLAY_BATCH_SIZE = 64,   		# How many experience tuples to sample from the buffer for each train step
+			REPLAY_BATCH_SIZE = 2000,  		# How many experience tuples to sample from the buffer for each train step
 			TRAIN_EVERY = 2000,   			# Number of iterations to sample batches for training
-			NUM_STEPS = 10,  				# The number of steps to collect experience in sequence for each GAE calculation
+			NUM_STEPS = 20,  				# The number of steps to collect experience in sequence for each GAE calculation
 		),
 	},
 	env_grps["gym_b2d"]: {
@@ -98,9 +98,9 @@ env_model_configs = {
 		"ddqn": net_config.clone(),
 		"sac": net_config.clone(),
 		"mppi": net_config.clone(
-			REPLAY_BATCH_SIZE = 200,   		# How many experience tuples to sample from the buffer for each train step
+			REPLAY_BATCH_SIZE = 5000,  		# How many experience tuples to sample from the buffer for each train step
 			TRAIN_EVERY = 5000,   			# Number of iterations to sample batches for training
-			NUM_STEPS = 10,  				# The number of steps to collect experience in sequence for each GAE calculation
+			NUM_STEPS = 20,  				# The number of steps to collect experience in sequence for each GAE calculation
 		),
 	},
 	env_grps["unt"]: {
@@ -108,7 +108,7 @@ env_model_configs = {
 			REWARD_MODEL = f"{inspect.getmodule(CostModel).__name__}:{CostModel.__name__}",
 			DYNAMICS_SPEC = f"{inspect.getmodule(CarRacing).__name__}:{CarRacing.__name__}",
 			REPLAY_BATCH_SIZE = 250,   		# How many experience tuples to sample from the buffer for each train step
-			NUM_STEPS = 10,  				# The number of steps to collect experience in sequence for each GAE calculation
+			NUM_STEPS = 20,  				# The number of steps to collect experience in sequence for each GAE calculation
 		)
 	}
 }

@@ -99,5 +99,7 @@ class MPPIAgent(PTAgent):
 			# 	self.losses.append(self.network.optimize(states, actions, next_states, rewards, dones))
 			# 	pbar.set_postfix_str(f"Loss: {self.losses[-1]:.4f}")
 			self.network.envmodel.network.schedule(np.mean(self.losses))
-		self.eps = (self.time/len(self.ep_lens))%1 if hasattr(self, "losses") else 1
-		self.stats.mean(len=len(self.replay_buffer))
+		self.eps = (self.time/np.mean(self.ep_lens))%1 if hasattr(self, "losses") else 1
+
+	def get_stats(self):
+		return {**super().get_stats(), "len":len(self.replay_buffer), "ep_len":np.mean(self.ep_lens)}

@@ -23,7 +23,9 @@ dark_cols = ["#777777", "#0000CD", "#FF0000", "#008000", "#FFA500"]
 root = "./logging/logs"
 
 indices = {
-	"CarRacing-v1": {"ppo": 30, "ddpg": 20, "sac": 41}
+	"CarRacing-v1": {"ppo": 30, "ddpg": 20, "sac": 41, "mppi": 9},
+	"Pendulum-v0": {"ppo": 0, "ddpg": 1, "sac": 0, "mppi": 11},
+	"LunarLanderContinuous-v2": {"ppo": 1, "ddpg": 0, "sac": 0, "mppi": 3},
 }
 
 def cat_stats(steps, stats):
