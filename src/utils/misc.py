@@ -72,7 +72,7 @@ def dict_update(d, u):
 		d[k] = dict_update(d.get(k,{}),v) if isinstance(v, collections.Mapping) else v
 	return d
 
-def partition(self, x, size=None):
+def partition(x, size=None):
 	if size is None: return x[None,...]
 	num_splits = x.shape[0]//size
 	if num_splits == 0:
@@ -82,3 +82,14 @@ def partition(self, x, size=None):
 		x = arr
 	arr = x[:num_splits*size].reshape(num_splits, size, *x.shape[1:])
 	return arr
+
+def pad(x, length, dim=0):
+	module = torch if isinstance(x,torch.Tensor) else np
+	padded = int(np.ceil(x.shape[dim]/length)*length)
+	num_splits = padded//length
+	sizes = np.array(x.shape)
+	sizes[dim] = padded
+	target = module.zeros(sizes)
+	slices = list(map(slice, x.shape))
+	target[slices] = x
+	return target.reshape(*x.shape[:dim], num_splits, length, *x.shape[dim+1:])

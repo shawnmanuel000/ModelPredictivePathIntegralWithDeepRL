@@ -3,9 +3,10 @@ import torch
 import random
 import numpy as np
 import scipy as sp
+from collections import deque
 from scipy.stats import multivariate_normal
+from src.utils.misc import load_module, pad
 from src.utils.rand import RandomAgent, ReplayBuffer
-from src.utils.misc import load_module
 from ..agents.base import PTNetwork, PTAgent, Conv, one_hot_from_indices
 from . import EnvModel
 
@@ -62,6 +63,7 @@ class MPPIAgent(PTAgent):
 	def __init__(self, state_size, action_size, config, gpu=True, load=None):
 		super().__init__(state_size, action_size, config, MPPIController, gpu=gpu, load=load)
 		self.dataset = load_module("src.data.loaders:OnlineDataset")
+		self.ep_lens = deque(maxlen=config.MAX_BUFFER_SIZE)
 
 	def get_action(self, state, eps=None, sample=True):
 		action_random = super().get_action(state)
@@ -77,21 +79,25 @@ class MPPIAgent(PTAgent):
 		for buffer, s, a, ns, r, d in zip(self.buffers, state, action, next_state, reward, done):
 			buffer.append((s, a, s if d else ns, r, d))
 			if not d: continue
+			self.ep_lens.append(len(buffer))
 			states, actions, next_states, rewards, dones = map(lambda x: self.to_tensor(x)[None], zip(*buffer))
 			buffer.clear()
 			values = self.network.envmodel.network.reward(actions, states, next_states)[0]
 			rewards = self.compute_gae(0*values[-1], rewards.transpose(0,1), dones.transpose(0,1), values)[0].transpose(0,1)
 			states, actions, next_states, rewards, dones = map(lambda x: x.cpu().numpy(), [states, actions, next_states, rewards, dones])
+			states, actions, next_states, rewards, dones = map(lambda x: pad(x[0], self.config.NUM_STEPS), [states, actions, next_states, rewards, dones])
 			self.replay_buffer.extend(list(zip(states, actions, next_states, rewards, dones)), shuffle=False)
-		if len(self.replay_buffer) > self.config.REPLAY_BATCH_SIZE and self.time % self.config.TRAIN_EVERY == 0:
+		if len(self.replay_buffer) > self.config.REPLAY_BATCH_SIZE:# and self.time % self.config.TRAIN_EVERY == 0:
 			self.losses = []
-			samples = list(self.replay_buffer.sample(self.config.REPLAY_BATCH_SIZE, dtype=None)[0])
-			dataset = self.dataset(self.config, samples, seq_len=self.config.MPC.HORIZON)
-			loader = torch.utils.data.DataLoader(dataset, batch_size=self.config.BATCH_SIZE, shuffle=True)
-			pbar = tqdm.tqdm(loader)
-			for states, actions, next_states, rewards, dones in pbar:
-				self.losses.append(self.network.optimize(states, actions, next_states, rewards, dones))
-				pbar.set_postfix_str(f"Loss: {self.losses[-1]:.4f}")
+			states, actions, next_states, rewards, dones = self.replay_buffer.sample(self.config.REPLAY_BATCH_SIZE, dtype=self.to_tensor)[0]
+			self.losses.append(self.network.optimize(states, actions, next_states, rewards, dones))
+			# samples = list(self.replay_buffer.sample(self.config.REPLAY_BATCH_SIZE, dtype=None)[0])
+			# dataset = self.dataset(self.config, samples, seq_len=self.config.MPC.HORIZON)
+			# loader = torch.utils.data.DataLoader(dataset, batch_size=self.config.BATCH_SIZE, shuffle=True)
+			# pbar = tqdm.tqdm(loader)
+			# for states, actions, next_states, rewards, dones in pbar:
+			# 	self.losses.append(self.network.optimize(states, actions, next_states, rewards, dones))
+			# 	pbar.set_postfix_str(f"Loss: {self.losses[-1]:.4f}")
 			self.network.envmodel.network.schedule(np.mean(self.losses))
-		self.eps = (self.time%self.config.TRAIN_EVERY)/self.config.TRAIN_EVERY if hasattr(self, "losses") else 1
+		self.eps = (self.time/len(self.ep_lens))%1 if hasattr(self, "losses") else 1
 		self.stats.mean(len=len(self.replay_buffer))
