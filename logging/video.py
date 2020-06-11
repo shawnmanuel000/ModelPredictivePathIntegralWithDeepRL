@@ -106,7 +106,8 @@ def visualize_envmodel(save=True):
 def write_info(rendered, text):
 	rendered[-40:] = 0
 	image = Image.fromarray(rendered, 'RGB')
-	font = ImageFont.truetype("/Library/Fonts/Arial.ttf", size=20)
+	try: font = ImageFont.truetype("/Library/Fonts/Arial.ttf", size=20)
+	except: font = ImageFont.truetype("/usr/share/fonts/truetype/open-sans/OpenSans-Light.ttf", size=20)
 	draw = ImageDraw.Draw(image)
 	point = (25, rendered.shape[1]-35)
 	draw.text(point, text, fill="rgb(255,255,255)", font=font)
@@ -221,7 +222,7 @@ def test_car_sim():
 if __name__ == "__main__":
 	# for model in ["sac","ddpg","ppo"]:
 	# 	visualize_rl(model)
-	visualize_envmodel(True)
+	visualize_envmodel(False)
 	# test_envmodel()
 	# test_car_sim()
 	# test_mppi()
