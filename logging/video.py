@@ -5,6 +5,7 @@ from PIL import Image, ImageFont, ImageDraw
 import matplotlib.pyplot as plt
 from mpl_toolkits import mplot3d
 from matplotlib.backends.backend_agg import FigureCanvasAgg
+import matplotlib as mpl
 sys.path.append(os.path.abspath("./"))
 from src.envs import get_env
 from src.models import RandomAgent, get_config
@@ -21,14 +22,15 @@ class PathAnimator():
 		if interactive: plt.ion()
 		self.interactive = interactive
 		self.track = track
-		self.fig = plt.figure()#(figsize=(6, 8), dpi=80)
+		self.fig = plt.figure(figsize=(8, 8), dpi=80)
+		plt.style.use('dark_background')
 		self.fig.tight_layout()
 		self.fig.subplots_adjust(hspace=0.2, wspace=0.2)
 		self.fig.suptitle("Sampled MPPI Trajectories")
 		self.ax = plt.axes(projection='3d')
 		self.X, self.Y, self.Z = track.X, track.Y, track.Z
 
-	def animate_path(self, trajectories, chosen=None, view=50, info=None):
+	def animate_path(self, trajectories, chosen=None, view=60, info=None):
 		self.ax.cla()
 		self.plot(trajectories, chosen, view, info)
 		if self.interactive:
@@ -39,14 +41,18 @@ class PathAnimator():
 			cvs = FigureCanvasAgg(self.fig)
 			cvs.draw()
 			w, h = map(int, self.fig.get_size_inches()*self.fig.get_dpi())
-			image = np.frombuffer(cvs.tostring_rgb(), dtype="uint8").reshape(h,w,3)
+			image = np.copy(np.frombuffer(cvs.tostring_rgb(), dtype="uint8").reshape(h,w,3))
+			image[:,:80] = 0 
+			image[:,-80:] = 0
+			image[:80] = 0
+			image[-80:] = 0
 			plt.close()
 		return image
 
 	def plot(self, trajectories, chosen, view, info=None):
 		point = trajectories[0,0]
 		X, Y, Z = map(lambda x: x, [self.X, self.Y, self.Z])
-		self.ax.plot(X,Y,Z, color="#DDDDDD")
+		self.ax.plot(X,Y,Z, color="#999999")
 		self.ax.set_zlim3d(-100, 100)
 		self.ax.set_xlim3d(point[0]-view, point[0]+view)
 		self.ax.set_ylim3d(point[2]-view, point[2]+view)
@@ -56,7 +62,15 @@ class PathAnimator():
 			self.ax.plot(xs, ys, zs, linewidth=0.2)
 		if chosen is not None:
 			x,z,y = chosen[0,:,0], chosen[0,:,1], chosen[0,:,2]
-			self.ax.plot(x, y, z, color="black", linewidth=1)
+			self.ax.plot(x, y, z, color="blue", linewidth=1)
+			self.ax.scatter(x[0],y[0],z[0], s=2, color="white")
+		self.ax.w_xaxis.pane.set_color('#222222')
+		self.ax.w_yaxis.pane.set_color('#222222')
+		self.ax.w_zaxis.pane.set_color('#222222')
+		self.ax.grid(b=True, which='major', color='#555555', linestyle='-')
+		self.ax.xaxis._axinfo["grid"]['linewidth'] = 0.1
+		self.ax.yaxis._axinfo["grid"]['linewidth'] = 0.1
+		self.ax.zaxis._axinfo["grid"]['linewidth'] = 0.1
 
 def visualize_envmodel(save=True):
 	make_env, model, config = get_config("CarRacing-v1", "mppi")
@@ -205,9 +219,9 @@ def test_car_sim():
 	env.close()
 
 if __name__ == "__main__":
-	for model in ["sac","ddpg","ppo"]:
-		visualize_rl(model)
-	visualize_envmodel()
+	# for model in ["sac","ddpg","ppo"]:
+	# 	visualize_rl(model)
+	visualize_envmodel(True)
 	# test_envmodel()
 	# test_car_sim()
 	# test_mppi()
