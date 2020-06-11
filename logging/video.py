@@ -1,6 +1,7 @@
 import os
 import sys
 import numpy as np
+from PIL import Image, ImageFont, ImageDraw
 import matplotlib.pyplot as plt
 from mpl_toolkits import mplot3d
 from matplotlib.backends.backend_agg import FigureCanvasAgg
@@ -67,6 +68,7 @@ def visualize_envmodel(save=True):
 	envmodel.reset(batch_size=[1], state=[state])
 	animator = PathAnimator(env.unwrapped.cost_model.track, interactive=not save)
 	renders = []
+	total_reward = 0
 	for s in range(500):
 		state = np.array([state])
 		action = agent.get_action(state, eps=0)
@@ -77,13 +79,45 @@ def visualize_envmodel(save=True):
 		state, reward, done, _ = env.step(env_action[0])
 		envmodel.reset(batch_size=[1], state=[state])
 		ns, r = envmodel.step(action, numpy=True)
+		total_reward += reward
 		rendered = env.render(mode="rgb_array")
-		graph = animator.animate_path(spec["pos"], path_spec["pos"], info={"Time": str(s), "Reward": f"{reward:5.2f}", "Vel(r,p,y)": f"{state[[5,3,4]]}"})
+		rendered = write_info(rendered, f"Time: {s}, Reward: {total_reward:5.2f}, Vel(r,p,y): {state[[5,3,4]]}")
+		graph = animator.animate_path(spec["pos"], path_spec["pos"])
 		print(f"Step: {s:5d}, Action: {action}, Reward: {reward:5.2f} ({r[0,0]:5.2f}), Pos: {state[:3]} ({ns[0][:3]}), Vel: {state[3:6]} ({ns[0][3:6]})")
 		if save: renders.append(np.concatenate([rendered, resize(graph, dim=rendered.shape[:2])], axis=1) if graph is not None else rendered)
 		if done: break
 	env.close()
 	if renders: make_video(renders, filename=os.path.abspath(os.path.join('logging/videos', config.env_name, f"mppi.avi")))
+
+def write_info(rendered, text):
+	rendered[-40:] = 0
+	image = Image.fromarray(rendered, 'RGB')
+	font = ImageFont.truetype("/Library/Fonts/Arial.ttf", size=20)
+	draw = ImageDraw.Draw(image)
+	point = (25, rendered.shape[1]-35)
+	draw.text(point, text, fill="rgb(255,255,255)", font=font)
+	rendered = np.array(image.getdata(), dtype=np.uint8).reshape(*rendered.shape)
+	return rendered
+
+def visualize_rl(model_name, save=True):
+	make_env, model, config = get_config("CarRacing-v1", model_name)
+	agent = model(config.state_size, config.action_size, config, load=config.env_name)
+	env = make_env()
+	state = env.reset()
+	renders = []
+	total_reward = 0
+	for s in range(500):
+		state = np.array([state])
+		env_action, action = agent.get_env_action(env, state, eps=0)
+		state, reward, done, _ = env.step(env_action[0])
+		total_reward += reward
+		rendered = env.render(mode="rgb_array")
+		rendered = write_info(rendered, f"Time: {s}, Reward: {total_reward:5.2f}, Vel(r,p,y): {state[[5,3,4]]}")
+		print(f"Step: {s:5d}, Action: {action}, Reward: {reward:5.2f} Pos: {state[:3]}, Vel: {state[3:6]}")
+		if save: renders.append(rendered)
+		if done: break
+	env.close()
+	if renders: make_video(renders, filename=os.path.abspath(os.path.join('logging/videos', config.env_name, f"{model_name}.avi")))
 
 def test_envmodel():
 	make_env, model, config = get_config("Pendulum-v0", "mppi")
@@ -171,6 +205,8 @@ def test_car_sim():
 	env.close()
 
 if __name__ == "__main__":
+	for model in ["sac","ddpg","ppo"]:
+		visualize_rl(model)
 	visualize_envmodel()
 	# test_envmodel()
 	# test_car_sim()
