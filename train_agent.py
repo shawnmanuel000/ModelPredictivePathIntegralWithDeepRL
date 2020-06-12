@@ -30,7 +30,7 @@ class GymTrainer():
 	def trial(self, agent, step=0, eps=0, stats={}, time_sleep=0.0):
 		rollouts = rollout(self.envs, agent, eps=eps, render=self.config.render, time_sleep=time_sleep, print_action=False)
 		self.total_rewards.append(np.mean(rollouts, axis=-1))
-		if self.config.trial: return print(f"Reward: {self.total_rewards[-1]}")
+		if self.config.trial: return print(f"Reward: {self.total_rewards[-1]} [{np.std(rollouts)}]")
 		if len(self.total_rewards) % self.config.SAVE_AT==0: agent.save_model(self.checkpoint)
 		if self.total_rewards[-1] >= max(self.total_rewards): agent.save_model(self.checkpoint, "best")
 		if self.logger: self.logger.log(f"Step: {step:7d}, Reward: {self.total_rewards[-1]:9.3f} [{np.std(rollouts):8.3f}], Avg: {np.mean(self.total_rewards, axis=0):9.3f} ({stats.get('eps',eps):.3f})", {**stats, **{f"{k}_e":v for k,v in agent.get_stats().items()}})
