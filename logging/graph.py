@@ -24,8 +24,8 @@ root = "./logging"
 
 indices = {
 	"CarRacing-v1": {"ppo": 30, "ddpg": 20, "sac": 41, "mppi": 9},
-	"Pendulum-v0": {"ppo": 0, "ddpg": 1, "sac": 0, "mppi": 11},
-	"LunarLanderContinuous-v2": {"ppo": 1, "ddpg": 0, "sac": 0, "mppi": 3},
+	# "Pendulum-v0": {"ppo": 0, "ddpg": 1, "sac": 0, "mppi": 11},
+	# "LunarLanderContinuous-v2": {"ppo": 1, "ddpg": 0, "sac": 0, "mppi": 3},
 }
 
 def cat_stats(steps, stats):
