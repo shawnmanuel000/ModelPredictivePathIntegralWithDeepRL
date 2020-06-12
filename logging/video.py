@@ -98,12 +98,15 @@ def visualize_envmodel(save=True):
 		rendered = write_info(rendered, f"Time: {s}, Reward: {total_reward:5.2f}, Vel(r,p,y): {state[[5,3,4]]}")
 		graph = animator.animate_path(spec["pos"], path_spec["pos"])
 		print(f"Step: {s:5d}, Action: {action}, Reward: {reward:5.2f} ({r[0,0]:5.2f}), Pos: {state[:3]} ({ns[0][:3]}), Vel: {state[3:6]} ({ns[0][3:6]})")
-		if save: renders.append(np.concatenate([rendered, resize(graph, dim=rendered.shape[:2])], axis=1) if graph is not None else rendered)
+		if save and rendered is not None: 
+			renders.append(np.concatenate([rendered, resize(graph, dim=rendered.shape[:2])], axis=1) if graph is not None else rendered)
 		if done: break
+	print(f"Reward: {total_reward}")
 	env.close()
 	if renders: make_video(renders, filename=os.path.abspath(os.path.join('logging/videos', config.env_name, f"mppi.avi")))
 
 def write_info(rendered, text):
+	if rendered is None: return None
 	rendered[-40:] = 0
 	image = Image.fromarray(rendered, 'RGB')
 	try: font = ImageFont.truetype("/Library/Fonts/Arial.ttf", size=20)

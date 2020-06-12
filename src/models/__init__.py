@@ -61,7 +61,7 @@ model_configs = {
 		EPS_DECAY = 0.998,             	# The rate at which eps decays from EPS_MAX to EPS_MIN
 	),
 	"mppi": net_config.clone(
-		MAX_BUFFER_SIZE = 100000,    	# Sets the maximum length of the replay buffer
+		MAX_BUFFER_SIZE = 1000000,    	# Sets the maximum length of the replay buffer
 		REPLAY_BATCH_SIZE = 10000,  	# How many experience tuples to sample from the buffer for each train step
 		TRAIN_EVERY = 10000,   			# Number of iterations to sample batches for training
 		BATCH_SIZE = 500,				# Number of samples to train on for each train step

@@ -52,16 +52,17 @@ class EnvModel():
 		self.state_size = state_size
 		self.action_size = action_size
 
+	def value(self, action, state, next_state):
+		return self.network.value(action, state, next_state)
+
 	def step(self, action, state=None, **kwargs):
-		next_state, reward = self.network.step(action, state, **kwargs)
-		return next_state, reward
+		return self.network.step(action, state, **kwargs)
 
 	def rollout(self, actions, state=None, **kwargs):
-		next_states, rewards = self.network.rollout(actions, state, **kwargs)
-		return next_states, rewards
+		return self.network.rollout(actions, state, **kwargs)
 
 	def reset(self, **kwargs):
-		self.network.reset(**kwargs)
+		return self.network.reset(**kwargs)
 
 	def optimize(self, states, actions, next_states, rewards, dones, **kwargs):
 		return self.network.optimize(states, actions, next_states, rewards, dones, **kwargs)

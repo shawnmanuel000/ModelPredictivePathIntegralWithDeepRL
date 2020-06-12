@@ -49,19 +49,20 @@ class RewardModel(torch.nn.Module):
 		self.linear4 = torch.nn.Linear(config.DYN.REWARD_HIDDEN, 1)
 		self.apply(lambda m: torch.nn.init.xavier_normal_(m.weight) if type(m) in [torch.nn.Conv2d, torch.nn.Linear] else None)
 
-	def forward(self, action, state, next_state, grad=False):
-		if self.cost and self.dyn_spec and not grad:
+	def forward(self, action, state, next_state, grad=False, model=False):
+		if self.cost and self.dyn_spec and not grad and not model:
 			next_state, state = [x.cpu().numpy() for x in [next_state, state]]
 			ns_spec, s_spec = map(self.dyn_spec.observation_spec, [next_state, state])
 			reward = -torch.FloatTensor(self.cost.get_cost(ns_spec, s_spec)).unsqueeze(-1)
 		else:
-			inputs = torch.cat([action, state, next_state],-1)
-			layer1 = self.linear1(inputs).relu()
-			layer1 = self.drop1(layer1)
-			layer2 = self.linear2(layer1).tanh() + layer1
-			layer2 = self.drop2(layer2)
-			layer3 = self.linear3(layer2).tanh() + layer1
-			reward = self.linear4(layer3)
+			with torch.enable_grad() if grad else torch.no_grad():
+				inputs = torch.cat([action, state, next_state],-1)
+				layer1 = self.linear1(inputs).relu()
+				layer1 = self.drop1(layer1)
+				layer2 = self.linear2(layer1).tanh() + layer1
+				layer2 = self.drop2(layer2)
+				layer3 = self.linear3(layer2).tanh() + layer1
+				reward = self.linear4(layer3)
 		return reward
 
 class DifferentialEnv(PTNetwork):
@@ -77,6 +78,11 @@ class DifferentialEnv(PTNetwork):
 		self.scheduler = torch.optim.lr_scheduler.ReduceLROnPlateau(self.optimizer, factor=config.DYN.FACTOR, patience=config.DYN.PATIENCE)
 		self.to(self.device)
 		if load: self.load_model(load)
+
+	def value(self, action, state, next_state):
+		state, next_state = [x[...,:self.dyn_index] for x in [state, next_state]]
+		reward = self.reward(action, state, next_state, model=True)
+		return reward
 
 	def step(self, action, state=None, numpy=False, grad=False):
 		action, state = map(self.to_tensor, [action, state])
@@ -142,11 +148,13 @@ class DifferentialEnv(PTNetwork):
 		return {**super().get_stats(), "lr": self.optimizer.param_groups[0]["lr"] if self.optimizer else None}
 
 	def save_model(self, dirname="pytorch", name="checkpoint", net=None):
+		if not (self.reward.cost and self.reward.dyn_spec): name+="_model"
 		filepath, _ = self.get_checkpoint_path(dirname, name, net)
 		os.makedirs(os.path.dirname(filepath), exist_ok=True)
 		torch.save(self.state_dict(), filepath)
 		
 	def load_model(self, dirname="pytorch", name="checkpoint", net=None):
+		if not (self.reward.cost and self.reward.dyn_spec): name+="_model"
 		filepath, _ = self.get_checkpoint_path(dirname, name, net)
 		if os.path.exists(filepath):
 			try:

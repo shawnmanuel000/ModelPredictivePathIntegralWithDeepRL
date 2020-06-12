@@ -128,7 +128,7 @@ class UnityToGymWrapper(gym.Env):
         else:
             return self._single_step(decision_step)
 
-    def _single_step(self, info: Union[DecisionSteps, TerminalSteps]) -> GymStepResult:
+    def _single_step(self, info: Union[DecisionSteps, TerminalSteps], compress=True) -> GymStepResult:
         self.info = info
         if self.use_visual:
             visual_obs = self._get_vis_obs_list(info)
@@ -145,6 +145,8 @@ class UnityToGymWrapper(gym.Env):
         else:
             raise UnityGymException("The Agent does not have vector observations and the environment was not setup to use visual observations.")
         done = isinstance(info, TerminalSteps)
+        if compress:
+            info.obs = [obs for obs in info.obs if len(obs.shape)<=2]
         return (default_observation, info.reward[0], done, {"step": info})
 
     def _preprocess_single(self, single_visual_obs: np.ndarray, uint8_visual: bool=False) -> np.ndarray:
@@ -190,7 +192,7 @@ class UnityToGymWrapper(gym.Env):
     def render(self, mode="human"):
         if mode=="rgb_array":
             visual_obs_list = self._get_vis_obs_list(self.info)
-            visual_obs = self._preprocess_single(visual_obs_list[0][0], uint8_visual=True)
+            visual_obs = self._preprocess_single(visual_obs_list[0][0], uint8_visual=True) if len(visual_obs_list) else None
             return visual_obs 
         return None
 

@@ -27,15 +27,16 @@ class MPPIController(PTNetwork):
 
 	def get_action(self, state, eps=None, sample=True):
 		batch = state.shape[:-1]
+		eps = 0 if eps is None else eps
 		horizon = max(int((1-eps)*self.horizon),1) if eps else self.horizon
 		if len(batch) and self.control.shape[0] != batch[0]: self.init_control(batch[0])
 		x = torch.Tensor(state).view(*batch, 1,-1).repeat_interleave(self.nsamples, -2)
-		noise = self.noise[...,:horizon,:] * max(eps if eps else 0, 0.1)
+		noise = self.noise[...,:horizon,:] * max(eps, 0.1)
 		controls = np.clip(self.control[:,None,:horizon,:] + noise, -1, 1)
 		self.states, rewards = self.envmodel.rollout(controls, x, numpy=True)
 		costs = -np.sum(rewards, -1) + self.lamda * np.copy(self.init_cost)
 		beta = np.min(costs, -1, keepdims=True)
-		costs_norm = -(costs - beta)/self.lamda
+		costs_norm = -(costs - beta)/self.lamda*np.exp(-2*eps)
 		weights = sp.special.softmax(costs_norm, axis=-1)
 		self.control[...,:horizon,:] += np.sum(weights[:,:,None,None]*noise, len(batch))
 		action = self.control[...,0,:]
@@ -71,7 +72,7 @@ class MPPIAgent(PTAgent):
 		action_random = super().get_action(state)
 		if eps >= 1: return action_random
 		action_greedy = self.network.get_action(np.array(state), eps)
-		action = np.clip((1-eps)*action_greedy + eps*action_random, -1, 1)
+		action = np.clip(action_greedy, -1, 1)
 		return action
 
 	def train(self, state, action, next_state, reward, done):
@@ -84,7 +85,7 @@ class MPPIAgent(PTAgent):
 			states, actions, next_states, rewards, dones = map(lambda x: self.to_tensor(x)[None], zip(*buffer))
 			buffer.clear()
 			mask = torch.ones_like(rewards)
-			values = self.network.envmodel.network.reward(actions, states, next_states)[0]
+			values = self.network.envmodel.value(actions, states, next_states)[0]
 			rewards = self.compute_gae(0*values[-1], rewards.transpose(0,1), dones.transpose(0,1), values)[0].transpose(0,1)
 			states, actions, next_states, rewards, dones, mask = map(lambda x: x.cpu().numpy(), [states, actions, next_states, rewards, dones, mask])
 			states, actions, next_states, rewards, dones, mask = map(lambda x: pad(x[0], self.config.NUM_STEPS), [states, actions, next_states, rewards, dones, mask])
@@ -100,7 +101,7 @@ class MPPIAgent(PTAgent):
 			# 	self.losses.append(self.network.optimize(states, actions, next_states, rewards, dones))
 			# 	pbar.set_postfix_str(f"Loss: {self.losses[-1]:.4f}")
 			# self.network.envmodel.network.schedule(np.mean(self.losses))
-			self.eps = (self.time/np.mean(self.ep_lens))%1
+			self.eps = (self.time/int(np.mean(self.ep_lens)+1))%1
 			self.stats.mean(loss=loss)
 
 	def get_stats(self):
