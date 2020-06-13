@@ -16,16 +16,16 @@ envs = importlib.util.module_from_spec(spec)
 sys.modules[spec.name] = envs
 spec.loader.exec_module(envs)
 
-models = ["rand", "ddpg", "ppo", "sac", "mppi"]
-lighter_cols = ["#EEEEEE", "#44DFFF", "#FF4493", "#BDFF4F", "#FFED44"]
-light_cols = ["#CCCCCC", "#00BFFF", "#FF1493", "#9DFF2F", "#FFED00"]
-dark_cols = ["#777777", "#0000CD", "#FF0000", "#008000", "#FFA500"]
+models = ["rand", "ddpg", "ppo", "sac", "mppi", "mppi_dyn"]
+lighter_cols = ["#EEEEEE", "#44DFFF", "#FF4493", "#BDFF4F", "#FFED44", "#FFED44"]
+light_cols = ["#CCCCCC", "#00BFFF", "#FF1493", "#9DFF2F", "#FFED00", "#FFED00"]
+dark_cols = ["#777777", "#0000CD", "#FF0000", "#008000", "#FFA500", "#FFA500"]
 root = "./logging"
 
 indices = {
-	"CarRacing-v1": {"ppo": 30, "ddpg": 20, "sac": 41, "mppi": 9},
-	# "Pendulum-v0": {"ppo": 0, "ddpg": 1, "sac": 0, "mppi": 11},
-	# "LunarLanderContinuous-v2": {"ppo": 1, "ddpg": 0, "sac": 0, "mppi": 3},
+	"CarRacing-v1": {"ppo": 30, "ddpg": 20, "sac": 41, "mppi": 14, "mppi_dyn": 15},
+	"Pendulum-v0": {"ppo": 0, "ddpg": 1, "sac": 0, "mppi": 15},
+	"LunarLanderContinuous-v2": {"ppo": 1, "ddpg": 0, "sac": 0, "mppi": 6},
 }
 
 def cat_stats(steps, stats):
@@ -65,19 +65,21 @@ def graph_logs(env_name, show=False):
 	plt.figure()
 	for framework in ["pt", "rl"]:
 		rl = framework=="rl"
-		for m,model in enumerate(models):
-			folder = f"{root}/logs/{framework}/{model}/{env_name}/"
-			if os.path.exists(folder):
+		for m,model in list(enumerate(models))[1:]:
+			folder = f"{root}/logs/{framework}/{model.replace('_dyn','')}/{env_name}/"
+			if os.path.exists(folder) and (model!="mppi_dyn" or model in indices.get(env_name,{})):
 				files = sorted(os.listdir(folder), key=lambda v: str(len(v)) + v)
 				index = indices.get(env_name, {}).get(model, len(files)-1)
+				dyn = "_dyn" in model
 				steps, rewards, rolling, stds, avgs, epss, times, stats = read_log(os.path.join(folder, files[index]))
-				plt.plot(steps, rewards, "--", color=light_cols[m], label=f"Trial {model.upper()} [logs_{index}]", linewidth=0.7, zorder=0)
-				plt.plot(steps, rolling, "-", color=dark_cols[m], label=f"Avg {model.upper()} <{times[-1]}>", zorder=1)
+				plt.plot(steps, rewards, ":" if dyn else "--", color=light_cols[m], label=f"Trial {model.upper()} [logs_{index}]", linewidth=0.7, zorder=0)
+				plt.plot(steps, rolling, "--" if dyn else "-", color=dark_cols[m], label=f"Avg {model.upper()} <{times[-1]}>", zorder=1)
+
 	try: 
 		steps
 		plt.xlabel("Step")
 		plt.ylabel("Total Reward")
-		plt.legend(loc="best", prop={'size': 8})
+		plt.legend(loc="best", prop={'size': 8-int(dyn)})
 		plt.grid(linewidth=0.3, linestyle='-')
 		plt.title(f"Eval Rewards for {env_name}")
 		graph_folder = "Unity" if env_name in envs.env_grps["unt"] else "OpenAI"

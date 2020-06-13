@@ -148,13 +148,13 @@ class DifferentialEnv(PTNetwork):
 		return {**super().get_stats(), "lr": self.optimizer.param_groups[0]["lr"] if self.optimizer else None}
 
 	def save_model(self, dirname="pytorch", name="checkpoint", net=None):
-		if not (self.reward.cost and self.reward.dyn_spec): name+="_model"
+		if (self.reward.cost and self.reward.dyn_spec): name+="_dyn"
 		filepath, _ = self.get_checkpoint_path(dirname, name, net)
 		os.makedirs(os.path.dirname(filepath), exist_ok=True)
 		torch.save(self.state_dict(), filepath)
 		
 	def load_model(self, dirname="pytorch", name="checkpoint", net=None):
-		if not (self.reward.cost and self.reward.dyn_spec): name+="_model"
+		if (self.reward.cost and self.reward.dyn_spec): name+="_dyn"
 		filepath, _ = self.get_checkpoint_path(dirname, name, net)
 		if os.path.exists(filepath):
 			try:

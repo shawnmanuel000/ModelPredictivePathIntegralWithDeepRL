@@ -1,0 +1,54 @@
+\documentclass[10pt]{article}
+\usepackage{fullpage,enumitem,amsmath,amssymb,graphicx}
+\usepackage[margin=0.5in]{geometry}
+\usepackage[utf8]{inputenc} % allow utf-8 input
+\usepackage[T1]{fontenc}    % use 8-bit T1 fonts
+\usepackage{subfigure}		% For subfigures
+\usepackage{microtype}      % microtypography
+\usepackage{graphicx}       % microtypography
+\usepackage{amsfonts}       % blackboard math symbols
+\usepackage{booktabs}       % professional-quality tables
+\usepackage{nicefrac}       % compact symbols for 1/2, etc.
+\usepackage{breqn}          % dmath multiline
+\usepackage{url}            % simple URL typesetting
+
+\begin{document}
+
+\begin{center}
+	{\Large \textbf{Summary of scores \\}}
+	{\textbf{MPPI tests} }
+	{\hfill \\}
+\end{center}
+
+\begin{center}
+	\begin{table}[h]
+		\caption{Average 10-trial Scores Across Agents}\label{tab:trials}
+		 \hspace{2em}
+		\centering % center the table
+		\small % text size of table content
+		\begin{tabular}{cccc} % alignment of each column data
+		\toprule[\heavyrulewidth]\toprule[\heavyrulewidth]
+		\textbf{\ \ Agent\ \ } 	& \textbf{Pendulum} & \textbf{LunarLander} 	& \textbf{CarRacing} 	\\
+		\midrule
+		SAC				& -177 $\pm$ 74				& 284 $\pm$ 17			& 2204 $\pm$ 0	\\
+		 \midrule
+		DDPG			& \textbf{-156 $\pm$ 75}	& 289 $\pm$ 14			& \textbf{2745 $\pm$ 0}	\\
+		 \midrule
+		PPO				& -157 $\pm$ 88	 			& \textbf{293 $\pm$ 14}	& 4 $\pm$ 35	\\
+		\midrule
+		MPPI			& -261 $\pm$ 170	 		& 159 $\pm$ 127			& 16 $\pm$ 158	\\
+		\midrule
+		MPPI (dyn)		& N/A	 					& N/A					& 1692 $\pm$ 196	\\
+		\bottomrule[\heavyrulewidth] 
+		\end{tabular}
+	\end{table}
+	
+	[2204.1858952412167,
+
+
+\end{center}
+
+\bibliographystyle{ieeetr}
+\bibliography{bibli}
+
+\end{document}

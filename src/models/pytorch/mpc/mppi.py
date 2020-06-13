@@ -34,7 +34,7 @@ class MPPIController(PTNetwork):
 		noise = self.noise[...,:horizon,:] * max(eps, 0.1)
 		controls = np.clip(self.control[:,None,:horizon,:] + noise, -1, 1)
 		self.states, rewards = self.envmodel.rollout(controls, x, numpy=True)
-		costs = -np.sum(rewards, -1) + self.lamda * np.copy(self.init_cost)
+		costs = -np.sum(rewards*self.discount, -1) + self.lamda * np.copy(self.init_cost)
 		beta = np.min(costs, -1, keepdims=True)
 		costs_norm = -(costs - beta)/self.lamda*np.exp(-2*eps)
 		weights = sp.special.softmax(costs_norm, axis=-1)
@@ -46,6 +46,7 @@ class MPPIController(PTNetwork):
 
 	def init_control(self, batch_size=1):
 		self.control = np.random.uniform(-1, 1, size=[batch_size, self.horizon, *self.action_size])
+		self.discount = np.power(self.config.DISCOUNT_RATE, np.arange(self.horizon))[None,None]
 		self.noise = np.random.multivariate_normal(self.mu, self.cov, size=[batch_size, self.nsamples, self.horizon])
 		self.init_cost = np.sum(self.control[:,None,:,None,:] @ self.icov[None,None,None,:,:] @ self.noise[:,:,:,:,None], axis=(2,3,4))/self.horizon
 
@@ -90,17 +91,9 @@ class MPPIAgent(PTAgent):
 			states, actions, next_states, rewards, dones, mask = map(lambda x: x.cpu().numpy(), [states, actions, next_states, rewards, dones, mask])
 			states, actions, next_states, rewards, dones, mask = map(lambda x: pad(x[0], self.config.NUM_STEPS), [states, actions, next_states, rewards, dones, mask])
 			self.replay_buffer.extend(list(zip(states, actions, next_states, rewards, dones, mask)), shuffle=False)
-		if len(self.replay_buffer) > self.config.REPLAY_BATCH_SIZE:# and self.time % self.config.TRAIN_EVERY == 0:
+		if len(self.replay_buffer) > self.config.REPLAY_BATCH_SIZE and self.time % self.config.TRAIN_EVERY == 0:
 			states, actions, next_states, rewards, dones, mask = self.replay_buffer.sample(self.config.REPLAY_BATCH_SIZE, dtype=self.to_tensor)[0]
 			loss = self.network.optimize(states, actions, next_states, rewards, dones, mask=mask)
-			# samples = list(self.replay_buffer.sample(self.config.REPLAY_BATCH_SIZE, dtype=None)[0])
-			# dataset = self.dataset(self.config, samples, seq_len=self.config.MPC.HORIZON)
-			# loader = torch.utils.data.DataLoader(dataset, batch_size=self.config.BATCH_SIZE, shuffle=True)
-			# pbar = tqdm.tqdm(loader)
-			# for states, actions, next_states, rewards, dones in pbar:
-			# 	self.losses.append(self.network.optimize(states, actions, next_states, rewards, dones))
-			# 	pbar.set_postfix_str(f"Loss: {self.losses[-1]:.4f}")
-			# self.network.envmodel.network.schedule(np.mean(self.losses))
 			self.eps = (self.time/int(np.mean(self.ep_lens)+1))%1
 			self.stats.mean(loss=loss)
 
