@@ -4,7 +4,7 @@ atari-py==0.2.6
 torch==1.4.0
 Box2D==2.3.2
 GPUtil==1.4.0
-numpy==1.18.1
+numpy==1.22.0
 opencv-python==4.1.2.30
 psutil==5.6.7
 tqdm==4.46.0
